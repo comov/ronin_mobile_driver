@@ -88,7 +88,7 @@ class _SignInState extends State<SignIn> with DebugMixin {
                             singInCallBack();
                           }
                         },
-                        child: const Text("Зарегестрироваться"),
+                        child: const Text("Зарегистрироваться"),
                       ),
                     ],
                   ),
@@ -106,7 +106,7 @@ class _SignInState extends State<SignIn> with DebugMixin {
           else
             {
               savePhoneNumber(phoneNumber),
-              debugPrint("СМС отправилась!"),
+              debugPrint("СМС отправилось!"),
               Navigator.pushNamed(context, "/auth"),
             }
         });

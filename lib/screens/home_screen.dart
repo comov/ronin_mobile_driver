@@ -1,6 +1,12 @@
+import 'dart:convert';
+
+import 'package:car_helper/entities.dart';
+import 'package:car_helper/resources/api_services.dart';
+import 'package:car_helper/screens/order_new_screen.dart';
 import 'package:car_helper/screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 import 'mixins.dart';
 
@@ -12,29 +18,24 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with DebugMixin {
-  String phoneNumber = "";
+  List<Category> categories = [];
   String authToken = "";
-  String refreshKey = "";
-
-
-  void delFromStorage() async {
-    final pf = await SharedPreferences.getInstance();
-    pf.remove("auth_token");
-  }
 
   @override
   Widget build(BuildContext context) {
     printStorage("HomeScreen");
     return FutureBuilder<String>(
-      future: loadFromStorage(),
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {  // AsyncSnapshot<Your object type>
+      future: loadInitialData(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        // AsyncSnapshot<Your object type>
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-              body: Center(child: Text("Загрузка...")),
+            body: Center(child: Text("Загрузка...")),
           );
         }
 
         if (snapshot.hasError) {
+          debugPrint(snapshot.error.toString());
           return Scaffold(
             body: Center(
               child: Column(
@@ -48,40 +49,52 @@ class _HomeState extends State<Home> with DebugMixin {
         }
 
         if (authToken == "") {
+          debugPrint("authToken is empty: $authToken");
           return const SignIn();
         }
 
         return Scaffold(
-          appBar: AppBar(title: const Text("Home screen")),
-          body: Column(
-            children: [
-              Text("phoneNumber: $phoneNumber"),
-              Text("authToken: $authToken"),
-              Text("refreshKey: $refreshKey"),
-              ElevatedButton(
+          appBar: AppBar(title: const Text("Все категории")),
+          body: ListView.separated(
+            padding: const EdgeInsets.all(8),
+            itemCount: categories.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                height: 50,
+                child: ElevatedButton(
                   onPressed: () {
-                    delFromStorage();
-                    Navigator.of(context).pushNamedAndRemoveUntil("/signin", (route) => false);
+                    Navigator.pushNamed(
+                      context,
+                      "/order/new",
+                      arguments: NewOrderArguments(category: categories[index]),
+                    );
                   },
-                child: const Text("Выйти"),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/categories");
-                  },
-                child: const Text("Открыть категории"),
-              ),
-            ],
+                  child: Text(categories[index].title),
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) =>
+            const Divider(),
           ),
         );
       },
     );
   }
 
-  Future<String> loadFromStorage() async {
+  Future<String> loadInitialData() async {
     final pf = await SharedPreferences.getInstance();
-    phoneNumber = pf.getString("phone_number") ?? "";
     authToken = pf.getString("auth_token") ?? "";
+    debugPrint("authToken $authToken");
+
+    final categoriesJson = pf.getString("categories") ?? "";
+    if (categoriesJson == "") {
+      final services = await getServices(authToken);
+      categories = fromServicesToCategories(services);
+      pf.setString("categories", jsonEncode(encodeCategories(categories)));
+    } else {
+      categories = decodeCategories(jsonDecode(categoriesJson));
+    }
+
     return Future.value("Ok");
   }
 }

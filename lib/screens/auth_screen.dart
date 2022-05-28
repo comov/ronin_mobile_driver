@@ -60,7 +60,7 @@ class _AuthState extends State<Auth> with DebugMixin {
                 ElevatedButton(
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      authCollBack();
+                      authCallBack();
                     }
                   },
                   child: const Text("Отправить"),
@@ -97,7 +97,7 @@ class _AuthState extends State<Auth> with DebugMixin {
         });
   }
 
-  void authCollBack() {
+  void authCallBack() {
     SharedPreferences.getInstance()
         .then((prefs) => {prefs.getString("phone_number")})
         .then((phoneNumber) => {

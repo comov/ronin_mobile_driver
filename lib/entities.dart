@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Service {
   final int id;
   final String title;
@@ -8,6 +6,13 @@ class Service {
     required this.id,
     required this.title,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "title": title,
+    };
+  }
 }
 
 class Category {
@@ -20,6 +25,18 @@ class Category {
     required this.title,
     this.services,
   });
+
+  Map<String, dynamic> toJson() {
+    final servicesJson = [];
+    for (final service in services!) {
+      servicesJson.add(service.toJson());
+    }
+    return {
+      "id": id,
+      "title": title,
+      "services": servicesJson,
+    };
+  }
 }
 
 class ServiceWithCategory {
@@ -63,4 +80,31 @@ List<Category> fromServicesToCategories(List<ServiceWithCategory> services) {
     categoriesMap[category.id] = category;
   }
   return categoriesMap.values.toList();
+}
+
+List<Map<String, dynamic>> encodeCategories(List<Category> categories) {
+  List<Map<String, dynamic>> categoriesJson = [];
+  for (final category in categories) {
+    categoriesJson.add(category.toJson());
+  }
+  return categoriesJson;
+}
+
+List<Category> decodeCategories(List<dynamic> categoriesJson) {
+  List<Category> categories = [];
+  for (final item in categoriesJson) {
+
+    final List<Service> services = [];
+    for (final i in item["services"]) {
+      services.add(Service(id: i["id"], title: i["title"]));
+    }
+
+    final category = Category(
+      id: item["id"],
+      title: item["title"],
+      services: services,
+    );
+    categories.add(category);
+  }
+  return categories;
 }

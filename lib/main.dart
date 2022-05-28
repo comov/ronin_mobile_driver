@@ -1,9 +1,9 @@
 import 'package:car_helper/screens/auth_screen.dart';
-import 'package:car_helper/screens/categories_screen.dart';
-import 'package:car_helper/screens/debug_screen.dart';
-import 'package:car_helper/screens/services_screen.dart';
-import 'package:car_helper/screens/sign_in_screen.dart';
 import 'package:car_helper/screens/home_screen.dart';
+import 'package:car_helper/screens/test_page_screen.dart';
+import 'package:car_helper/screens/order_new_screen.dart';
+import 'package:car_helper/screens/sign_in_screen.dart';
+import 'package:car_helper/screens/debug_page_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,15 +16,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "MaterialApp title",
-      initialRoute: "/debug",
+      title: "CarHelpers",
+      initialRoute: "/home",
       routes: {
         "/home": (BuildContext context) => const Home(),
         "/signin": (BuildContext context) => const SignIn(),
         "/auth": (BuildContext context) => const Auth(),
-        "/categories": (BuildContext context) => const CategoriesList(),
-        "/services_screen": (BuildContext context) => const ServicesList(),
-        "/debug": (BuildContext context) => const Debug(),
+        "/order/new": (BuildContext context) => const OrderNew(),
+        "/debug": (BuildContext context) => const DebugPage(),
+        "/test": (BuildContext context) => const TestPage(),
       },
     );
   }
