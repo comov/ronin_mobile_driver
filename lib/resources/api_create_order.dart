@@ -52,7 +52,7 @@ class CreateOrderResponse {
 Future<CreateOrderResponse> createOrder(
     String authToken, List<int> services) async {
   final response = await http.post(
-    Uri.parse("https://stage.i-10.win/api/v1/services"),
+    Uri.parse("https://stage.i-10.win/api/v1/user/order"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",

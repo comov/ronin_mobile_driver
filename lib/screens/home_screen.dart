@@ -20,6 +20,26 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with DebugMixin {
   List<Category> categories = [];
   String authToken = "";
+  String phoneNumber = "";
+  String refreshKey = "";
+
+  int _selectedIndex = 0;
+  Map<int, Function> widgetOptions = {};
+
+  @override
+  void initState() {
+    super.initState();
+    widgetOptions = {
+      0: bottomCategories,
+      1: bottomProfile,
+    };
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,35 +75,75 @@ class _HomeState extends State<Home> with DebugMixin {
 
         return Scaffold(
           appBar: AppBar(title: const Text("Все категории")),
-          body: ListView.separated(
-            padding: const EdgeInsets.all(8),
-            itemCount: categories.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      "/order/new",
-                      arguments: NewOrderArguments(category: categories[index]),
-                    );
-                  },
-                  child: Text(categories[index].title),
-                ),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) =>
-            const Divider(),
+          body: Center(
+            child: widgetOptions[_selectedIndex]!(),
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.category),
+                label: "Категории",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: "Профиль",
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
           ),
         );
       },
     );
   }
 
+  Widget bottomCategories() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(8),
+      itemCount: categories.length,
+      itemBuilder: (BuildContext context, int index) {
+        return SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                "/order/new",
+                arguments: NewOrderArguments(category: categories[index]),
+              );
+            },
+            child: Text(categories[index].title),
+          ),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) =>
+      const Divider(),
+    );
+  }
+
+  Widget bottomProfile() {
+    return Column(
+      children: [
+        // todo: Need to delete phoneNumber, authToken, refreshKey from this page
+        Text("phoneNumber: $phoneNumber"),
+        Text("authToken: $authToken"),
+        Text("refreshKey: $refreshKey"),
+        ElevatedButton(
+          onPressed: () {
+            delFromStorage();
+            Navigator.of(context).pushNamedAndRemoveUntil("/signin", (route) => false);
+          },
+          child: const Text("Выйти"),
+        ),
+      ],
+    );
+  }
+
   Future<String> loadInitialData() async {
     final pf = await SharedPreferences.getInstance();
     authToken = pf.getString("auth_token") ?? "";
+    phoneNumber = pf.getString("phone_number") ?? "";
+    refreshKey = pf.getString("refresh_key") ?? "";
     debugPrint("authToken $authToken");
 
     final categoriesJson = pf.getString("categories") ?? "";
@@ -96,5 +156,11 @@ class _HomeState extends State<Home> with DebugMixin {
     }
 
     return Future.value("Ok");
+  }
+
+  void delFromStorage() async {
+    final pf = await SharedPreferences.getInstance();
+    pf.remove("auth_token");
+    pf.remove("refresh_key");
   }
 }

@@ -66,11 +66,6 @@ class _OrderNewState extends State<OrderNew> with DebugMixin, CategoriesMixin {
 
   final Map<int, Map<String, dynamic>> _checkedServices = {};
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
-
   @override
   Widget build(BuildContext context) {
     printStorage("HomeScreen");
