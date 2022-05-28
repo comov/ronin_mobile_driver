@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:car_helper/resources/auth.dart';
 import 'package:car_helper/resources/signin.dart';
-import 'package:car_helper/screens/mixins.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,13 +12,12 @@ class Auth extends StatefulWidget {
   State<Auth> createState() => _AuthState();
 }
 
-class _AuthState extends State<Auth> with DebugMixin {
+class _AuthState extends State<Auth> {
   var otpCode = "";
   String phoneNumber = "";
 
   @override
   Widget build(BuildContext context) {
-    printStorage("AuthScreen");
     loadFromStorage();
 
     final formKey = GlobalKey<FormState>();
@@ -56,11 +54,17 @@ class _AuthState extends State<Auth> with DebugMixin {
                     return null;
                   },
                 ),
-                Text("OTP: $otpCode"),
                 ElevatedButton(
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      authCallBack();
+                      authCallBack().then((value) {
+                        if (value == "Ok") {
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            "/home",
+                            (route) => false,
+                          );
+                        }
+                      });
                     }
                   },
                   child: const Text("Отправить"),
@@ -85,35 +89,46 @@ class _AuthState extends State<Auth> with DebugMixin {
     return Future.value("Ok");
   }
 
-  saveAuthData(String token, String refreshKey) async {
+  Future<String> saveAuthData(String token, String refreshKey) async {
     final pf = await SharedPreferences.getInstance();
     pf.setString("auth_token", token);
     pf.setString("refresh_key", refreshKey);
+    return Future.value("Ok");
   }
 
-  void singInCallBack() {
-    sigIn(phoneNumber).then((response) => {
-          if (response.error != "") {debugPrint(response.message)}
-        });
+  void singInCallBack() async {
+    final response = await sigIn(phoneNumber);
+    switch (response.statusCode) {
+      case 200:
+        {
+          break;
+        }
+      default:
+        {
+          debugPrint("Ошибка при авторизации: ${response.statusCode}");
+          debugPrint("response.error!.error=${response.error!.error}");
+          debugPrint("response.error!.message=${response.error!.message}");
+          break;
+        }
+    }
   }
 
-  void authCallBack() {
-    SharedPreferences.getInstance()
-        .then((prefs) => {prefs.getString("phone_number")})
-        .then((phoneNumber) => {
-              auth(phoneNumber.first.toString(), otpCode).then((response) => {
-                    if (response.error != "")
-                      {debugPrint(response.message)}
-                    else
-                      {
-                        saveAuthData(
-                          response.token ?? "",
-                          response.refreshKey ?? "",
-                        ),
-                        Navigator.of(context)
-                            .pushNamedAndRemoveUntil("/home", (route) => false)
-                      }
-                  })
-            });
+  Future<String> authCallBack() async {
+    final response = await auth(phoneNumber, otpCode);
+    switch (response.statusCode) {
+      case 200:
+        {
+          saveAuthData(response.auth!.token, response.auth!.refreshKey);
+          break;
+        }
+      default:
+        {
+          debugPrint("Ошибка при авторизации: ${response.statusCode}");
+          debugPrint("response.error!.error=${response.error!.error}");
+          debugPrint("response.error!.message=${response.error!.message}");
+          break;
+        }
+    }
+    return Future.value("Ok");
   }
 }

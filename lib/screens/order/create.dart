@@ -1,32 +1,34 @@
 import 'package:car_helper/entities.dart';
-import 'package:car_helper/resources/api_create_order.dart';
-import 'package:car_helper/screens/mixins.dart';
+import 'package:car_helper/entities/order.dart';
+import 'package:car_helper/resources/api_order_create.dart';
+import 'package:car_helper/screens/home.dart';
+import 'package:car_helper/screens/order/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-class OrderCreateArguments {
+class OrderCreateArgs {
   final Category category;
 
-  OrderCreateArguments({required this.category});
+  OrderCreateArgs({required this.category});
 }
 
-
 class ListOfServices extends StatefulWidget {
-  const ListOfServices({Key? key, required this.checkedServices}) : super(key: key);
-  final Map<int, Map<String, dynamic>> checkedServices;
+  const ListOfServices({Key? key, required this.servicesMap}) : super(key: key);
+  final Map<int, Map<String, dynamic>> servicesMap;
 
   @override
-  State<ListOfServices> createState() => _ListOfServicesState(checkedServices: checkedServices);
+  State<ListOfServices> createState() =>
+      _ListOfServicesState(servicesMap: servicesMap);
 }
 
 class _ListOfServicesState extends State<ListOfServices> {
-  final Map<int, Map<String, dynamic>> checkedServices;
-  _ListOfServicesState({required this.checkedServices});
+  final Map<int, Map<String, dynamic>> servicesMap;
+
+  _ListOfServicesState({required this.servicesMap});
 
   @override
   Widget build(BuildContext context) {
-    final servicesList = checkedServices.values.toList();
+    final servicesList = servicesMap.values.toList();
     return SizedBox(
       height: 500,
       child: Column(
@@ -46,7 +48,6 @@ class _ListOfServicesState extends State<ListOfServices> {
                 );
               },
             ),
-
           ),
         ],
       ),
@@ -64,17 +65,17 @@ class OrderNew extends StatefulWidget {
 class _OrderNewState extends State<OrderNew> {
   String authToken = "";
 
-  final Map<int, Map<String, dynamic>> _checkedServices = {};
+  final Map<int, Map<String, dynamic>> _servicesMap = {};
 
   @override
   Widget build(BuildContext context) {
     loadFromStorage();
 
-    final args = ModalRoute.of(context)!.settings.arguments as OrderCreateArguments;
+    final args = ModalRoute.of(context)!.settings.arguments as OrderCreateArgs;
     final services = args.category.services!;
 
     for (final i in services) {
-      _checkedServices[i.id] = {"checked": false, "obj": i};
+      _servicesMap[i.id] = {"checked": false, "obj": i};
     }
 
     return Scaffold(
@@ -85,13 +86,26 @@ class _OrderNewState extends State<OrderNew> {
           const Text("Описание того, что входит в услугу"),
           ElevatedButton(
             onPressed: () {
-              _showModalBottomSheet(context, _checkedServices);
+              _showModalBottomSheet(context, _servicesMap);
             },
             child: const Text("Выбирете услугу"),
           ),
           ElevatedButton(
             onPressed: () {
-              _createOrder(_checkedServices);
+              _createOrder(_servicesMap).then((order) {
+                if (order != null) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    "/home",
+                    (route) => false,
+                    arguments: HomeArgs(initialState: 1, newOrder: order),
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    "/order/detail",
+                    arguments: OrderDetailArgs(order: order),
+                  );
+                }
+              });
             },
             child: const Text("Создать заказ"),
           ),
@@ -106,16 +120,21 @@ class _OrderNewState extends State<OrderNew> {
     return Future.value("Ok");
   }
 
-  void _showModalBottomSheet(BuildContext context, Map<int, Map<String, dynamic>> checkedServices) {
+  void _showModalBottomSheet(
+    BuildContext context,
+    Map<int, Map<String, dynamic>> servicesMap,
+  ) {
     showModalBottomSheet<void>(
       context: context,
       builder: (context) {
-        return ListOfServices(checkedServices: checkedServices);
+        return ListOfServices(servicesMap: servicesMap);
       },
     );
   }
 
-  void _createOrder(Map<int, Map<String, dynamic>> checkedServices) async {
+  Future<Order?> _createOrder(
+    Map<int, Map<String, dynamic>> checkedServices,
+  ) async {
     final List<int> services = [];
     checkedServices.forEach((id, info) {
       if (info["checked"] == true) {
@@ -123,11 +142,22 @@ class _OrderNewState extends State<OrderNew> {
       }
     });
 
-    final newOrderResponse = await createOrder(authToken, services);
-    if (newOrderResponse.id != 0 && newOrderResponse.id != null) {
-      debugPrint("Заказ был создан! Order: ${newOrderResponse.id}");
-    } else {
-      debugPrint("Что-то пошло не так: $newOrderResponse");
+    final response = await createOrder(authToken, services);
+    switch (response.statusCode) {
+      case 200:
+        {
+          final order = response.order!;
+          debugPrint("Заказ был создан! Order: ${order.id}");
+          break;
+        }
+      default:
+        {
+          debugPrint("Ошибка при создании Заказа: ${response.statusCode}");
+          debugPrint("response.error!.error=${response.error!.error}");
+          debugPrint("response.error!.message=${response.error!.message}");
+          break;
+        }
     }
+    return Future.value(response.order);
   }
 }

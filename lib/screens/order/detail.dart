@@ -1,12 +1,10 @@
-import 'package:car_helper/entities.dart';
-import 'package:car_helper/screens/mixins.dart';
+import 'package:car_helper/entities/order.dart';
 import 'package:flutter/material.dart';
 
-
-class OrderDetailArguments {
+class OrderDetailArgs {
   final Order order;
 
-  OrderDetailArguments({required this.order});
+  OrderDetailArgs({required this.order});
 }
 
 class OrderDetail extends StatefulWidget {
@@ -17,13 +15,9 @@ class OrderDetail extends StatefulWidget {
 }
 
 class _OrderDetailState extends State<OrderDetail> {
-  String authToken = "";
-
-  final Map<int, Map<String, dynamic>> _checkedServices = {};
-
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as OrderDetailArguments;
+    final args = ModalRoute.of(context)!.settings.arguments as OrderDetailArgs;
     final order = args.order;
 
     return Scaffold(
