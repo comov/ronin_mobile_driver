@@ -1,16 +1,25 @@
 import 'dart:convert';
 
 import 'package:car_helper/entities.dart';
+import 'package:car_helper/entities/order.dart';
+import 'package:car_helper/entities/user.dart';
 import 'package:car_helper/resources/api_order_list.dart';
 import 'package:car_helper/resources/api_services.dart';
+import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:car_helper/screens/order/detail.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:crypto/crypto.dart';
 
+class HomeArgs {
+  final int initialState;
+  final Order? newOrder;
 
-import 'mixins.dart';
+  HomeArgs({required this.initialState, this.newOrder});
+}
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -19,7 +28,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with DebugMixin {
+class _HomeState extends State<Home> {
   List<Category> categories = [];
   List<Order> orders = [];
 
@@ -27,16 +36,19 @@ class _HomeState extends State<Home> with DebugMixin {
   String phoneNumber = "";
   String refreshKey = "";
 
+  Profile? profile;
+
   int _selectedIndex = 0;
-  Map<int, Function> widgetOptions = {};
+  Map<int, List> widgetOptions = {};
 
   @override
   void initState() {
     super.initState();
     widgetOptions = {
-      0: bottomCategories,
-      1: bottomOrders,
-      2: bottomProfile,
+      0: ["Все категории", bottomCategories],
+      1: ["Заказы", bottomOrders],
+      2: ["Чаты", bottomChats],
+      3: ["Профиль", bottomProfile],
     };
   }
 
@@ -48,7 +60,18 @@ class _HomeState extends State<Home> with DebugMixin {
 
   @override
   Widget build(BuildContext context) {
-    printStorage("HomeScreen");
+    // todo: need to implement
+    // var args = ModalRoute.of(context)!.settings.arguments;
+    // debugPrint("args $args");
+    // if (args != null) {
+    //   final homeArgs = args as HomeArgs;
+    //   _selectedIndex = homeArgs.initialState;
+    //   if (homeArgs.newOrder != null) {
+    //     orders = [homeArgs.newOrder!, ...orders];
+    //   }
+    //   args = null;
+    // }
+
     return FutureBuilder<String>(
       future: loadInitialData(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -60,10 +83,10 @@ class _HomeState extends State<Home> with DebugMixin {
         }
 
         if (snapshot.hasError) {
-          debugPrint(snapshot.error.toString());
           return Scaffold(
             body: Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("Ошибка при загрузке приложения :("),
                   Text("${snapshot.error}"),
@@ -73,15 +96,22 @@ class _HomeState extends State<Home> with DebugMixin {
           );
         }
 
-        if (authToken == "") {
-          debugPrint("authToken is empty: $authToken");
-          return const SignIn();
+        switch (snapshot.data!) {
+          case "tokenNotFound":
+            {
+              debugPrint("authToken is empty: $authToken");
+              return const SignIn();
+            }
+          case "":
+            {
+              debugPrint("authToken is expired: $authToken");
+              return const SignIn();
+            }
         }
-
         return Scaffold(
-          appBar: AppBar(title: const Text("Все категории")),
+          appBar: AppBar(title: Text(widgetOptions[_selectedIndex]![0])),
           body: Center(
-            child: widgetOptions[_selectedIndex]!(),
+            child: widgetOptions[_selectedIndex]![1](),
           ),
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
@@ -94,10 +124,19 @@ class _HomeState extends State<Home> with DebugMixin {
                 label: "Заказы",
               ),
               BottomNavigationBarItem(
+                icon: Icon(Icons.chat),
+                label: "Чаты",
+              ),
+              BottomNavigationBarItem(
                 icon: Icon(Icons.settings),
                 label: "Профиль",
               ),
             ],
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.grey,
+            selectedFontSize: 0,
+            unselectedFontSize: 0,
+            iconSize: 26,
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
           ),
@@ -118,15 +157,14 @@ class _HomeState extends State<Home> with DebugMixin {
               Navigator.pushNamed(
                 context,
                 "/order/new",
-                arguments: OrderCreateArguments(category: categories[index]),
+                arguments: OrderCreateArgs(category: categories[index]),
               );
             },
             child: Text(categories[index].title),
           ),
         );
       },
-      separatorBuilder: (BuildContext context, int index) =>
-      const Divider(),
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
   }
 
@@ -142,34 +180,114 @@ class _HomeState extends State<Home> with DebugMixin {
               Navigator.pushNamed(
                 context,
                 "/order/detail",
-                arguments: OrderDetailArguments(order: orders[index]),
+                arguments: OrderDetailArgs(order: orders[index]),
               );
             },
             child: Text("${orders[index].id}"),
           ),
         );
       },
-      separatorBuilder: (BuildContext context, int index) =>
-      const Divider(),
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
+    );
+  }
+
+  Widget bottomChats() {
+    // todo: need to check
+    const domain = "stage.i-10.win";
+    final uid = md5.convert(utf8.encode("${profile!.id}")).toString();
+    return WebView(
+      initialUrl: "https://$domain/admin/chat/",
+      initialCookies: [
+        WebViewCookie(name: "uid", value: uid, domain: domain),
+      ],
     );
   }
 
   Widget bottomProfile() {
-    return Column(
-      children: [
-        // todo: Need to delete phoneNumber, authToken, refreshKey from this page
-        Text("phoneNumber: $phoneNumber"),
-        Text("authToken: $authToken"),
-        Text("refreshKey: $refreshKey"),
-        ElevatedButton(
-          onPressed: () {
-            delFromStorage();
-            Navigator.of(context).pushNamedAndRemoveUntil("/signin", (route) => false);
-          },
-          child: const Text("Выйти"),
-        ),
-      ],
-    );
+    return FutureBuilder<String>(
+        future: loadInitialData(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          // AsyncSnapshot<Your object type>
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: Text("Загрузка...")),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Ошибка при загрузке приложения :("),
+                    Text("${snapshot.error}"),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          switch (snapshot.data!) {
+            case "tokenNotFound":
+              {
+                debugPrint("authToken is empty: $authToken");
+                return const SignIn();
+              }
+            case "":
+              {
+                debugPrint("authToken is expired: $authToken");
+                return const SignIn();
+              }
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("id: ${profile!.id}"),
+              const Divider(),
+              Text("phone: ${profile!.phone}"),
+              const Divider(),
+              Text("firstName: ${profile!.firstName}"),
+              const Divider(),
+              Text("lastName: ${profile!.lastName}"),
+              const Divider(),
+              Text("createdAt: ${profile!.createdAt}"),
+              const Divider(),
+              Text("modifiedAt: ${profile!.modifiedAt}"),
+              const Divider(),
+
+              // todo: Need to delete phoneNumber, authToken, refreshKey from this page
+              const Text("##### Хранилище приложения #####"),
+              const Divider(),
+              Text("phoneNumber: $phoneNumber"),
+              const Divider(),
+              Text("authToken: $authToken"),
+              const Divider(),
+              Text("refreshKey: $refreshKey"),
+              const Divider(),
+
+              const Text("##### Кнопки #####"),
+              Row(),
+              ElevatedButton(
+                onPressed: () {
+                  delFromStorage();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    "/signin",
+                    (route) => false,
+                  );
+                },
+                child: const Text("Выйти"),
+              ),
+            ],
+          );
+        });
+  }
+
+  void delFromStorage() async {
+    final pf = await SharedPreferences.getInstance();
+    pf.remove("auth_token");
+    pf.remove("refresh_key");
   }
 
   Future<String> loadInitialData() async {
@@ -177,7 +295,25 @@ class _HomeState extends State<Home> with DebugMixin {
     authToken = pf.getString("auth_token") ?? "";
     phoneNumber = pf.getString("phone_number") ?? "";
     refreshKey = pf.getString("refresh_key") ?? "";
-    debugPrint("authToken $authToken");
+
+    if (authToken == "") {
+      return Future.value("tokenNotFound");
+    }
+
+    if (profile == null) {
+      final profileResponse = await getProfile(authToken);
+      switch (profileResponse.statusCode) {
+        case 200:
+          {
+            profile = profileResponse.profile;
+          }
+          break;
+        case 401:
+          {
+            return Future.value("tokenExpired");
+          }
+      }
+    }
 
     final categoriesJson = pf.getString("categories") ?? "";
     if (categoriesJson == "") {
@@ -188,13 +324,10 @@ class _HomeState extends State<Home> with DebugMixin {
       categories = decodeCategories(jsonDecode(categoriesJson));
     }
 
-    orders = await getOrders(authToken);
+    if (orders.isEmpty) {
+      orders = await getOrders(authToken);
+      orders.sort((a, b) => b.id!.compareTo(a.id!));
+    }
     return Future.value("Ok");
-  }
-
-  void delFromStorage() async {
-    final pf = await SharedPreferences.getInstance();
-    pf.remove("auth_token");
-    pf.remove("refresh_key");
   }
 }

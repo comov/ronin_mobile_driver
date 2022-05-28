@@ -2,8 +2,6 @@ import 'package:car_helper/resources/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../mixins.dart';
-
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
 
@@ -11,7 +9,7 @@ class SignIn extends StatefulWidget {
   State<SignIn> createState() => _SignInState();
 }
 
-class _SignInState extends State<SignIn> with DebugMixin {
+class _SignInState extends State<SignIn> {
   var phoneNumber = "";
 
   Future<String> loadFromStorage() async {
@@ -27,7 +25,6 @@ class _SignInState extends State<SignIn> with DebugMixin {
 
   @override
   Widget build(BuildContext context) {
-    printStorage("SignInScreen");
     return FutureBuilder<String>(
         future: loadFromStorage(),
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -85,7 +82,11 @@ class _SignInState extends State<SignIn> with DebugMixin {
                       ElevatedButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            singInCallBack();
+                            singInCallBack().then((value) {
+                              if (value == "Ok") {
+                                Navigator.pushNamed(context, "/auth");
+                              }
+                            });
                           }
                         },
                         child: const Text("Зарегистрироваться"),
@@ -99,16 +100,24 @@ class _SignInState extends State<SignIn> with DebugMixin {
         });
   }
 
-  void singInCallBack() {
-    sigIn(phoneNumber).then((response) => {
-          if (response.error != "")
-            {debugPrint(response.message)}
-          else
-            {
-              savePhoneNumber(phoneNumber),
-              debugPrint("СМС отправилось!"),
-              Navigator.pushNamed(context, "/auth"),
-            }
-        });
+  Future<String> singInCallBack() async {
+    final response = await sigIn(phoneNumber);
+    switch (response.statusCode) {
+      case 200:
+        {
+          savePhoneNumber(phoneNumber);
+          debugPrint("СМС отправилось!");
+          break;
+        }
+      default:
+        {
+          debugPrint("Ошибка при отправки OPT: ${response.statusCode}");
+          debugPrint("response.error!.error=${response.error!.error}");
+          debugPrint("response.error!.message=${response.error!.message}");
+          break;
+        }
+    }
+
+    return Future.value("Ok");
   }
 }
