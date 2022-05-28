@@ -2,7 +2,7 @@ import 'package:car_helper/resources/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'mixins.dart';
+import '../mixins.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);

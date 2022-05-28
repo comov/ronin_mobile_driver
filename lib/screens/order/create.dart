@@ -1,14 +1,14 @@
 import 'package:car_helper/entities.dart';
 import 'package:car_helper/resources/api_create_order.dart';
+import 'package:car_helper/screens/mixins.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'mixins.dart';
 
-class NewOrderArguments {
+class OrderCreateArguments {
   final Category category;
 
-  NewOrderArguments({required this.category});
+  OrderCreateArguments({required this.category});
 }
 
 
@@ -61,17 +61,16 @@ class OrderNew extends StatefulWidget {
   State<OrderNew> createState() => _OrderNewState();
 }
 
-class _OrderNewState extends State<OrderNew> with DebugMixin, CategoriesMixin {
+class _OrderNewState extends State<OrderNew> {
   String authToken = "";
 
   final Map<int, Map<String, dynamic>> _checkedServices = {};
 
   @override
   Widget build(BuildContext context) {
-    printStorage("HomeScreen");
     loadFromStorage();
 
-    final args = ModalRoute.of(context)!.settings.arguments as NewOrderArguments;
+    final args = ModalRoute.of(context)!.settings.arguments as OrderCreateArguments;
     final services = args.category.services!;
 
     for (final i in services) {

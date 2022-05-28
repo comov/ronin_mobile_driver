@@ -27,7 +27,7 @@ mixin CategoriesMixin {
     storage.setItem("categories", categoriesJson);
   }
 
-  void getCategoriesFromLocalStorage() {
+  getCategoriesFromLocalStorage() {
     final categoriesJson = storage.getItem("categories");
     return jsonDecode(categoriesJson);
   }

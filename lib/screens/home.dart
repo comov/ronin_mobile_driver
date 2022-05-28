@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:car_helper/entities.dart';
+import 'package:car_helper/resources/api_order_list.dart';
 import 'package:car_helper/resources/api_services.dart';
-import 'package:car_helper/screens/order_new_screen.dart';
-import 'package:car_helper/screens/sign_in_screen.dart';
+import 'package:car_helper/screens/order/create.dart';
+import 'package:car_helper/screens/order/detail.dart';
+import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +21,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with DebugMixin {
   List<Category> categories = [];
+  List<Order> orders = [];
+
   String authToken = "";
   String phoneNumber = "";
   String refreshKey = "";
@@ -31,7 +35,8 @@ class _HomeState extends State<Home> with DebugMixin {
     super.initState();
     widgetOptions = {
       0: bottomCategories,
-      1: bottomProfile,
+      1: bottomOrders,
+      2: bottomProfile,
     };
   }
 
@@ -85,6 +90,10 @@ class _HomeState extends State<Home> with DebugMixin {
                 label: "Категории",
               ),
               BottomNavigationBarItem(
+                icon: Icon(Icons.view_list),
+                label: "Заказы",
+              ),
+              BottomNavigationBarItem(
                 icon: Icon(Icons.settings),
                 label: "Профиль",
               ),
@@ -109,10 +118,34 @@ class _HomeState extends State<Home> with DebugMixin {
               Navigator.pushNamed(
                 context,
                 "/order/new",
-                arguments: NewOrderArguments(category: categories[index]),
+                arguments: OrderCreateArguments(category: categories[index]),
               );
             },
             child: Text(categories[index].title),
+          ),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) =>
+      const Divider(),
+    );
+  }
+
+  Widget bottomOrders() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(8),
+      itemCount: orders.length,
+      itemBuilder: (BuildContext context, int index) {
+        return SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                "/order/detail",
+                arguments: OrderDetailArguments(order: orders[index]),
+              );
+            },
+            child: Text("${orders[index].id}"),
           ),
         );
       },
@@ -155,6 +188,7 @@ class _HomeState extends State<Home> with DebugMixin {
       categories = decodeCategories(jsonDecode(categoriesJson));
     }
 
+    orders = await getOrders(authToken);
     return Future.value("Ok");
   }
 

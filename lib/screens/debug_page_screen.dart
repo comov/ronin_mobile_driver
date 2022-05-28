@@ -1,4 +1,4 @@
-import 'package:car_helper/screens/sign_in_screen.dart';
+import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,11 +16,6 @@ class _DebugPageState extends State<DebugPage> with DebugMixin {
   String authToken = "";
   String refreshKey = "";
 
-
-  void delFromStorage() async {
-    final pf = await SharedPreferences.getInstance();
-    pf.remove("auth_token");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,19 +53,6 @@ class _DebugPageState extends State<DebugPage> with DebugMixin {
               Text("phoneNumber: $phoneNumber"),
               Text("authToken: $authToken"),
               Text("refreshKey: $refreshKey"),
-              ElevatedButton(
-                  onPressed: () {
-                    delFromStorage();
-                    Navigator.of(context).pushNamedAndRemoveUntil("/signin", (route) => false);
-                  },
-                child: const Text("Выйти"),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/categories");
-                  },
-                child: const Text("Открыть категории"),
-              ),
             ],
           ),
         );
