@@ -11,8 +11,6 @@ import 'package:car_helper/screens/order/detail.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:crypto/crypto.dart';
 
 class HomeArgs {
   final int initialState;
@@ -38,7 +36,7 @@ class _HomeState extends State<Home> {
 
   Profile? profile;
 
-  int _selectedIndex = 0;
+  int _selectedBottom = 0;
   Map<int, List> widgetOptions = {};
 
   @override
@@ -47,14 +45,13 @@ class _HomeState extends State<Home> {
     widgetOptions = {
       0: ["Все категории", bottomCategories],
       1: ["Заказы", bottomOrders],
-      2: ["Чаты", bottomChats],
-      3: ["Профиль", bottomProfile],
+      2: ["Профиль", bottomProfile],
     };
   }
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedBottom = index;
     });
   }
 
@@ -109,11 +106,14 @@ class _HomeState extends State<Home> {
             }
         }
         return Scaffold(
-          appBar: AppBar(title: Text(widgetOptions[_selectedIndex]![0])),
+          appBar: AppBar(title: Text(widgetOptions[_selectedBottom]![0])),
           body: Center(
-            child: widgetOptions[_selectedIndex]![1](),
+            child: widgetOptions[_selectedBottom]![1](),
           ),
           bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: Colors.white10,
+            elevation: 0,
+            iconSize: 26,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.category),
@@ -124,20 +124,11 @@ class _HomeState extends State<Home> {
                 label: "Заказы",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.chat),
-                label: "Чаты",
-              ),
-              BottomNavigationBarItem(
                 icon: Icon(Icons.settings),
                 label: "Профиль",
               ),
             ],
-            selectedItemColor: Colors.blue,
-            unselectedItemColor: Colors.grey,
-            selectedFontSize: 0,
-            unselectedFontSize: 0,
-            iconSize: 26,
-            currentIndex: _selectedIndex,
+            currentIndex: _selectedBottom,
             onTap: _onItemTapped,
           ),
         );
@@ -188,18 +179,6 @@ class _HomeState extends State<Home> {
         );
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
-    );
-  }
-
-  Widget bottomChats() {
-    // todo: need to check
-    const domain = "stage.i-10.win";
-    final uid = md5.convert(utf8.encode("${profile!.id}")).toString();
-    return WebView(
-      initialUrl: "https://$domain/admin/chat/",
-      initialCookies: [
-        WebViewCookie(name: "uid", value: uid, domain: domain),
-      ],
     );
   }
 
