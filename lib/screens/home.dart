@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:car_helper/entities.dart';
+import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/entities/user.dart';
+import 'package:car_helper/resources/api_categories.dart';
 import 'package:car_helper/resources/api_order_list.dart';
-import 'package:car_helper/resources/api_services.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:car_helper/screens/order/detail.dart';
@@ -43,9 +43,10 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     widgetOptions = {
-      0: ["Все категории", bottomCategories],
-      1: ["Заказы", bottomOrders],
-      2: ["Профиль", bottomProfile],
+      0: ["Главная", bottomCategories],
+      1: ["Новый заказ", createOrder],
+      2: ["Заказы", bottomOrders],
+      3: ["Профиль", bottomProfile],
     };
   }
 
@@ -111,13 +112,22 @@ class _HomeState extends State<Home> {
             child: widgetOptions[_selectedBottom]![1](),
           ),
           bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: Colors.white10,
-            elevation: 0,
-            iconSize: 26,
+            // backgroundColor: Colors.white10,
+            // elevation: 0,
+            iconSize: 24,
+            selectedFontSize: 12,
+            unselectedFontSize: 12,
+            selectedItemColor: Colors.blueAccent,
+            unselectedItemColor: Colors.grey,
+            showUnselectedLabels: true,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Icon(Icons.category),
-                label: "Категории",
+                icon: Icon(Icons.dns),
+                label: "Главная",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.add),
+                label: "Новый заказ",
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.view_list),
@@ -156,6 +166,20 @@ class _HomeState extends State<Home> {
         );
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
+    );
+  }
+
+  Widget createOrder() {
+    return GridView.count(
+      crossAxisCount: 2,
+      children: List.generate(categories.length, (index) {
+        return Center(
+          child: Text(
+            categories[index].title,
+            style: Theme.of(context).textTheme.headline5,
+          ),
+        );
+      }),
     );
   }
 
@@ -296,8 +320,19 @@ class _HomeState extends State<Home> {
 
     final categoriesJson = pf.getString("categories") ?? "";
     if (categoriesJson == "") {
-      final services = await getServices(authToken);
-      categories = fromServicesToCategories(services);
+      final categoriesResponse = await getCategories(authToken);
+      switch (categoriesResponse.statusCode) {
+        case 200:
+          {
+            categories = categoriesResponse.categories;
+          }
+          break;
+        case 401:
+          {
+            return Future.value("tokenExpired");
+          }
+      }
+
       pf.setString("categories", jsonEncode(encodeCategories(categories)));
     } else {
       categories = decodeCategories(jsonDecode(categoriesJson));
@@ -305,7 +340,6 @@ class _HomeState extends State<Home> {
 
     if (orders.isEmpty) {
       orders = await getOrders(authToken);
-      orders.sort((a, b) => b.id!.compareTo(a.id!));
     }
     return Future.value("Ok");
   }

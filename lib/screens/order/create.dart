@@ -1,4 +1,4 @@
-import 'package:car_helper/entities.dart';
+import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/resources/api_order_create.dart';
 import 'package:car_helper/screens/home.dart';
@@ -72,7 +72,7 @@ class _OrderNewState extends State<OrderNew> {
     loadFromStorage();
 
     final args = ModalRoute.of(context)!.settings.arguments as OrderCreateArgs;
-    final services = args.category.services!;
+    final services = args.category.services;
 
     for (final i in services) {
       _servicesMap[i.id] = {"checked": false, "obj": i};

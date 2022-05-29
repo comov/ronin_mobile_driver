@@ -1,3 +1,5 @@
+import 'package:car_helper/entities/car.dart';
+import 'package:car_helper/entities/driver.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:flutter/material.dart';
 
@@ -27,10 +29,12 @@ class _OrderDetailState extends State<OrderDetail> {
           Text("id: ${order.id}"),
           Text("createdAt: ${order.createdAt}"),
           Text("modifiedAt: ${order.modifiedAt}"),
-          Text("status: ${getOrderStatusText(order.status!)}"),
-          Text("customerId: ${order.customerId}"),
-          Text("carId: ${order.carId}"),
-          Text("driverId: ${order.driverId}"),
+          Text("status: ${getOrderStatusText(order.status)}"),
+          Text("car.id: ${order.car.id}"),
+          Text("car.model: ${order.car.model}"),
+          Text("driver.id: ${order.driver.id}"),
+          Text("driver.firstName: ${order.driver.firstName}"),
+          Text("driver.lastName: ${order.driver.lastName}"),
           Text("managerId: ${order.managerId}"),
           Text("services: ${order.services}"),
         ],

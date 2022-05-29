@@ -1,0 +1,63 @@
+import 'package:car_helper/entities/service.dart';
+
+class Category {
+  final int id;
+  final String title;
+  final List<Service> services;
+
+  const Category({
+    required this.id,
+    required this.title,
+    required this.services,
+  });
+
+  factory Category.fromJson(Map<String, dynamic> json) {
+    final services = <Service>[];
+    for (final item in json["services"]) {
+      services.add(Service(id: item["id"], title: item["title"]));
+    }
+    return Category(
+      id: json["id"],
+      title: json["title"],
+      services: services,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final servicesJson = <Map<String, dynamic>>[];
+    for (final service in services) {
+      servicesJson.add(service.toJson());
+    }
+    return {
+      "id": id,
+      "title": title,
+      "services": servicesJson,
+    };
+  }
+}
+
+List<Map<String, dynamic>> encodeCategories(List<Category> categories) {
+  List<Map<String, dynamic>> categoriesJson = [];
+  for (final category in categories) {
+    categoriesJson.add(category.toJson());
+  }
+  return categoriesJson;
+}
+
+List<Category> decodeCategories(List<dynamic> categoriesJson) {
+  List<Category> categories = [];
+  for (final item in categoriesJson) {
+    final List<Service> services = [];
+    for (final i in item["services"]) {
+      services.add(Service(id: i["id"], title: i["title"]));
+    }
+
+    final category = Category(
+      id: item["id"],
+      title: item["title"],
+      services: services,
+    );
+    categories.add(category);
+  }
+  return categories;
+}

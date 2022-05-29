@@ -1,5 +1,38 @@
 import 'package:flutter/material.dart';
 
+
+Widget CallsPage() {
+  return DefaultTabController(
+    length: 3,
+    child: Scaffold(
+      appBar: AppBar(
+        flexibleSpace: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: const [
+            TabBar(
+              tabs: [
+                Tab(
+                  text: 'Incoming',
+                ),
+                Tab(
+                  text: 'Outgoing',
+                ),
+                Tab(
+                  text: 'Missed',
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+      body: const Icon(
+        Icons.call,
+        size: 150,
+      ),
+    ),
+  );
+}
+
 class TestPage extends StatefulWidget {
   const TestPage({Key? key}) : super(key: key);
 
@@ -8,51 +41,49 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> {
+  int _selectedIndex = 0;
+
+  static final List<Widget> _pages = <Widget>[
+    CallsPage(),
+    const Icon(
+      Icons.camera,
+      size: 150,
+    ),
+    const Icon(
+      Icons.chat,
+      size: 150,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
-
-    final formKey = GlobalKey<FormState>();
     return Scaffold(
-      appBar: AppBar(title: const Text("DEBUG PAGE")),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'Enter your email',
-                ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Validate will return true if the form is valid, or false if
-                    // the form is invalid.
-                    if (formKey.currentState!.validate()) {
-                      print(formKey.currentState!.context.toString());
-                    }
-                  },
-                  child: const Text('Submit'),
-                ),
-              ),
-            ],
-          ),
-        ),
+      appBar: AppBar(
+        title: const Text('BottomNavigationBar Demo'),
+      ),
+      body: GridView.count(
+        // Create a grid with 2 columns. If you change the scrollDirection to
+        // horizontal, this produces 2 rows.
+        crossAxisCount: 2,
+        // Generate 100 widgets that display their index in the List.
+        children: List.generate(100, (index) {
+          return Center(
+            child: Text(
+              'Item $index',
+              style: Theme.of(context).textTheme.headline5,
+            ),
+          );
+        }),
       ),
     );
   }
-}
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+}
 
 class ChangedText extends StatefulWidget {
   const ChangedText(key) : super(key: key);

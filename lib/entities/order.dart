@@ -1,3 +1,7 @@
+import 'package:car_helper/entities/car.dart';
+import 'package:car_helper/entities/driver.dart';
+import 'package:car_helper/entities/service.dart';
+
 enum OrderStatus {
   created,
   cancelled,
@@ -33,45 +37,43 @@ String getOrderStatusText(int status) {
 }
 
 class Order {
-  final int? id;
+  final int id;
+  final int status;
+  final Car car;
+  final Driver driver;
+  final int managerId;
+  final String createdAt;
+  final String modifiedAt;
 
-  // todo: change to DateTime object
-  final String? createdAt;
-
-  // todo: change to DateTime object
-  final String? modifiedAt;
-  final int? status;
-  final int? customerId;
-  final int? carId;
-  final int? driverId;
-  final int? managerId;
-
-  // todo: change to Entity
-  final List<dynamic>? services;
+  final List<Service> services;
 
   const Order({
-    this.id,
-    this.createdAt,
-    this.modifiedAt,
-    this.status,
-    this.customerId,
-    this.carId,
-    this.driverId,
-    this.managerId,
-    this.services,
+    required this.id,
+    required this.status,
+    required this.car,
+    required this.driver,
+    required this.managerId,
+    required this.services,
+    required this.createdAt,
+    required this.modifiedAt,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
+    final services = <Service>[];
+    for (final item in json["services"]) {
+      services.add(Service(id: item["id"], title: item["title"]));
+    }
     return Order(
       id: json["id"],
+      status: json["status"],
+      car: json["car"] == null ? Car.empty() : Car.fromJson(json["car"]),
+      driver: json["driver"] == null
+          ? Driver.empty()
+          : Driver.fromJson(json["driver"]),
+      managerId: json["manager_id"] ?? 0,
       createdAt: json["created_at"],
       modifiedAt: json["modified_at"],
-      status: json["status"],
-      customerId: json["customer_id"],
-      carId: json["car_id"],
-      driverId: json["driver_id"],
-      managerId: json["manager_id"],
-      services: json["services"],
+      services: services,
     );
   }
 }
