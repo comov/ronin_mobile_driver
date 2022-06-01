@@ -10,6 +10,11 @@ class ApiErrorResponse {
       message: json["message"],
     );
   }
+
+  @override
+  String toString() {
+    return "error: $error; message: $message";
+  }
 }
 
 class AuthData {

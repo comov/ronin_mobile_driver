@@ -19,7 +19,7 @@ class GetCategoriesResponse {
 
 Future<GetCategoriesResponse> getCategories(String authToken) async {
   final response = await http.get(
-    Uri.parse("https://stage.i-10.win/api/v1/categories"),
+    Uri.parse("https://stage.i-10.win/api/v1/services"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",

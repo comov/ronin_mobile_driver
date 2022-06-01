@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
@@ -6,6 +7,7 @@ import 'package:car_helper/entities/user.dart';
 import 'package:car_helper/resources/api_categories.dart';
 import 'package:car_helper/resources/api_order_list.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
+import 'package:car_helper/resources/refresh.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:car_helper/screens/order/detail.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
@@ -100,7 +102,7 @@ class _HomeState extends State<Home> {
               debugPrint("authToken is empty: $authToken");
               return const SignIn();
             }
-          case "":
+          case "tokenExpired":
             {
               debugPrint("authToken is expired: $authToken");
               return const SignIn();
@@ -313,13 +315,24 @@ class _HomeState extends State<Home> {
           break;
         case 401:
           {
-            return Future.value("tokenExpired");
+            final refreshResponse = await refreshToken(refreshKey);
+            if (refreshResponse.statusCode == 200) {
+              authToken = refreshResponse.auth!.token;
+              refreshKey = refreshResponse.auth!.refreshKey;
+              saveAuthData(authToken, refreshKey);
+              break;
+            } else {
+              debugPrint(
+                  "refreshResponse.statusCode: ${refreshResponse.statusCode}");
+              debugPrint("refreshResponse.error: ${refreshResponse.error}");
+              return Future.value("tokenExpired");
+            }
           }
       }
     }
 
     final categoriesJson = pf.getString("categories") ?? "";
-    if (categoriesJson == "") {
+    if (categoriesJson == "" || categoriesJson == "[]") {
       final categoriesResponse = await getCategories(authToken);
       switch (categoriesResponse.statusCode) {
         case 200:
@@ -341,6 +354,13 @@ class _HomeState extends State<Home> {
     if (orders.isEmpty) {
       orders = await getOrders(authToken);
     }
+    return Future.value("Ok");
+  }
+
+  Future<String> saveAuthData(String token, String refreshKey) async {
+    final pf = await SharedPreferences.getInstance();
+    pf.setString("auth_token", token);
+    pf.setString("refresh_key", refreshKey);
     return Future.value("Ok");
   }
 }

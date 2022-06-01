@@ -1,12 +1,10 @@
 import 'package:car_helper/entities/service.dart';
 
 class Category {
-  final int id;
   final String title;
   final List<Service> services;
 
   const Category({
-    required this.id,
     required this.title,
     required this.services,
   });
@@ -17,7 +15,6 @@ class Category {
       services.add(Service(id: item["id"], title: item["title"]));
     }
     return Category(
-      id: json["id"],
       title: json["title"],
       services: services,
     );
@@ -29,7 +26,6 @@ class Category {
       servicesJson.add(service.toJson());
     }
     return {
-      "id": id,
       "title": title,
       "services": servicesJson,
     };
@@ -53,7 +49,6 @@ List<Category> decodeCategories(List<dynamic> categoriesJson) {
     }
 
     final category = Category(
-      id: item["id"],
       title: item["title"],
       services: services,
     );
