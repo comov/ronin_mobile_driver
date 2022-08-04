@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 
-Widget CallsPage() {
+Widget callsPage() {
   return DefaultTabController(
     length: 3,
     child: Scaffold(
@@ -44,7 +44,7 @@ class _TestPageState extends State<TestPage> {
   int _selectedIndex = 0;
 
   static final List<Widget> _pages = <Widget>[
-    CallsPage(),
+    callsPage(),
     const Icon(
       Icons.camera,
       size: 150,

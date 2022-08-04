@@ -1,6 +1,9 @@
 import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/entities/driver.dart';
 import 'package:car_helper/entities/service.dart';
+import 'package:car_helper/entities/employee.dart';
+import 'package:car_helper/entities/photos.dart';
+
 
 enum OrderStatus {
   created,
@@ -32,30 +35,34 @@ Map<int, String> orderStatusMap = {
   OrderStatus.created.index: "Создан",
 };
 
-String getOrderStatusText(int status) {
-  return orderStatusMap[status]!;
-}
 
 class Order {
   final int id;
-  final int status;
-  final Car car;
-  final Driver driver;
-  final int managerId;
-  final String createdAt;
+  final String? comment;
+  final String status;
+  final String? pickUpAddress;
+  final String? pickUpTime;
+  final DateTime createdAt;
   final String modifiedAt;
-
+  final Car? car;
+  final Driver? driver;
+  final Employee? employee;
   final List<Service> services;
+  final List<Photos>? photos;
 
   const Order({
     required this.id,
+    required this.comment,
+    required this.pickUpAddress,
+    required this.pickUpTime,
     required this.status,
     required this.car,
     required this.driver,
-    required this.managerId,
+    required this.employee,
     required this.services,
     required this.createdAt,
     required this.modifiedAt,
+    required this.photos,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -63,17 +70,32 @@ class Order {
     for (final item in json["services"]) {
       services.add(Service(id: item["id"], title: item["title"]));
     }
+    final photos = <Photos>[];
+    for (final item in json["services"]) {
+      services.add(Service(id: item["id"], title: item["title"]));
+    }
+
     return Order(
       id: json["id"],
+      comment: json["comment"],
       status: json["status"],
-      car: json["car"] == null ? Car.empty() : Car.fromJson(json["car"]),
+      pickUpAddress: json["pick_up_address"],
+      pickUpTime: json["pick_up_time"],
+      createdAt: DateTime.parse(json["created_at"]),
+
+      // createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+      modifiedAt: json["modified_at"],
+      car: json["car"] == null
+          ? Car.empty()
+          : Car.fromJson(json["car"]),
       driver: json["driver"] == null
           ? Driver.empty()
           : Driver.fromJson(json["driver"]),
-      managerId: json["manager_id"] ?? 0,
-      createdAt: json["created_at"],
-      modifiedAt: json["modified_at"],
+      employee: json["employee"] == null
+          ? Employee.empty()
+          : Employee.fromJson(json["employee"]),
       services: services,
+      photos: photos,
     );
   }
 }

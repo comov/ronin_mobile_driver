@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/entities/user.dart';
+import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/resources/api_categories.dart';
 import 'package:car_helper/resources/api_order_list.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
@@ -13,6 +12,9 @@ import 'package:car_helper/screens/order/detail.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
 
 class HomeArgs {
   final int initialState;
@@ -32,18 +34,25 @@ class _HomeState extends State<Home> {
   List<Category> categories = [];
   List<Order> orders = [];
 
+
   String authToken = "";
   String phoneNumber = "";
   String refreshKey = "";
 
   Profile? profile;
+  List<Car?> car = [];
 
   int _selectedBottom = 0;
   Map<int, List> widgetOptions = {};
+  final Map<int, Map<String, dynamic>> _servicesMap = {};
+  final DateFormat formatter = DateFormat("d MMMM yyyy, hh:mm");
+
+
 
   @override
   void initState() {
     super.initState();
+
     widgetOptions = {
       0: ["Главная", bottomCategories],
       1: ["Новый заказ", createOrder],
@@ -53,13 +62,24 @@ class _HomeState extends State<Home> {
   }
 
   void _onItemTapped(int index) {
+
     setState(() {
       _selectedBottom = index;
+
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    const String homeIcon = "assets/images/tabbarhome.svg";
+    const String servicesIcon = "assets/images/TabBarServices.svg";
+    const String ordersIcon = "assets/images/TabBarOrders.svg";
+    const String profileIcon = "assets/images/TabBarProfile.svg";
+
+    // String orderDateTime = DateFormat.MMMMEEEEd().format()
+
+
+
     // todo: need to implement
     // var args = ModalRoute.of(context)!.settings.arguments;
     // debugPrint("args $args");
@@ -116,32 +136,50 @@ class _HomeState extends State<Home> {
           bottomNavigationBar: BottomNavigationBar(
             // backgroundColor: Colors.white10,
             // elevation: 0,
-            iconSize: 24,
-            selectedFontSize: 12,
-            unselectedFontSize: 12,
-            selectedItemColor: Colors.blueAccent,
+            // iconSize: 24,
+            selectedFontSize: 10,
+            unselectedFontSize: 10,
+            selectedItemColor: Colors.black,
             unselectedItemColor: Colors.grey,
-            showUnselectedLabels: true,
-            items: const <BottomNavigationBarItem>[
+            // showUnselectedLabels: true,
+            type: BottomNavigationBarType.fixed,
+            items:  <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Icon(Icons.dns),
+                icon: SvgPicture.asset(
+                    homeIcon, color: Colors.grey,
+                  ),
+                activeIcon: SvgPicture.asset(homeIcon, color: Colors.black,),
                 label: "Главная",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.add),
+                icon: SvgPicture.asset(
+                  servicesIcon, color: Colors.grey,
+                ),
+                activeIcon: SvgPicture.asset(servicesIcon, color: Colors.black,),
+
                 label: "Новый заказ",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.view_list),
+                icon: SvgPicture.asset(
+                  ordersIcon, color: Colors.grey,
+                ),
+                activeIcon: SvgPicture.asset(ordersIcon, color: Colors.black,),
+
                 label: "Заказы",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
+                icon: SvgPicture.asset(
+                  profileIcon, color: Colors.grey,
+                ),
+                activeIcon: SvgPicture.asset(profileIcon, color: Colors.black,),
+
                 label: "Профиль",
+
               ),
             ],
             currentIndex: _selectedBottom,
             onTap: _onItemTapped,
+
           ),
         );
       },
@@ -174,15 +212,60 @@ class _HomeState extends State<Home> {
   Widget createOrder() {
     return GridView.count(
       crossAxisCount: 2,
+      childAspectRatio: 1.4,
+      // crossAxisSpacing: 16,
+      padding: const EdgeInsets.all(20),
+
       children: List.generate(categories.length, (index) {
-        return Center(
-          child: Text(
-            categories[index].title,
-            style: Theme.of(context).textTheme.headline5,
+        return TextButton(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+
+              Container(
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                ),
+                width: double.infinity,
+                height: 100,
+                // padding: EdgeInsets.all(32),
+
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      categories[index].title,
+                      style: const TextStyle(color: Colors.white),
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+
+
+              ),
+
+
+              // style: Theme.of(context).textTheme.headline5,
+            ]
+
           ),
+          onPressed: () async {
+            _showModalBottomSheet(context, _servicesMap);
+          }
+
         );
+
+
       }),
+
     );
+
   }
 
   Widget bottomOrders() {
@@ -200,7 +283,30 @@ class _HomeState extends State<Home> {
                 arguments: OrderDetailArgs(order: orders[index]),
               );
             },
-            child: Text("${orders[index].id}"),
+            child: RichText(
+              text: TextSpan(
+                children:  <InlineSpan>[
+                  TextSpan(text: "${orders[index].id}"),
+                  const WidgetSpan(
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 20),
+                    ),
+                  ),
+
+                  TextSpan(text: formatter.format(orders[index].createdAt)),
+
+                  const WidgetSpan(
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 20, left: 10),
+                      ),
+                  ),
+
+                  TextSpan(text: orders[index].status)
+
+                ]
+              )
+            )
+
           ),
         );
       },
@@ -246,45 +352,116 @@ class _HomeState extends State<Home> {
               }
           }
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("id: ${profile!.id}"),
-              const Divider(),
-              Text("phone: ${profile!.phone}"),
-              const Divider(),
-              Text("firstName: ${profile!.firstName}"),
-              const Divider(),
-              Text("lastName: ${profile!.lastName}"),
-              const Divider(),
-              Text("createdAt: ${profile!.createdAt}"),
-              const Divider(),
-              Text("modifiedAt: ${profile!.modifiedAt}"),
-              const Divider(),
+          return ListView(
+            children: <Widget> [
+              Expanded(child: Card(
 
-              // todo: Need to delete phoneNumber, authToken, refreshKey from this page
-              const Text("##### Хранилище приложения #####"),
-              const Divider(),
-              Text("phoneNumber: $phoneNumber"),
-              const Divider(),
-              Text("authToken: $authToken"),
-              const Divider(),
-              Text("refreshKey: $refreshKey"),
-              const Divider(),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Column(
 
-              const Text("##### Кнопки #####"),
-              Row(),
-              ElevatedButton(
-                onPressed: () {
-                  delFromStorage();
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    "/signin",
-                    (route) => false,
-                  );
-                },
-                child: const Text("Выйти"),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+
+                          const SizedBox(height: 5),
+                        Text("Фамилия: ${profile!.lastName}",
+                          textAlign: TextAlign.justify,
+                        ),
+                        Text("Имя: ${profile!.firstName}",
+                          textAlign: TextAlign.start,
+                        ),
+                        Text("Номер телефона: ${profile!.phone}",
+                        ),
+                         const SizedBox(height: 5),
+                            TextButton(onPressed: null, child: Text("Редактировать профиль"))
+            ]
+                      ),
+                    )
+
+
+
               ),
+              ),
+              Expanded(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  // padding: const EdgeInsets.all(1),
+                  itemCount: car.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      child: ExpansionTileCard(
+
+
+                      title: Text('${car[index]?.brand}' " " '${car[index]?.model}'),
+                      subtitle: Text('${car[index]?.plateNumber}'),
+                      children: <Widget>[
+                        const Divider(
+                          thickness: 1.0,
+                          height: 1.0,
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 8.0,
+                              ),
+                              child: Column (
+                                children: <Widget>[
+                                  const SizedBox(height: 5),
+                                  Text("id:"'${car[index]?.id.toString()}'),
+                                  Text("Марка авто:"'${car[index]?.brand}'),
+                                  Text("Модель авто:"'${car[index]?.model}'),
+                                  Text("Гос. Номер:"'${car[index]?.plateNumber}'),
+                                  Text("VIN авто:"'${car[index]?.vin}'), Text("Год авто:"'${car[index]?.year.toString()}'),
+                                  const SizedBox(height: 5),
+
+
+                                ],
+
+                              ),
+                            )
+                        )
+
+                      ],
+                      ),
+
+                    );
+                  }, separatorBuilder: (BuildContext context, int index) => const Divider(),
+                ),
+              ),
+              Expanded(child: Card(
+                  child: Column(
+                      children: <Widget>[
+// todo: Need to delete phoneNumber, authToken, refreshKey from this page
+                  const Text("##### Хранилище приложения #####"),
+                  const Divider(),
+                  Text("phoneNumber: $phoneNumber"),
+                  const Divider(),
+                  Text("authToken: $authToken"),
+                  const Divider(),
+                  Text("refreshKey: $refreshKey"),
+                  const Divider(),
+
+                  const Text("##### Кнопки #####"),
+                  Row(),
+                  ElevatedButton(
+                    onPressed: () {
+                      delFromStorage();
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        "/signin",
+                            (route) => false,
+                      );
+                    },
+                    child: const Text("Выйти"),
+                  ),
+                ],
+                  ),
+                ),
+                ),
+
             ],
+
           );
         });
   }
@@ -295,11 +472,29 @@ class _HomeState extends State<Home> {
     pf.remove("refresh_key");
   }
 
+  void _showModalBottomSheet(
+      BuildContext context,
+      Map<int, Map<String, dynamic>> servicesMap,
+      ) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (context) {
+        return ListOfServices(servicesMap: servicesMap);
+      },
+    );
+  }
+
   Future<String> loadInitialData() async {
+
+
     final pf = await SharedPreferences.getInstance();
+    //update categories
+
     authToken = pf.getString("auth_token") ?? "";
     phoneNumber = pf.getString("phone_number") ?? "";
     refreshKey = pf.getString("refresh_key") ?? "";
+
+
 
     if (authToken == "") {
       return Future.value("tokenNotFound");
@@ -331,6 +526,24 @@ class _HomeState extends State<Home> {
       }
     }
 
+    if (car.isEmpty) {
+      car = await getCustomerCars(authToken);
+    }
+    else {
+      car = await getCustomerCars(authToken);
+
+      // List<Map<String, dynamic>> _items = List.generate(
+      //     car.length,
+      //         (index) => {
+      //       'id': index,
+      //       'title': 'Item $index',
+      //       'description':
+      //       'This is the description of the item $index. Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+      //       'isExpanded': false
+      //     });
+
+    }
+
     final categoriesJson = pf.getString("categories") ?? "";
     if (categoriesJson == "" || categoriesJson == "[]") {
       final categoriesResponse = await getCategories(authToken);
@@ -348,11 +561,30 @@ class _HomeState extends State<Home> {
 
       pf.setString("categories", jsonEncode(encodeCategories(categories)));
     } else {
+
+      final categoriesResponse = await getCategories(authToken);
+      switch (categoriesResponse.statusCode) {
+        case 200:
+          {
+            categories = categoriesResponse.categories;
+          }
+          break;
+        case 401:
+          {
+            return Future.value("tokenExpired");
+          }
+      }
+      pf.setString("categories", jsonEncode(encodeCategories(categories)));
+
       categories = decodeCategories(jsonDecode(categoriesJson));
     }
 
     if (orders.isEmpty) {
       orders = await getOrders(authToken);
+    }
+    else {
+      orders = await getOrders(authToken);
+
     }
     return Future.value("Ok");
   }

@@ -37,6 +37,9 @@ dependencies:
   http: ^0.13.4
   shared_preferences: ^2.0.15
   localstorage: ^4.0.0+1
+  flutter_svg: ^1.1.1+1
+  intl: ^0.17.0
+  expansion_tile_card: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -55,10 +58,17 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
+
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/icon/
+
+
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

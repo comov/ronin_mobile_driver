@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:car_helper/entities/api.dart';
 import 'package:car_helper/entities/user.dart';
+import 'package:car_helper/entities/car.dart';
 import 'package:http/http.dart' as http;
 
 class ProfileResponse {
@@ -31,4 +32,28 @@ Future<ProfileResponse> getProfile(String authToken) async {
     statusCode: response.statusCode,
     error: ApiErrorResponse.fromJson(jsonDecode(response.body)),
   );
+}
+
+
+
+List<Car> listOfCarsFromJson(List<dynamic> jsonList) {
+  List<Car> cars = [];
+  for (var item in jsonList) {
+    cars.add(Car.fromJson(item));
+  }
+  return cars;
+}
+
+Future<List<Car>> getCustomerCars(String authToken) async {
+  final response = await http.get(
+    Uri.parse("https://stage.i-10.win/api/v1/user/cars"),
+    headers: <String, String>{
+      "Content-Type": "application/json; charset=UTF-8",
+      "Authorization": "Bearer $authToken",
+    },
+  );
+  if (response.statusCode == 200) {
+    return listOfCarsFromJson(jsonDecode(response.body));
+  }
+  return listOfCarsFromJson(jsonDecode(response.body));
 }

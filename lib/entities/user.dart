@@ -1,8 +1,8 @@
 class Profile {
   final int id;
   final String phone;
-  final String firstName;
-  final String lastName;
+  final String? firstName;
+  final String? lastName;
   final String createdAt;
   final String modifiedAt;
 

@@ -4,11 +4,14 @@ class Car {
   final String model;
   final String plateNumber;
   final String? vin;
-  final String year;
+  final int year;
   final String createdAt;
   final String modifiedAt;
+   bool expanded;
 
-  const Car({
+
+
+   Car({
     required this.id,
     required this.brand,
     required this.model,
@@ -17,6 +20,7 @@ class Car {
     required this.year,
     required this.createdAt,
     required this.modifiedAt,
+    this.expanded = false
   });
 
   factory Car.fromJson(Map<String, dynamic> json) {
@@ -33,12 +37,12 @@ class Car {
   }
 
   factory Car.empty() {
-    return const Car(
+    return  Car(
         id: 0,
         brand: "",
         model: "",
         plateNumber: "",
-        year: "",
+        year: 0,
         createdAt: "",
         modifiedAt: "");
   }
