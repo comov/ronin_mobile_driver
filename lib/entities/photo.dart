@@ -1,8 +1,6 @@
-
-
 enum PhotoKind {
   before,
-  after
+  after,
 }
 
 Map<int, String> photoKindMap = {

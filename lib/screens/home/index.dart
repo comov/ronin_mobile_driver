@@ -9,14 +9,19 @@ import 'package:car_helper/resources/api_order_list.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/resources/refresh.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
-import 'package:car_helper/screens/order/create.dart';
-import 'package:car_helper/screens/order/detail.dart';
+import 'package:car_helper/screens/home/main.dart';
+import 'package:car_helper/screens/home/new_order.dart';
+import 'package:car_helper/screens/home/orders.dart';
 import 'package:car_helper/screens/user/edit.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+const String homeIcon = "assets/images/icon/tabbarhome.svg";
+const String servicesIcon = "assets/images/icon/TabBarServices.svg";
+const String ordersIcon = "assets/images/icon/TabBarOrders.svg";
+const String profileIcon = "assets/images/icon/TabBarProfile.svg";
 
 class HomeArgs {
   final int initialState;
@@ -46,7 +51,6 @@ class _HomeState extends State<Home> {
   int _selectedBottom = 0;
   Map<int, List> widgetOptions = {};
   final Map<int, Map<String, dynamic>> _servicesMap = {};
-  final DateFormat formatter = DateFormat("d MMMM yyyy, hh:mm");
 
   @override
   void initState() {
@@ -54,7 +58,7 @@ class _HomeState extends State<Home> {
 
     widgetOptions = {
       0: ["Главная", bottomCategories],
-      1: ["Новый заказ", createOrder],
+      1: ["Новый заказ", newOrder],
       2: ["Заказы", bottomOrders],
       3: ["Профиль", bottomProfile],
     };
@@ -68,11 +72,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    const String homeIcon = "assets/images/icon/tabbarhome.svg";
-    const String servicesIcon = "assets/images/icon/TabBarServices.svg";
-    const String ordersIcon = "assets/images/icon/TabBarOrders.svg";
-    const String profileIcon = "assets/images/icon/TabBarProfile.svg";
-
     // String orderDateTime = DateFormat.MMMMEEEEd().format()
 
     // todo: need to implement
@@ -126,7 +125,12 @@ class _HomeState extends State<Home> {
         return Scaffold(
           appBar: AppBar(title: Text(widgetOptions[_selectedBottom]![0])),
           body: Center(
-            child: widgetOptions[_selectedBottom]![1](),
+            child: widgetOptions[_selectedBottom]![1](
+              context,
+              categories,
+              orders,
+              _servicesMap,
+            ),
           ),
           bottomNavigationBar: BottomNavigationBar(
             // backgroundColor: Colors.white10,
@@ -192,113 +196,12 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget bottomCategories() {
-    return ListView.separated(
-      padding: const EdgeInsets.all(8),
-      itemCount: categories.length,
-      itemBuilder: (BuildContext context, int index) {
-        return SizedBox(
-          height: 50,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(
-                context,
-                "/order/new",
-                arguments: OrderCreateArgs(category: categories[index]),
-              );
-            },
-            child: Text(categories[index].title),
-          ),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) => const Divider(),
-    );
-  }
-
-  Widget createOrder() {
-    return GridView.count(
-      crossAxisCount: 2,
-      childAspectRatio: 1.4,
-      // crossAxisSpacing: 16,
-      padding: const EdgeInsets.all(20),
-
-      children: List.generate(categories.length, (index) {
-        return TextButton(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
-                        ),
-                      ),
-                      width: double.infinity,
-                      height: 100,
-                      // padding: EdgeInsets.all(32),
-
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          categories[index].title,
-                          style: const TextStyle(color: Colors.white),
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                        ),
-                      )),
-
-                  // style: Theme.of(context).textTheme.headline5,
-                ]),
-            onPressed: () async {
-              _showModalBottomSheet(context, _servicesMap);
-            });
-      }),
-    );
-  }
-
-  Widget bottomOrders() {
-    return ListView.separated(
-      padding: const EdgeInsets.all(8),
-      itemCount: orders.length,
-      itemBuilder: (BuildContext context, int index) {
-        return SizedBox(
-          height: 50,
-          child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  "/order/detail",
-                  arguments: OrderDetailArgs(order: orders[index]),
-                );
-              },
-              child: RichText(
-                  text: TextSpan(children: <InlineSpan>[
-                TextSpan(text: "${orders[index].id}"),
-                const WidgetSpan(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 20),
-                  ),
-                ),
-                TextSpan(text: formatter.format(orders[index].createdAt)),
-                const WidgetSpan(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 20, left: 10),
-                  ),
-                ),
-                TextSpan(text: orders[index].status)
-              ]))),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) => const Divider(),
-    );
-  }
-
-  Widget bottomProfile() {
+  Widget bottomProfile(
+    BuildContext context,
+    List<Category> categories,
+    List<Order> orders,
+    Map<int, Map<String, dynamic>> servicesMap,
+  ) {
     return FutureBuilder<String>(
         future: loadInitialData(),
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -475,18 +378,6 @@ class _HomeState extends State<Home> {
     pf.remove("refresh_key");
   }
 
-  void _showModalBottomSheet(
-    BuildContext context,
-    Map<int, Map<String, dynamic>> servicesMap,
-  ) {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (context) {
-        return ListOfServices(servicesMap: servicesMap);
-      },
-    );
-  }
-
   Future<String> loadInitialData() async {
     final pf = await SharedPreferences.getInstance();
 
@@ -559,6 +450,12 @@ class _HomeState extends State<Home> {
       pf.setString("categories", jsonEncode(encodeCategories(categories)));
 
       categories = decodeCategories(jsonDecode(categoriesJson));
+    }
+
+    for (final category in categories) {
+      for (final service in category.services) {
+        _servicesMap[service.id] = {"checked": false, "obj": service};
+      }
     }
 
     final getOrderListResponse = await getOrders(authToken);
