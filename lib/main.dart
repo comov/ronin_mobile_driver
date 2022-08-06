@@ -4,6 +4,7 @@ import 'package:car_helper/screens/debug_page_screen.dart';
 import 'package:car_helper/screens/home.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:car_helper/screens/order/detail.dart';
+import 'package:car_helper/screens/user/user_edit.dart';
 import 'package:car_helper/screens/test_page_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -25,8 +26,10 @@ class MyApp extends StatelessWidget {
         "/auth": (BuildContext context) => const Auth(),
         "/order/new": (BuildContext context) => const OrderNew(),
         "/order/detail": (BuildContext context) => const OrderDetail(),
+        "/user/user_edit": (BuildContext context) => const UserEdit(),
         "/debug": (BuildContext context) => const DebugPage(),
         "/test": (BuildContext context) => const TestPage(),
+
       },
     );
   }
