@@ -71,8 +71,8 @@ class Order {
       services.add(Service(id: item["id"], title: item["title"]));
     }
     final photos = <Photos>[];
-    for (final item in json["services"]) {
-      services.add(Service(id: item["id"], title: item["title"]));
+    for (final item in json["photos"]) {
+      photos.add(Photos(kind: item["kind"], imageUrl: item["image_url"]));
     }
 
     return Order(
