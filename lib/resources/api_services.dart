@@ -15,6 +15,12 @@ class GetServicesResponse {
     required this.services,
     this.error,
   });
+
+  parseJson(List<dynamic> jsonList) {
+    for (final item in jsonList) {
+      services.add(Service.fromJson(item));
+    }
+  }
 }
 
 Future<GetServicesResponse> getServices(String authToken) async {
@@ -25,18 +31,12 @@ Future<GetServicesResponse> getServices(String authToken) async {
       "Authorization": "Bearer $authToken",
     },
   );
-  if (response.statusCode == 200) {
-    final services = <Service>[];
-    for (final item in jsonDecode(response.body)) {
-      services.add(Service.fromJson(item));
-    }
-    return GetServicesResponse(
-      statusCode: response.statusCode,
-      services: services,
-    );
-  }
-  return GetServicesResponse(
+  final res = GetServicesResponse(
     statusCode: response.statusCode,
     services: [],
   );
+  if (response.statusCode == 200) {
+    res.parseJson(jsonDecode(response.body));
+  }
+  return res;
 }

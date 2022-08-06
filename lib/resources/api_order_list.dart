@@ -3,15 +3,28 @@ import 'dart:convert';
 import 'package:car_helper/entities/order.dart';
 import 'package:http/http.dart' as http;
 
-List<Order> listOfOrdersFromJson(List<dynamic> jsonList) {
-  List<Order> orders = [];
-  for (var item in jsonList) {
-    orders.add(Order.fromJson(item));
+import '../entities/api.dart';
+
+class OrderListResponse {
+  final int statusCode;
+
+  final List<Order> orders;
+  final ApiErrorResponse? error;
+
+  const OrderListResponse({
+    required this.statusCode,
+    required this.orders,
+    this.error,
+  });
+
+  parseJson(List<dynamic> jsonList) {
+    for (var item in jsonList) {
+      orders.add(Order.fromJson(item));
+    }
   }
-  return orders;
 }
 
-Future<List<Order>> getOrders(String authToken) async {
+Future<OrderListResponse> getOrders(String authToken) async {
   final response = await http.get(
     Uri.parse("https://stage.i-10.win/api/v1/user/order"),
     headers: <String, String>{
@@ -19,8 +32,12 @@ Future<List<Order>> getOrders(String authToken) async {
       "Authorization": "Bearer $authToken",
     },
   );
+  final res = OrderListResponse(
+    statusCode: response.statusCode,
+    orders: [],
+  );
   if (response.statusCode == 200) {
-    return listOfOrdersFromJson(jsonDecode(response.body));
+    res.parseJson(jsonDecode(response.body));
   }
-  return listOfOrdersFromJson(jsonDecode(response.body));
+  return res;
 }

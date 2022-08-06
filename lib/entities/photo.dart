@@ -1,14 +1,26 @@
-class Photos {
+
+
+enum PhotoKind {
+  before,
+  after
+}
+
+Map<int, String> photoKindMap = {
+  PhotoKind.before.index: "До",
+  PhotoKind.after.index: "После",
+};
+
+class Photo {
   final int kind;
   final String imageUrl;
 
-  const Photos({
+  const Photo({
     required this.kind,
     required this.imageUrl,
   });
 
-  factory Photos.fromJson(Map<String, dynamic> json) {
-    return Photos(
+  factory Photo.fromJson(Map<String, dynamic> json) {
+    return Photo(
       kind: json["kind"],
       imageUrl: json["image_url"],
     );

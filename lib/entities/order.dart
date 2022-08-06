@@ -1,7 +1,7 @@
 import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/entities/driver.dart';
 import 'package:car_helper/entities/employee.dart';
-import 'package:car_helper/entities/photos.dart';
+import 'package:car_helper/entities/photo.dart';
 import 'package:car_helper/entities/service.dart';
 
 enum OrderStatus {
@@ -46,7 +46,7 @@ class Order {
   final Driver? driver;
   final Employee? employee;
   final List<Service> services;
-  final List<Photos>? photos;
+  final List<Photo> photos;
 
   const Order({
     required this.id,
@@ -68,10 +68,12 @@ class Order {
     for (final item in json["services"]) {
       services.add(Service(id: item["id"], title: item["title"]));
     }
-    final photos = <Photos>[];
-    // for (final item in json["photos"]) {
-    //   photos.add(Photos(kind: item["kind"], imageUrl: item["image_url"]));
-    // }
+    final photos = <Photo>[];
+    if (json["photos"] != null) {
+      for (final item in json["photos"]) {
+        photos.add(Photo(kind: item["kind"], imageUrl: item["image_url"]));
+      }
+    }
 
     return Order(
       id: json["id"],
@@ -80,8 +82,6 @@ class Order {
       pickUpAddress: json["pick_up_address"],
       pickUpTime: json["pick_up_time"],
       createdAt: DateTime.parse(json["created_at"]),
-
-      // createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
       modifiedAt: json["modified_at"],
       car: json["car"] == null ? Car.empty() : Car.fromJson(json["car"]),
       driver: json["driver"] == null

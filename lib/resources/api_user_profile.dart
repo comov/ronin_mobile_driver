@@ -34,15 +34,26 @@ Future<ProfileResponse> getProfile(String authToken) async {
   );
 }
 
-List<Car> listOfCarsFromJson(List<dynamic> jsonList) {
-  List<Car> cars = [];
-  for (var item in jsonList) {
-    cars.add(Car.fromJson(item));
+class CarListResponse {
+  final int statusCode;
+
+  final List<Car> cars;
+  final ApiErrorResponse? error;
+
+  const CarListResponse({
+    required this.statusCode,
+    required this.cars,
+    this.error,
+  });
+
+  parseJson(List<dynamic> jsonList) {
+    for (var item in jsonList) {
+      cars.add(Car.fromJson(item));
+    }
   }
-  return cars;
 }
 
-Future<List<Car>> getCustomerCars(String authToken) async {
+Future<CarListResponse> getCustomerCars(String authToken) async {
   final response = await http.get(
     Uri.parse("https://stage.i-10.win/api/v1/user/cars"),
     headers: <String, String>{
@@ -50,8 +61,9 @@ Future<List<Car>> getCustomerCars(String authToken) async {
       "Authorization": "Bearer $authToken",
     },
   );
+  final res = CarListResponse(statusCode: response.statusCode, cars: []);
   if (response.statusCode == 200) {
-    return listOfCarsFromJson(jsonDecode(response.body));
+    res.parseJson(jsonDecode(response.body));
   }
-  return listOfCarsFromJson(jsonDecode(response.body));
+  return res;
 }

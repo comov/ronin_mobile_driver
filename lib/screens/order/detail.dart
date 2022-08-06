@@ -29,7 +29,7 @@ class _OrderDetailState extends State<OrderDetail> {
           Text("status: ${order.status}"),
           Text("pickUpAddress: ${order.pickUpAddress}"),
           Text("pickUpTime: ${order.pickUpTime}"),
-          // Text("createdAt: ${order.createdAt.day.toString()}"),
+          Text("createdAt: ${order.createdAt.day.toString()}"),
           Text("modifiedAt: ${order.modifiedAt}"),
           Text("car.id: ${order.car?.id}"),
           Text("car.model: ${order.car?.model}"),
@@ -39,6 +39,7 @@ class _OrderDetailState extends State<OrderDetail> {
           Text("employee.firstName: ${order.employee?.firstName}"),
           Text("employee.LastName: ${order.employee?.lastName}"),
           Text("services: ${order.services}"),
+          Text("photos: ${order.photos}"),
         ],
       ),
     );

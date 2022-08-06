@@ -41,7 +41,7 @@ class _HomeState extends State<Home> {
   String refreshKey = "";
 
   Profile? profile;
-  List<Car?> car = [];
+  List<Car> carList = [];
 
   int _selectedBottom = 0;
   Map<int, List> widgetOptions = {};
@@ -354,9 +354,7 @@ class _HomeState extends State<Home> {
                           "Имя: ${profile!.firstName}",
                           textAlign: TextAlign.start,
                         ),
-                        Text(
-                          "Номер телефона: ${profile!.phone}",
-                        ),
+                        Text("Номер телефона: ${profile!.phone}"),
                         const SizedBox(height: 5),
                         TextButton(
                             onPressed: () {
@@ -374,13 +372,13 @@ class _HomeState extends State<Home> {
                 child: ListView.separated(
                   shrinkWrap: true,
                   // padding: const EdgeInsets.all(1),
-                  itemCount: car.length,
+                  itemCount: carList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Card(
                       child: ExpansionTileCard(
                         title: Text(
-                            '${car[index]?.brand}' " " '${car[index]?.model}'),
-                        subtitle: Text('${car[index]?.plateNumber}'),
+                            '${carList[index].brand} ${carList[index].model}'),
+                        subtitle: Text(carList[index].plateNumber),
                         children: <Widget>[
                           const Divider(
                             thickness: 1.0,
@@ -396,14 +394,15 @@ class _HomeState extends State<Home> {
                                 child: Column(
                                   children: <Widget>[
                                     const SizedBox(height: 5),
-                                    Text("id:" '${car[index]?.id.toString()}'),
-                                    Text("Марка авто:" '${car[index]?.brand}'),
-                                    Text("Модель авто:" '${car[index]?.model}'),
-                                    Text("Гос. Номер:"
-                                        '${car[index]?.plateNumber}'),
-                                    Text("VIN авто:" '${car[index]?.vin}'),
-                                    Text("Год авто:"
-                                        '${car[index]?.year.toString()}'),
+                                    Text("id: ${carList[index].id.toString()}"),
+                                    Text("Марка авто: ${carList[index].brand}"),
+                                    Text(
+                                        "Модель авто: ${carList[index].model}"),
+                                    Text(
+                                        "Гос. Номер: ${carList[index].plateNumber}"),
+                                    Text("VIN авто: ${carList[index].vin}"),
+                                    Text(
+                                        "Год авто: ${carList[index].year.toString()}"),
                                     const SizedBox(height: 5),
                                   ],
                                 ),
@@ -420,7 +419,7 @@ class _HomeState extends State<Home> {
                 child: Card(
                   child: Column(
                     children: <Widget>[
-// todo: Need to delete phoneNumber, authToken, refreshKey from this page
+                      // todo: Need to delete phoneNumber, authToken, refreshKey from this page
                       const Text("##### Хранилище приложения #####"),
                       const Divider(),
                       Text("phoneNumber: $phoneNumber"),
@@ -471,7 +470,6 @@ class _HomeState extends State<Home> {
 
   Future<String> loadInitialData() async {
     final pf = await SharedPreferences.getInstance();
-    //update categories
 
     authToken = pf.getString("auth_token") ?? "";
     phoneNumber = pf.getString("phone_number") ?? "";
@@ -507,22 +505,8 @@ class _HomeState extends State<Home> {
       }
     }
 
-    if (car.isEmpty) {
-      car = await getCustomerCars(authToken);
-    } else {
-      car = await getCustomerCars(authToken);
-
-      // List<Map<String, dynamic>> _items = List.generate(
-      //     car.length,
-      //         (index) => {
-      //       'id': index,
-      //       'title': 'Item $index',
-      //       'description':
-      //       'This is the description of the item $index. Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-      //       'isExpanded': false
-      //     });
-
-    }
+    final getCarListResponse = await getCustomerCars(authToken);
+    carList = getCarListResponse.cars;
 
     final categoriesJson = pf.getString("categories") ?? "";
     if (categoriesJson == "" || categoriesJson == "[]") {
@@ -558,14 +542,8 @@ class _HomeState extends State<Home> {
       categories = decodeCategories(jsonDecode(categoriesJson));
     }
 
-    //update ordersList
-    orders = await getOrders(authToken);
-
-    // if (orders.isEmpty) {
-    //   orders = await getOrders(authToken);
-    // } else {
-    //   orders = await getOrders(authToken);
-    // }
+    final getOrderListResponse = await getOrders(authToken);
+    orders = getOrderListResponse.orders;
     return Future.value("Ok");
   }
 
