@@ -278,20 +278,20 @@ class _HomeState extends State<Home> {
               },
               child: RichText(
                   text: TextSpan(children: <InlineSpan>[
-                    TextSpan(text: "${orders[index].id}"),
-                    const WidgetSpan(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 20),
-                      ),
-                    ),
-                    TextSpan(text: formatter.format(orders[index].createdAt)),
-                    const WidgetSpan(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 20, left: 10),
-                      ),
-                    ),
-                    TextSpan(text: orders[index].status)
-                  ]))),
+                TextSpan(text: "${orders[index].id}"),
+                const WidgetSpan(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 20),
+                  ),
+                ),
+                TextSpan(text: formatter.format(orders[index].createdAt)),
+                const WidgetSpan(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 20, left: 10),
+                  ),
+                ),
+                TextSpan(text: orders[index].status)
+              ]))),
         );
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -337,117 +337,116 @@ class _HomeState extends State<Home> {
           }
 
           return ListView(
-              children: <Widget>[
-          Expanded(
-          child: Card(
-              child: Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-          child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-          const SizedBox(height: 5),
-          Text(
-          "Фамилия: ${profile!.lastName}",
-          textAlign: TextAlign.justify,
-          ),
-          Text(
-          "Имя: ${profile!.firstName}",
-          textAlign: TextAlign.start,
-          ),
-          Text(
-          "Номер телефона: ${profile!.phone}",
-          ),
-          const SizedBox(height: 5),
-           TextButton(
-          onPressed: () {
-          Navigator.pushNamed(
-          context,
-          "/user/user_edit",
-          arguments: UserEditArs(profile: profile),
-          );
-          },
-          child: Text("Редактировать профиль"))
-          ]),
-          )),
-          ),
-          Expanded(
-          child: ListView.separated(
-          shrinkWrap: true,
-          // padding: const EdgeInsets.all(1),
-          itemCount: car.length,
-          itemBuilder: (BuildContext context, int index) {
-          return Card(
-          child: ExpansionTileCard(
-          title: Text(
-          '${car[index]?.brand}' " " '${car[index]?.model}'),
-          subtitle: Text('${car[index]?.plateNumber}'),
-          children: <Widget>[
-          const Divider(
-          thickness: 1.0,
-          height: 1.0,
-          ),
-          Align(
-          alignment: Alignment.center,
-          child: Padding(
-          padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 8.0,
-          ),
-          child: Column(
-          children: <Widget>[
-          const SizedBox(height: 5),
-          Text("id:" '${car[index]?.id.toString()}'),
-          Text("Марка авто:" '${car[index]?.brand}'),
-          Text("Модель авто:" '${car[index]?.model}'),
-          Text("Гос. Номер:"
-          '${car[index]?.plateNumber}'),
-          Text("VIN авто:" '${car[index]?.vin}'),
-          Text("Год авто:"
-          '${car[index]?.year.toString()}'),
-          const SizedBox(height: 5),
-          ],
-          ),
-          ))
-          ],
-          ),
-          );
-          },
-          separatorBuilder: (BuildContext context, int index) =>
-          const Divider(),
-          ),
-          ),
-          Expanded(
-          child: Card(
-          child: Column(
-          children: <Widget>[
+            children: <Widget>[
+              Expanded(
+                child: Card(
+                    child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const SizedBox(height: 5),
+                        Text(
+                          "Фамилия: ${profile!.lastName}",
+                          textAlign: TextAlign.justify,
+                        ),
+                        Text(
+                          "Имя: ${profile!.firstName}",
+                          textAlign: TextAlign.start,
+                        ),
+                        Text(
+                          "Номер телефона: ${profile!.phone}",
+                        ),
+                        const SizedBox(height: 5),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                "/user/user_edit",
+                                arguments: UserEditArs(profile: profile),
+                              );
+                            },
+                            child: Text("Редактировать профиль"))
+                      ]),
+                )),
+              ),
+              Expanded(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  // padding: const EdgeInsets.all(1),
+                  itemCount: car.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      child: ExpansionTileCard(
+                        title: Text(
+                            '${car[index]?.brand}' " " '${car[index]?.model}'),
+                        subtitle: Text('${car[index]?.plateNumber}'),
+                        children: <Widget>[
+                          const Divider(
+                            thickness: 1.0,
+                            height: 1.0,
+                          ),
+                          Align(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                  vertical: 8.0,
+                                ),
+                                child: Column(
+                                  children: <Widget>[
+                                    const SizedBox(height: 5),
+                                    Text("id:" '${car[index]?.id.toString()}'),
+                                    Text("Марка авто:" '${car[index]?.brand}'),
+                                    Text("Модель авто:" '${car[index]?.model}'),
+                                    Text("Гос. Номер:"
+                                        '${car[index]?.plateNumber}'),
+                                    Text("VIN авто:" '${car[index]?.vin}'),
+                                    Text("Год авто:"
+                                        '${car[index]?.year.toString()}'),
+                                    const SizedBox(height: 5),
+                                  ],
+                                ),
+                              ))
+                        ],
+                      ),
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Divider(),
+                ),
+              ),
+              Expanded(
+                child: Card(
+                  child: Column(
+                    children: <Widget>[
 // todo: Need to delete phoneNumber, authToken, refreshKey from this page
-          const Text("##### Хранилище приложения #####"),
-          const Divider(),
-          Text("phoneNumber: $phoneNumber"),
-          const Divider(),
-          Text("authToken: $authToken"),
-          const Divider(),
-          Text("refreshKey: $refreshKey"),
-          const Divider(),
+                      const Text("##### Хранилище приложения #####"),
+                      const Divider(),
+                      Text("phoneNumber: $phoneNumber"),
+                      const Divider(),
+                      Text("authToken: $authToken"),
+                      const Divider(),
+                      Text("refreshKey: $refreshKey"),
+                      const Divider(),
 
-          const Text("##### Кнопки #####"),
-          Row(),
-          ElevatedButton(
-          onPressed: () {
-          delFromStorage();
-          Navigator.of(context).pushNamedAndRemoveUntil(
-          "/signin",
-          (route) => false,
-          );
-          },
-          child: const Text("Выйти"),
-          ),
-          ],
-          ),
-          ),
-          ),
-          ]
-          ,
+                      const Text("##### Кнопки #####"),
+                      Row(),
+                      ElevatedButton(
+                        onPressed: () {
+                          delFromStorage();
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            "/signin",
+                            (route) => false,
+                          );
+                        },
+                        child: const Text("Выйти"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           );
         });
   }
@@ -458,8 +457,10 @@ class _HomeState extends State<Home> {
     pf.remove("refresh_key");
   }
 
-  void _showModalBottomSheet(BuildContext context,
-      Map<int, Map<String, dynamic>> servicesMap,) {
+  void _showModalBottomSheet(
+    BuildContext context,
+    Map<int, Map<String, dynamic>> servicesMap,
+  ) {
     showModalBottomSheet<void>(
       context: context,
       builder: (context) {
