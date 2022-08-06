@@ -1,20 +1,21 @@
 import 'dart:convert';
+
+import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/entities/user.dart';
-import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/resources/api_categories.dart';
 import 'package:car_helper/resources/api_order_list.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/resources/refresh.dart';
+import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:car_helper/screens/order/detail.dart';
-import 'package:car_helper/screens/authorization/sign_in_screen.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:expansion_tile_card/expansion_tile_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeArgs {
   final int initialState;
@@ -34,7 +35,6 @@ class _HomeState extends State<Home> {
   List<Category> categories = [];
   List<Order> orders = [];
 
-
   String authToken = "";
   String phoneNumber = "";
   String refreshKey = "";
@@ -46,8 +46,6 @@ class _HomeState extends State<Home> {
   Map<int, List> widgetOptions = {};
   final Map<int, Map<String, dynamic>> _servicesMap = {};
   final DateFormat formatter = DateFormat("d MMMM yyyy, hh:mm");
-
-
 
   @override
   void initState() {
@@ -62,10 +60,8 @@ class _HomeState extends State<Home> {
   }
 
   void _onItemTapped(int index) {
-
     setState(() {
       _selectedBottom = index;
-
     });
   }
 
@@ -77,8 +73,6 @@ class _HomeState extends State<Home> {
     const String profileIcon = "assets/images/TabBarProfile.svg";
 
     // String orderDateTime = DateFormat.MMMMEEEEd().format()
-
-
 
     // todo: need to implement
     // var args = ModalRoute.of(context)!.settings.arguments;
@@ -143,43 +137,54 @@ class _HomeState extends State<Home> {
             unselectedItemColor: Colors.grey,
             // showUnselectedLabels: true,
             type: BottomNavigationBarType.fixed,
-            items:  <BottomNavigationBarItem>[
+            items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
-                    homeIcon, color: Colors.grey,
-                  ),
-                activeIcon: SvgPicture.asset(homeIcon, color: Colors.black,),
+                  homeIcon,
+                  color: Colors.grey,
+                ),
+                activeIcon: SvgPicture.asset(
+                  homeIcon,
+                  color: Colors.black,
+                ),
                 label: "Главная",
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
-                  servicesIcon, color: Colors.grey,
+                  servicesIcon,
+                  color: Colors.grey,
                 ),
-                activeIcon: SvgPicture.asset(servicesIcon, color: Colors.black,),
-
+                activeIcon: SvgPicture.asset(
+                  servicesIcon,
+                  color: Colors.black,
+                ),
                 label: "Новый заказ",
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
-                  ordersIcon, color: Colors.grey,
+                  ordersIcon,
+                  color: Colors.grey,
                 ),
-                activeIcon: SvgPicture.asset(ordersIcon, color: Colors.black,),
-
+                activeIcon: SvgPicture.asset(
+                  ordersIcon,
+                  color: Colors.black,
+                ),
                 label: "Заказы",
               ),
               BottomNavigationBarItem(
                 icon: SvgPicture.asset(
-                  profileIcon, color: Colors.grey,
+                  profileIcon,
+                  color: Colors.grey,
                 ),
-                activeIcon: SvgPicture.asset(profileIcon, color: Colors.black,),
-
+                activeIcon: SvgPicture.asset(
+                  profileIcon,
+                  color: Colors.black,
+                ),
                 label: "Профиль",
-
               ),
             ],
             currentIndex: _selectedBottom,
             onTap: _onItemTapped,
-
           ),
         );
       },
@@ -218,54 +223,41 @@ class _HomeState extends State<Home> {
 
       children: List.generate(categories.length, (index) {
         return TextButton(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                      ),
+                      width: double.infinity,
+                      height: 100,
+                      // padding: EdgeInsets.all(32),
 
-              Container(
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                ),
-                width: double.infinity,
-                height: 100,
-                // padding: EdgeInsets.all(32),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          categories[index].title,
+                          style: const TextStyle(color: Colors.white),
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                        ),
+                      )),
 
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      categories[index].title,
-                      style: const TextStyle(color: Colors.white),
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-
-
-              ),
-
-
-              // style: Theme.of(context).textTheme.headline5,
-            ]
-
-          ),
-          onPressed: () async {
-            _showModalBottomSheet(context, _servicesMap);
-          }
-
-        );
-
-
+                  // style: Theme.of(context).textTheme.headline5,
+                ]),
+            onPressed: () async {
+              _showModalBottomSheet(context, _servicesMap);
+            });
       }),
-
     );
-
   }
 
   Widget bottomOrders() {
@@ -276,38 +268,29 @@ class _HomeState extends State<Home> {
         return SizedBox(
           height: 50,
           child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(
-                context,
-                "/order/detail",
-                arguments: OrderDetailArgs(order: orders[index]),
-              );
-            },
-            child: RichText(
-              text: TextSpan(
-                children:  <InlineSpan>[
-                  TextSpan(text: "${orders[index].id}"),
-                  const WidgetSpan(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 20),
-                    ),
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  "/order/detail",
+                  arguments: OrderDetailArgs(order: orders[index]),
+                );
+              },
+              child: RichText(
+                  text: TextSpan(children: <InlineSpan>[
+                TextSpan(text: "${orders[index].id}"),
+                const WidgetSpan(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 20),
                   ),
-
-                  TextSpan(text: formatter.format(orders[index].createdAt)),
-
-                  const WidgetSpan(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 20, left: 10),
-                      ),
+                ),
+                TextSpan(text: formatter.format(orders[index].createdAt)),
+                const WidgetSpan(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 20, left: 10),
                   ),
-
-                  TextSpan(text: orders[index].status)
-
-                ]
-              )
-            )
-
-          ),
+                ),
+                TextSpan(text: orders[index].status)
+              ]))),
         );
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -353,34 +336,32 @@ class _HomeState extends State<Home> {
           }
 
           return ListView(
-            children: <Widget> [
-              Expanded(child: Card(
-
+            children: <Widget>[
+              Expanded(
+                child: Card(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Column(
-
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-
-                          const SizedBox(height: 5),
-                        Text("Фамилия: ${profile!.lastName}",
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const SizedBox(height: 5),
+                        Text(
+                          "Фамилия: ${profile!.lastName}",
                           textAlign: TextAlign.justify,
                         ),
-                        Text("Имя: ${profile!.firstName}",
+                        Text(
+                          "Имя: ${profile!.firstName}",
                           textAlign: TextAlign.start,
                         ),
-                        Text("Номер телефона: ${profile!.phone}",
+                        Text(
+                          "Номер телефона: ${profile!.phone}",
                         ),
-                         const SizedBox(height: 5),
-                            const TextButton(onPressed: null, child: Text("Редактировать профиль"))
-            ]
-                      ),
-                    )
-
-
-
-              ),
+                        const SizedBox(height: 5),
+                        const TextButton(
+                            onPressed: null,
+                            child: Text("Редактировать профиль"))
+                      ]),
+                )),
               ),
               Expanded(
                 child: ListView.separated(
@@ -390,78 +371,75 @@ class _HomeState extends State<Home> {
                   itemBuilder: (BuildContext context, int index) {
                     return Card(
                       child: ExpansionTileCard(
-
-
-                      title: Text('${car[index]?.brand}' " " '${car[index]?.model}'),
-                      subtitle: Text('${car[index]?.plateNumber}'),
-                      children: <Widget>[
-                        const Divider(
-                          thickness: 1.0,
-                          height: 1.0,
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 8.0,
-                              ),
-                              child: Column (
-                                children: <Widget>[
-                                  const SizedBox(height: 5),
-                                  Text("id:"'${car[index]?.id.toString()}'),
-                                  Text("Марка авто:"'${car[index]?.brand}'),
-                                  Text("Модель авто:"'${car[index]?.model}'),
-                                  Text("Гос. Номер:"'${car[index]?.plateNumber}'),
-                                  Text("VIN авто:"'${car[index]?.vin}'), Text("Год авто:"'${car[index]?.year.toString()}'),
-                                  const SizedBox(height: 5),
-
-
-                                ],
-
-                              ),
-                            )
-                        )
-
-                      ],
+                        title: Text(
+                            '${car[index]?.brand}' " " '${car[index]?.model}'),
+                        subtitle: Text('${car[index]?.plateNumber}'),
+                        children: <Widget>[
+                          const Divider(
+                            thickness: 1.0,
+                            height: 1.0,
+                          ),
+                          Align(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                  vertical: 8.0,
+                                ),
+                                child: Column(
+                                  children: <Widget>[
+                                    const SizedBox(height: 5),
+                                    Text("id:" '${car[index]?.id.toString()}'),
+                                    Text("Марка авто:" '${car[index]?.brand}'),
+                                    Text("Модель авто:" '${car[index]?.model}'),
+                                    Text("Гос. Номер:"
+                                        '${car[index]?.plateNumber}'),
+                                    Text("VIN авто:" '${car[index]?.vin}'),
+                                    Text("Год авто:"
+                                        '${car[index]?.year.toString()}'),
+                                    const SizedBox(height: 5),
+                                  ],
+                                ),
+                              ))
+                        ],
                       ),
-
                     );
-                  }, separatorBuilder: (BuildContext context, int index) => const Divider(),
+                  },
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Divider(),
                 ),
               ),
-              Expanded(child: Card(
+              Expanded(
+                child: Card(
                   child: Column(
-                      children: <Widget>[
+                    children: <Widget>[
 // todo: Need to delete phoneNumber, authToken, refreshKey from this page
-                  const Text("##### Хранилище приложения #####"),
-                  const Divider(),
-                  Text("phoneNumber: $phoneNumber"),
-                  const Divider(),
-                  Text("authToken: $authToken"),
-                  const Divider(),
-                  Text("refreshKey: $refreshKey"),
-                  const Divider(),
+                      const Text("##### Хранилище приложения #####"),
+                      const Divider(),
+                      Text("phoneNumber: $phoneNumber"),
+                      const Divider(),
+                      Text("authToken: $authToken"),
+                      const Divider(),
+                      Text("refreshKey: $refreshKey"),
+                      const Divider(),
 
-                  const Text("##### Кнопки #####"),
-                  Row(),
-                  ElevatedButton(
-                    onPressed: () {
-                      delFromStorage();
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        "/signin",
+                      const Text("##### Кнопки #####"),
+                      Row(),
+                      ElevatedButton(
+                        onPressed: () {
+                          delFromStorage();
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            "/signin",
                             (route) => false,
-                      );
-                    },
-                    child: const Text("Выйти"),
-                  ),
-                ],
+                          );
+                        },
+                        child: const Text("Выйти"),
+                      ),
+                    ],
                   ),
                 ),
-                ),
-
+              ),
             ],
-
           );
         });
   }
@@ -473,9 +451,9 @@ class _HomeState extends State<Home> {
   }
 
   void _showModalBottomSheet(
-      BuildContext context,
-      Map<int, Map<String, dynamic>> servicesMap,
-      ) {
+    BuildContext context,
+    Map<int, Map<String, dynamic>> servicesMap,
+  ) {
     showModalBottomSheet<void>(
       context: context,
       builder: (context) {
@@ -485,16 +463,12 @@ class _HomeState extends State<Home> {
   }
 
   Future<String> loadInitialData() async {
-
-
     final pf = await SharedPreferences.getInstance();
     //update categories
 
     authToken = pf.getString("auth_token") ?? "";
     phoneNumber = pf.getString("phone_number") ?? "";
     refreshKey = pf.getString("refresh_key") ?? "";
-
-
 
     if (authToken == "") {
       return Future.value("tokenNotFound");
@@ -528,8 +502,7 @@ class _HomeState extends State<Home> {
 
     if (car.isEmpty) {
       car = await getCustomerCars(authToken);
-    }
-    else {
+    } else {
       car = await getCustomerCars(authToken);
 
       // List<Map<String, dynamic>> _items = List.generate(
@@ -561,7 +534,6 @@ class _HomeState extends State<Home> {
 
       pf.setString("categories", jsonEncode(encodeCategories(categories)));
     } else {
-
       final categoriesResponse = await getCategories(authToken);
       switch (categoriesResponse.statusCode) {
         case 200:
@@ -581,10 +553,8 @@ class _HomeState extends State<Home> {
 
     if (orders.isEmpty) {
       orders = await getOrders(authToken);
-    }
-    else {
+    } else {
       orders = await getOrders(authToken);
-
     }
     return Future.value("Ok");
   }

@@ -1,10 +1,10 @@
 import 'package:car_helper/screens/authorization/auth_screen.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
+import 'package:car_helper/screens/debug_page_screen.dart';
 import 'package:car_helper/screens/home.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:car_helper/screens/order/detail.dart';
 import 'package:car_helper/screens/test_page_screen.dart';
-import 'package:car_helper/screens/debug_page_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {

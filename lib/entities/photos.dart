@@ -16,7 +16,7 @@ class Photos {
 
   Map<String, dynamic> toJson() {
     return {
-      "kinid": kind,
+      "kind": kind,
       "image_url": imageUrl,
     };
   }

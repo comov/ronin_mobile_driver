@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 
 Future<AuthResponse> refreshToken(String refreshToken) async {
   final response = await http.post(
-    Uri.parse("https://stage.i-10.win/api/v1/refresh?refresh_token=$refreshToken"),
+    Uri.parse(
+        "https://stage.i-10.win/api/v1/refresh?refresh_token=$refreshToken"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
     },

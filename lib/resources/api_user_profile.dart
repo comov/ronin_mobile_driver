@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:car_helper/entities/api.dart';
-import 'package:car_helper/entities/user.dart';
 import 'package:car_helper/entities/car.dart';
+import 'package:car_helper/entities/user.dart';
 import 'package:http/http.dart' as http;
 
 class ProfileResponse {
@@ -33,8 +33,6 @@ Future<ProfileResponse> getProfile(String authToken) async {
     error: ApiErrorResponse.fromJson(jsonDecode(response.body)),
   );
 }
-
-
 
 List<Car> listOfCarsFromJson(List<dynamic> jsonList) {
   List<Car> cars = [];

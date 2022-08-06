@@ -16,16 +16,16 @@ class _DebugPageState extends State<DebugPage> with DebugMixin {
   String authToken = "";
   String refreshKey = "";
 
-
   @override
   Widget build(BuildContext context) {
     printStorage("HomeScreen");
     return FutureBuilder<String>(
       future: loadFromStorage(),
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {  // AsyncSnapshot<Your object type>
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        // AsyncSnapshot<Your object type>
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-              body: Center(child: Text("Загрузка...")),
+            body: Center(child: Text("Загрузка...")),
           );
         }
 

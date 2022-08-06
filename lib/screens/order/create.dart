@@ -75,7 +75,7 @@ class _OrderNewState extends State<OrderNew> {
     final services = args.category.services;
 
     for (final i in services) {
-      _servicesMap[i.id] = { "checked": false, "obj": i};
+      _servicesMap[i.id] = {"checked": false, "obj": i};
     }
 
     return Scaffold(

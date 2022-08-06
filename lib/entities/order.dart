@@ -1,9 +1,8 @@
 import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/entities/driver.dart';
-import 'package:car_helper/entities/service.dart';
 import 'package:car_helper/entities/employee.dart';
 import 'package:car_helper/entities/photos.dart';
-
+import 'package:car_helper/entities/service.dart';
 
 enum OrderStatus {
   created,
@@ -34,7 +33,6 @@ Map<int, String> orderStatusMap = {
   // Клиент оценил выполнение заказа
   OrderStatus.created.index: "Создан",
 };
-
 
 class Order {
   final int id;
@@ -85,9 +83,7 @@ class Order {
 
       // createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
       modifiedAt: json["modified_at"],
-      car: json["car"] == null
-          ? Car.empty()
-          : Car.fromJson(json["car"]),
+      car: json["car"] == null ? Car.empty() : Car.fromJson(json["car"]),
       driver: json["driver"] == null
           ? Driver.empty()
           : Driver.fromJson(json["driver"]),
