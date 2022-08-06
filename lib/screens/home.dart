@@ -373,7 +373,7 @@ class _HomeState extends State<Home> {
                         Text("Номер телефона: ${profile!.phone}",
                         ),
                          const SizedBox(height: 5),
-                            TextButton(onPressed: null, child: Text("Редактировать профиль"))
+                            const TextButton(onPressed: null, child: Text("Редактировать профиль"))
             ]
                       ),
                     )
