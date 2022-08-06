@@ -551,11 +551,14 @@ class _HomeState extends State<Home> {
       categories = decodeCategories(jsonDecode(categoriesJson));
     }
 
-    if (orders.isEmpty) {
+    //update ordersList
       orders = await getOrders(authToken);
-    } else {
-      orders = await getOrders(authToken);
-    }
+
+    // if (orders.isEmpty) {
+    //   orders = await getOrders(authToken);
+    // } else {
+    //   orders = await getOrders(authToken);
+    // }
     return Future.value("Ok");
   }
 
