@@ -68,10 +68,10 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    const String homeIcon = "assets/images/tabbarhome.svg";
-    const String servicesIcon = "assets/images/TabBarServices.svg";
-    const String ordersIcon = "assets/images/TabBarOrders.svg";
-    const String profileIcon = "assets/images/TabBarProfile.svg";
+    const String homeIcon = "assets/images/icon/tabbarhome.svg";
+    const String servicesIcon = "assets/images/icon/TabBarServices.svg";
+    const String ordersIcon = "assets/images/icon/TabBarOrders.svg";
+    const String profileIcon = "assets/images/icon/TabBarProfile.svg";
 
     // String orderDateTime = DateFormat.MMMMEEEEd().format()
 
