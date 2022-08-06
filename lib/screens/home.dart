@@ -11,7 +11,7 @@ import 'package:car_helper/resources/refresh.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:car_helper/screens/order/detail.dart';
-import 'package:car_helper/screens/user/user_edit.dart';
+import 'package:car_helper/screens/user/edit.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -347,14 +347,16 @@ class _HomeState extends State<Home> {
                       children: <Widget>[
                         const SizedBox(height: 5),
                         Text(
-                          "Фамилия: ${profile!.lastName}",
+                          "Фамилия: ${profile?.lastName}",
                           textAlign: TextAlign.justify,
                         ),
                         Text(
-                          "Имя: ${profile!.firstName}",
+                          "Имя: ${profile?.firstName}",
                           textAlign: TextAlign.start,
                         ),
-                        Text("Номер телефона: ${profile!.phone}"),
+                        Text(
+                          "Номер телефона: ${profile?.phone}",
+                        ),
                         const SizedBox(height: 5),
                         TextButton(
                             onPressed: () {
@@ -364,7 +366,7 @@ class _HomeState extends State<Home> {
                                 arguments: UserEditArs(profile: profile),
                               );
                             },
-                            child: Text("Редактировать профиль"))
+                            child: const Text("Редактировать профиль"))
                       ]),
                 )),
               ),

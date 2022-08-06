@@ -1,12 +1,12 @@
 class Profile {
-  final int id;
-  final String phone;
-  final String? firstName;
-  final String? lastName;
-  final String createdAt;
-  final String modifiedAt;
+  int id;
+  String phone;
+  String? firstName;
+  String? lastName;
+  String createdAt;
+  String modifiedAt;
 
-  const Profile({
+  Profile({
     required this.id,
     required this.phone,
     required this.firstName,

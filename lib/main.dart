@@ -4,7 +4,7 @@ import 'package:car_helper/screens/debug_page_screen.dart';
 import 'package:car_helper/screens/home.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:car_helper/screens/order/detail.dart';
-import 'package:car_helper/screens/user/user_edit.dart';
+import 'package:car_helper/screens/user/edit.dart';
 import 'package:car_helper/screens/test_page_screen.dart';
 import 'package:flutter/material.dart';
 
