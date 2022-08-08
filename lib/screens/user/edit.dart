@@ -15,7 +15,6 @@ class UserEdit extends StatefulWidget {
 }
 
 class _UserEditState extends State<UserEdit> {
-  final firsName = "";
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +26,9 @@ class _UserEditState extends State<UserEdit> {
       body: ListView(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+      Flex(
+      direction: Axis.horizontal,
+        children: [
           Expanded(
             child: Card(
               child: Padding(
@@ -35,27 +37,48 @@ class _UserEditState extends State<UserEdit> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       const SizedBox(height: 5),
-                      Text("lastName: ${profile?.phone}"),
+                      Text("Ваш номер телефона: ${profile?.phone}"),
                       TextField(
                         onChanged: (val) {
                           profile?.firstName = val;
                         },
                         decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                          border: UnderlineInputBorder(),
                           hintText: 'Введите имя ',
                         ),
                       ),
-                      Text("lastName: ${profile?.lastName}"),
+                      TextField(
+                        onChanged: (val) {
+                          profile?.lastName = val;
+                        },
+                        decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          hintText: 'Введите фамилию',
+                        ),
+                      ),
                       const SizedBox(height: 5),
                     ]),
               ),
             ),
           ),
+          ],
+      ),
+      Flex(
+        direction: Axis.horizontal,
+        children: [
           Expanded(
               child: Card(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const <Widget>[]))),
+                      children: const <Widget>[
+                        Text("Добавить новое авто")
+                      ],
+                  ),
+              ),
+          ),
+
+        ],
+      ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
@@ -63,7 +86,7 @@ class _UserEditState extends State<UserEdit> {
               child: const Text("Сохранить"),
             ),
           )
-        ],
+      ],
       ),
     );
   }

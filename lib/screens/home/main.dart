@@ -3,11 +3,13 @@ import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:flutter/material.dart';
 
+List<Category> categories = [];
+
 Widget bottomCategories(
   BuildContext context,
-  List<Category> categories,
-  List<Order> orders,
-  Map<int, Map<String, dynamic>> servicesMap,
+  // List<Category> categories,
+  // List<Order> orders,
+  // Map<int, Map<String, dynamic>> servicesMap,
 ) {
   return ListView.separated(
     padding: const EdgeInsets.all(8),
