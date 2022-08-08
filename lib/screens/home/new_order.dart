@@ -40,6 +40,8 @@ Widget newOrder(
   // List<Order> orders,
   // Map<int, Map<String, dynamic>> servicesMap,
 ) {
+  final controller = Get.put(SelectedServiceController());
+
   return FutureBuilder<String>(
       future: loadInitialData(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -138,11 +140,19 @@ Widget newOrder(
                   builder: (value) =>
                        Column(
                          children: <Widget>[
-                           if (value.choosenData.isNotEmpty)
-                           Text('${value.choosenData}'),
-
                            if (value.choosenData.isEmpty)
                              Text('${value.emptyData}' ),
+
+                           if (value.choosenData.isNotEmpty)
+                           for (var item in value.choosenData)
+                             TextButton(
+                                 onPressed: () {
+                                   controller.removeData(item);
+                                 },
+                                 child: Text('${item}'))
+
+
+
 
 
                          ],
