@@ -136,7 +136,8 @@ Widget newOrder(
                 child: GetBuilder<SelectedServiceController>(
                   init: SelectedServiceController(),
                   builder: (value) =>
-                      Text('${value.choosenData ?? " "}' ),
+
+                      Text('${value.choosenData}' ),
                 ),
               )
             )
@@ -232,23 +233,22 @@ Future<String> loadInitialData() async {
   return Future.value("Ok");
 }
 
-class SelectedServiceController extends GetxController {
-  List? choosenData = [];
-
+ class SelectedServiceController extends GetxController {
+  List choosenData = [];
 
 
   void addData(var data) {
     // data = [];
-    choosenData?.add(data);
+    choosenData.add(data);
     debugPrint("selecteddata: $choosenData");
 
     update();
   }
   void removeData(var data) {
     // data = [];
-    choosenData?.remove(data);
 
-    choosenData?.remove(data);
+
+    choosenData.remove(data);
     debugPrint("existdata-selected: $choosenData");
 
     update();

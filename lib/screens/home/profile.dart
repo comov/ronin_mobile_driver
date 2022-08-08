@@ -7,13 +7,6 @@ import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/resources/refresh.dart';
-import 'package:car_helper/entities/category.dart';
-import 'package:car_helper/entities/order.dart';
-
-
-
-
-
 
 
 String authToken = "";
