@@ -136,9 +136,21 @@ Widget newOrder(
                 child: GetBuilder<SelectedServiceController>(
                   init: SelectedServiceController(),
                   builder: (value) =>
+                       Column(
+                         children: <Widget>[
+                           if (value.choosenData.isNotEmpty)
+                           Text('${value.choosenData}'),
 
-                      Text('${value.choosenData}' ),
+                           if (value.choosenData.isEmpty)
+                             Text('${value.emptyData}' ),
+
+
+                         ],
+
+                       )
+
                 ),
+
               )
             )
           ],
@@ -235,6 +247,7 @@ Future<String> loadInitialData() async {
 
  class SelectedServiceController extends GetxController {
   List choosenData = [];
+  String  emptyData = "Выберите сервисы";
 
 
   void addData(var data) {
