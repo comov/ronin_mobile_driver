@@ -107,11 +107,8 @@ Future<String> loadInitialData1() async {
   var phoneNumber = pf.getString("phone_number") ?? "";
   var refreshKey = pf.getString("refresh_key") ?? "";
 
-  debugPrint("auto");
   final getOrderListResponse = await getOrders(authToken);
   orders = getOrderListResponse.orders;
-  debugPrint("orders: $getOrderListResponse.orders;");
-
 
   return Future.value("Ok");
 }

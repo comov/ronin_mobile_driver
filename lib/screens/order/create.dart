@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/entities/service.dart';
@@ -7,61 +9,14 @@ import 'package:car_helper/screens/order/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class OrderCreateArgs {
   final Category category;
 
   OrderCreateArgs({required this.category});
 }
 
-class ListOfServices extends StatefulWidget {
-  const ListOfServices({
-    Key? key,
-    required this.servicesMap,
-    required this.services,
-  }) : super(key: key);
-  final Map<int, Map<String, dynamic>> servicesMap;
-  final List<Service> services;
 
-  @override
-  State<ListOfServices> createState() => _ListOfServicesState(
-        servicesMap: servicesMap,
-        services: services,
-      );
-}
-
-class _ListOfServicesState extends State<ListOfServices> {
-  final Map<int, Map<String, dynamic>> servicesMap;
-  final List<Service> services;
-
-  _ListOfServicesState({required this.servicesMap, required this.services});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 500,
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: services.length,
-              itemBuilder: (context, index) {
-                return CheckboxListTile(
-                  title: Text(services[index].title),
-                  value: servicesMap[services[index].id]?["checked"],
-                  onChanged: (bool? value) {
-                    setState(() {
-                      servicesMap[services[index].id]?["checked"] = value!;
-                    });
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class OrderNew extends StatefulWidget {
   const OrderNew({Key? key}) : super(key: key);

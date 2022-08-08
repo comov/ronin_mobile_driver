@@ -1,23 +1,38 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/service.dart';
-import 'package:car_helper/screens/order/create.dart';
 import 'package:flutter/material.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:car_helper/resources/api_categories.dart';
+import 'package:get/get.dart';
+
+
 
 String authToken = "";
 String phoneNumber = "";
 String refreshKey = "";
 
 List<Category> categories = [];
+List<Service> selectedservices = [];
 
 
 final Map<int, Map<String, dynamic>> _servicesMap = {};
 
 var servicesMap = _servicesMap;
+
+Future<List<Service>> aStream() async {
+  List<Service> selected = [];
+
+for (var item in selectedservices) {
+
+  selected.add(item);
+}
+return selected;
+}
+
 
 Widget newOrder(
   BuildContext context,
@@ -100,6 +115,7 @@ Widget newOrder(
                     context,
                     servicesMap,
                     categories[index].services,
+                    selectedservices,
                   );
                 });
           }),
@@ -111,19 +127,26 @@ Widget newOrder(
               height: 280,
               child: categoriesBlock,
             ),
-            Card(child: Column(
-
-                // children: getSelectedServices(servicesMap),
-                children: <Widget>[
-
-                ])),
+            Card(
+            //     child: Column(
+            //   // children: getSelectedServices(servicesMap),
+            //   children: getSelectedServices1(selectedservices),
+            // )
+              child: Container(
+                child: GetBuilder<SelectedServiceController>(
+                  init: SelectedServiceController(),
+                  builder: (value) =>
+                      Text('${value.choosenData ?? " "}' ),
+                ),
+              )
+            )
           ],
         );
 
         return view;
+
       });
 }
-
 
 List<Widget> getSelectedServices(Map<int, Map<String, dynamic>> servicesMap) {
   return [
@@ -133,28 +156,38 @@ List<Widget> getSelectedServices(Map<int, Map<String, dynamic>> servicesMap) {
             "${service["obj"].title} ${service["obj"].id} (${service["checked"]})")
   ];
 }
-//
 
-
+List<Widget> getSelectedServices1(List<Service> selectedservice) {
+  return [for (var service in selectedservices) Text(service.title)];
+}
 
 void _showModalBottomSheet(
   BuildContext context,
   Map<int, Map<String, dynamic>> servicesMap,
   List<Service> services,
+  List<Service> selectedservices,
 ) {
   showModalBottomSheet<void>(
     context: context,
     builder: (context) {
-      return ListOfServices(servicesMap: servicesMap, services: services);
+
+        return ListOfServices(
+          servicesMap: servicesMap,
+          services: services,
+          selectedservices: selectedservices,
+        );
+
     },
   );
 }
 
+
+
 Future<String> loadInitialData() async {
+  // selectedservices = [];
   final pf = await SharedPreferences.getInstance();
 
   var authToken = pf.getString("auth_token") ?? "";
-
 
   final categoriesJson = pf.getString("categories") ?? "";
   if (categoriesJson == "" || categoriesJson == "[]") {
@@ -199,3 +232,100 @@ Future<String> loadInitialData() async {
   return Future.value("Ok");
 }
 
+class SelectedServiceController extends GetxController {
+  List? choosenData = [];
+
+
+
+  void addData(var data) {
+    // data = [];
+    choosenData?.add(data);
+    debugPrint("selecteddata: $choosenData");
+
+    update();
+  }
+  void removeData(var data) {
+    // data = [];
+    choosenData?.remove(data);
+
+    choosenData?.remove(data);
+    debugPrint("existdata-selected: $choosenData");
+
+    update();
+  }
+}
+
+class ListOfServices extends StatefulWidget {
+  const ListOfServices({
+    Key? key,
+    required this.servicesMap,
+    required this.services,
+    required this.selectedservices,
+
+  }) : super(key: key);
+  final Map<int, Map<String, dynamic>> servicesMap;
+  final List<Service> services;
+  final List<Service> selectedservices;
+
+  @override
+  State<ListOfServices> createState() => _ListOfServicesState(
+      servicesMap: servicesMap,
+      services: services,
+      selectedservices: selectedservices
+  );
+}
+class _ListOfServicesState extends State<ListOfServices> {
+  final Map<int, Map<String, dynamic>> servicesMap;
+  final List<Service> services;
+  final List<Service> selectedservices;
+
+
+
+
+  _ListOfServicesState({required this.servicesMap, required this.services, required this.selectedservices});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.put(SelectedServiceController());
+    return SizedBox(
+      height: 500,
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: services.length,
+              itemBuilder: (context, index) {
+                return CheckboxListTile(
+                  title: Text(services[index].title),
+                  value: servicesMap[services[index].id]?["checked"],
+                  onChanged: (bool? value) {
+                    setState(() {
+
+                      servicesMap[services[index].id]?["checked"] = value!;
+
+                      if (selectedservices.contains(services[index])) {
+                        selectedservices.remove(services[index]);
+                        debugPrint("exist");
+                        debugPrint("selected: $selectedservices");
+                        controller.removeData(services[index]);
+
+
+                      }
+                      else  {
+                        controller.addData(services[index]);
+
+                        selectedservices.add(services[index]);
+                        debugPrint("selected: $selectedservices");
+                      }
+
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

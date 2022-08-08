@@ -1,10 +1,8 @@
-import 'dart:convert';
 
 import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/entities/user.dart';
-import 'package:car_helper/resources/api_categories.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:car_helper/screens/home/main.dart';
 import 'package:car_helper/screens/home/new_order.dart';
@@ -13,7 +11,8 @@ import 'package:car_helper/screens/home/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:car_helper/resources/api_order_list.dart';
+
+import '../../entities/service.dart';
 
 
 const String homeIcon = "assets/images/icon/tabbarhome.svg";
@@ -48,7 +47,8 @@ class _HomeState extends State<Home> {
 
   int _selectedBottom = 0;
   Map<int, List> widgetOptions = {};
-  final Map<int, Map<String, dynamic>> _servicesMap = {};
+
+  List<Service> selectedservices = [];
 
   @override
   void initState() {
