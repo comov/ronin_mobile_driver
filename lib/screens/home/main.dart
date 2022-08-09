@@ -21,7 +21,7 @@ Widget bottomCategories(
             Navigator.pushNamed(
               context,
               "/order/new",
-              arguments: OrderCreateArgs(category: categories[index]),
+              // arguments: OrderCreateArgs(category: categories[index]),
             );
           },
           child: Text(categories[index].title),

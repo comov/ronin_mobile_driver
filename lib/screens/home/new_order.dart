@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../order/create.dart';
+
 String authToken = "";
 String phoneNumber = "";
 String refreshKey = "";
@@ -131,13 +133,22 @@ Widget newOrder(
                     else
                       for (var item in value.servicesMap.values.toList())
                         if (item["checked"] == true)
-                          TextButton(
-                            onPressed: () {
-                              controller.checked(
-                                  item["obj"].id, !item["checked"]);
-                            },
-                            child: Text('${item["obj"].title}'),
-                          )
+                          Column(children: [
+                            TextButton(
+                              onPressed: () {
+                                controller.checked(
+                                    item["obj"].id, !item["checked"]);
+                              },
+                              child: Text('${item["obj"].title}'),
+                            ),
+                                ElevatedButton(onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    "/order/new",
+                                    arguments: OrderCreateArgs(servicesMap: item),
+                                  );
+                                }, child: Text("Оформить заказ"))
+                          ]),
                   ],
                 ),
               ),

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/resources/api_order_create.dart';
 import 'package:car_helper/screens/home/index.dart';
@@ -9,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderCreateArgs {
-  final Category category;
+  Map<String, dynamic> servicesMap = {};
 
-  OrderCreateArgs({required this.category});
+  OrderCreateArgs({required this.servicesMap});
 }
 
 class OrderNew extends StatefulWidget {
@@ -30,12 +29,13 @@ class _OrderNewState extends State<OrderNew> {
   Widget build(BuildContext context) {
     loadFromStorage();
 
-    final args = ModalRoute.of(context)!.settings.arguments as OrderCreateArgs;
-    final services = args.category.services;
+    //tempory disable. mayble later update it
+    // final args = ModalRoute.of(context)!.settings.arguments as OrderCreateArgs;
+    // final services = args.servicesMap;
 
-    for (final i in services) {
-      _servicesMap[i.id] = {"checked": false, "obj": i};
-    }
+    // for (final i in services) {
+    //   _servicesMap[i.id] = {"checked": false, "obj": i};
+    // }
 
     return Scaffold(
       appBar: AppBar(title: const Text("Создание заказа")),
