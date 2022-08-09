@@ -20,6 +20,37 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "CarHelpers",
       initialRoute: "/index",
+      theme: ThemeData(
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            onPrimary: Colors.white,
+            primary: Colors.black,
+          ),
+        ),
+        checkboxTheme: CheckboxThemeData(
+          checkColor: MaterialStateProperty.all(Colors.black),
+          fillColor: MaterialStateProperty.all(Colors.black),
+          side: const BorderSide(width: 1),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(3)),
+          ),
+        ),
+        buttonTheme: const ButtonThemeData(
+          buttonColor: Colors.black,
+        ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: false,
+          iconTheme: IconThemeData(color: Colors.black),
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 34,
+          ),
+          toolbarHeight: 35,
+        ),
+      ),
       routes: {
         "/index": (BuildContext context) => const Index(),
         "/signin": (BuildContext context) => const SignIn(),

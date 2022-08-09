@@ -187,9 +187,6 @@ Widget getSelectedServicesCard(context, controller, value) {
       SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: Colors.black,
-          ),
           child: const Text("Продолжить"),
           onPressed: () {
             Navigator.pushNamed(

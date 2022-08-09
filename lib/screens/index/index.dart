@@ -115,7 +115,6 @@ class _IndexState extends State<Index> with MainState {
         return Scaffold(
           appBar: AppBar(
             title: Text(widgetOptions[_selectedBottom]![0]),
-            toolbarHeight: 30.0,
           ),
           body: widgetOptions[_selectedBottom]![1](context),
           bottomNavigationBar: BottomNavigationBar(

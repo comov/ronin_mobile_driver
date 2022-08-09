@@ -44,4 +44,8 @@ class Car {
         createdAt: "",
         modifiedAt: "");
   }
+
+  String displayName() {
+    return "$brand $model ($plateNumber)";
+  }
 }

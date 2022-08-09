@@ -32,155 +32,162 @@ class _OrderNewState extends State<OrderNew> {
 
   @override
   Widget build(BuildContext context) {
-    loadFromStorage();
     final args = ModalRoute.of(context)!.settings.arguments as OrderCreateArgs;
 
     final services = args.servicesMaps;
     FocusManager.instance.primaryFocus?.unfocus();
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Создание заказа")),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Форма заказа",
-              style: TextStyle(fontSize: 34),
-            ),
-            const Text(
-              "Все заявки обрабатываются в течении 2х часов, начинаем выполнять на следующий день, чтобы заранее могли забронировать очередь в СТО",
-              style: TextStyle(fontSize: 15),
-            ),
-            Card(
-              child: ExpansionTileCard(
-                title: const Text('Выбранные услуги'),
-                children: <Widget>[
-                  const Divider(
-                    thickness: 1.0,
-                    height: 1.0,
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          // horizontal: 16.0,
-                          // vertical: 8.0,
-                          ),
-                      child: Column(
-                        children: <Widget>[
-                          const SizedBox(height: 5),
-                          for (var item in servicesMap.values.toList())
-                            if (item.checked == true) Text(item.service.title),
-                          // const SizedBox(height: 5),
-                        ],
+    return FutureBuilder<String>(
+      future: loadFromStorage(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        return Scaffold(
+          appBar: AppBar(title: const Text("Создание заказа")),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView(
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Форма заказа",
+                  style: TextStyle(fontSize: 34),
+                ),
+                const Text(
+                  "Все заявки обрабатываются в течении 2х часов, начинаем выполнять на следующий день, чтобы заранее могли забронировать очередь в СТО",
+                  style: TextStyle(fontSize: 15),
+                ),
+                Card(
+                  child: ExpansionTileCard(
+                    title: const Text('Выбранные услуги'),
+                    children: <Widget>[
+                      const Divider(
+                        thickness: 1.0,
+                        height: 1.0,
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Column(
-                children: [
-                  //возможно нужен контроллер
-                  if (carList.isEmpty)
-                    const Text(
-                        "У вас нету добавленных авто, можете добавить тут. ссылка на страничку добавления авто")
-                  else
-                    const Text("Выберите Авто:")
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Text("Адрес откуда забрать авто:"),
-            ),
-            SizedBox(
-              height: 40,
-              child: TextFormField(
-                onChanged: (text) => {pickUpAddress = text},
-                autofocus: true,
-                keyboardType: TextInputType.streetAddress,
-                decoration: InputDecoration(
-                  labelText: "Название улицы, номер дома",
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                    borderSide: const BorderSide(
-                      color: Colors.blue,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                    ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              // horizontal: 16.0,
+                              // vertical: 8.0,
+                              ),
+                          child: Column(
+                            children: <Widget>[
+                              const SizedBox(height: 5),
+                              for (var item in servicesMap.values.toList())
+                                if (item.checked == true)
+                                  Text(item.service.title),
+                              // const SizedBox(height: 5),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                initialValue: pickUpAddress,
-                validator: (value) {
-                  if (value?.length != 12) {
-                    return "Не больше 50 символов";
-                  }
-                  return null;
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Column(
-                children: const [
-                  Text("Выберите удобное для Вас время:"),
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Text("тут какой-то пикер"),
-            ),
-            const Divider(),
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Text("Пожелания/Комментарии"),
-            ),
-            TextField(
-              onChanged: (text) {
-                customerComment = text;
-              },
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: '',
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final List<int> selectedServices = [
-                  for (final item in services.values)
-                    if (item.checked == true) item.service.id
-                ];
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Column(
+                    children: [
+                      //возможно нужен контроллер
+                      if (carList.isEmpty)
+                        const Text(
+                            "У вас нету добавленных авто, можете добавить тут. ссылка на страничку добавления авто")
+                      else
+                        const Text("Выберите Авто:"),
+                      for (final car in carList)
+                          Text(car.displayName())
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Text("Адрес откуда забрать авто:"),
+                ),
+                SizedBox(
+                  height: 40,
+                  child: TextFormField(
+                    onChanged: (text) => {pickUpAddress = text},
+                    autofocus: true,
+                    keyboardType: TextInputType.streetAddress,
+                    decoration: InputDecoration(
+                      labelText: "Название улицы, номер дома",
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: const BorderSide(
+                          color: Colors.blue,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: const BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    initialValue: pickUpAddress,
+                    validator: (value) {
+                      if (value?.length != 12) {
+                        return "Не больше 50 символов";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Column(
+                    children: const [
+                      Text("Выберите удобное для Вас время:"),
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Text("тут какой-то пикер"),
+                ),
+                const Divider(),
+                const Padding(
+                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Text("Пожелания/Комментарии"),
+                ),
+                TextField(
+                  onChanged: (text) {
+                    customerComment = text;
+                  },
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: '',
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final List<int> selectedServices = [
+                      for (final item in services.values)
+                        if (item.checked == true) item.service.id
+                    ];
 
-                _createOrder(selectedServices).then((order) {
-                  if (order != null) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      "/home",
-                      (route) => false,
-                      arguments: HomeArgs(initialState: 1, newOrder: order),
-                    );
-                    Navigator.pushNamed(
-                      context,
-                      "/order/detail",
-                      arguments: OrderDetailArgs(order: order),
-                    );
-                  }
-                });
-              },
-              child: const Text("Создать заказ"),
+                    _createOrder(selectedServices).then((order) {
+                      if (order != null) {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          "/home",
+                          (route) => false,
+                          arguments: HomeArgs(initialState: 1, newOrder: order),
+                        );
+                        Navigator.pushNamed(
+                          context,
+                          "/order/detail",
+                          arguments: OrderDetailArgs(order: order),
+                        );
+                      }
+                    });
+                  },
+                  child: const Text("Создать заказ"),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
