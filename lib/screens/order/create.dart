@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:car_helper/entities/car.dart';
 
+import '../../resources/api_user_profile.dart';
+
 
 class OrderCreateArgs {
   Map<int, Map<String, dynamic>> servicesMaps = {};
@@ -21,6 +23,7 @@ class OrderNew extends StatefulWidget {
   const OrderNew({Key? key}) : super(key: key);
 
   @override
+
   State<OrderNew> createState() => _OrderNewState();
 }
 
@@ -28,6 +31,10 @@ class _OrderNewState extends State<OrderNew> {
   String authToken = "";
   String customerComment = "";
   String pickUpAddress = "";
+  List<Car> carList = [];
+
+
+
 
 
   // final Map<int, Map<String, dynamic>> _servicesMap = {};
@@ -41,7 +48,9 @@ class _OrderNewState extends State<OrderNew> {
 
     FocusManager.instance.primaryFocus?.unfocus();
 
-    List<Car> carList = [];
+
+
+
 
 
     // for (final i in services) {
@@ -93,10 +102,20 @@ class _OrderNewState extends State<OrderNew> {
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(top:8.0, bottom: 8.0),
-              for (car in carList)
-              child: Text("Выберите Авто:"),
+             Padding(
+              padding: const EdgeInsets.only(top:8.0, bottom: 8.0),
+
+              child: Column(
+              children: [
+                //возможно нужен контроллер
+                if (carList.isEmpty)
+                   const Text("У вас нету добавленных авто, можете добавить тут. ссылка на страничку добавления авто")
+                else
+                  const Text("Выберите Авто:")
+
+              ],
+
+             )
             ),
             const Padding(
               padding: EdgeInsets.only(top:8.0, bottom: 8.0),
@@ -131,9 +150,14 @@ class _OrderNewState extends State<OrderNew> {
                 },
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(top:8.0, bottom: 8.0),
-              child: Text("Выберите удобное для Вас время:"),
+             Padding(
+              padding: const EdgeInsets.only(top:8.0, bottom: 8.0),
+              child: Column(
+                children: const [
+                  Text("Выберите удобное для Вас время:"),
+
+                ],
+              )
             ),
             const Padding(
               padding: EdgeInsets.only(top:8.0, bottom: 8.0),
@@ -181,6 +205,16 @@ class _OrderNewState extends State<OrderNew> {
   Future<String> loadFromStorage() async {
     final pf = await SharedPreferences.getInstance();
     authToken = pf.getString("auth_token") ?? "";
+
+    // List<Car> carList = [];
+
+
+    final getCarListResponse = await getCustomerCars(authToken);
+    carList = getCarListResponse.cars;
+    debugPrint("debug");
+
+    debugPrint(carList.toString());
+
     return Future.value("Ok");
   }
 
@@ -213,6 +247,7 @@ class _OrderNewState extends State<OrderNew> {
           break;
         }
     }
+
     return Future.value(response.order);
   }
 }
