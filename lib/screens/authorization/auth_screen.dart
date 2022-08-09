@@ -60,7 +60,7 @@ class _AuthState extends State<Auth> {
                       authCallBack().then((value) {
                         if (value == "Ok") {
                           Navigator.of(context).pushNamedAndRemoveUntil(
-                            "/home",
+                            "/index",
                             (route) => false,
                           );
                         }

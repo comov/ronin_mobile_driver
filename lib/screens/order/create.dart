@@ -169,7 +169,7 @@ class _OrderNewState extends State<OrderNew> {
                     _createOrder(selectedServices).then((order) {
                       if (order != null) {
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                          "/home",
+                          "/index",
                           (route) => false,
                           arguments: HomeArgs(initialState: 1, newOrder: order),
                         );
