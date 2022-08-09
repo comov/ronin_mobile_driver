@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderCreateArgs {
-  Map<String, dynamic> servicesMap = {};
+  Iterable<Map<String, dynamic>> servicesMap = {};
 
   OrderCreateArgs({required this.servicesMap});
 }

@@ -131,6 +131,13 @@ Widget newOrder(
                     if (value.isEmpty())
                       Text(value.emptyData)
                     else
+                      ElevatedButton(onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          "/order/new",
+                          arguments: OrderCreateArgs(servicesMap: value.servicesMap.values),
+                        );
+                      }, child: const Text("Оформить заказ")),
                       for (var item in value.servicesMap.values.toList())
                         if (item["checked"] == true)
                           Column(children: [
@@ -141,14 +148,9 @@ Widget newOrder(
                               },
                               child: Text('${item["obj"].title}'),
                             ),
-                                ElevatedButton(onPressed: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    "/order/new",
-                                    arguments: OrderCreateArgs(servicesMap: item),
-                                  );
-                                }, child: Text("Оформить заказ"))
                           ]),
+
+
                   ],
                 ),
               ),
