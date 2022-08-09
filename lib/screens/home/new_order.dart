@@ -158,18 +158,6 @@ Widget newOrder(
       });
 }
 
-List<Widget> getSelectedServices(Map<int, Map<String, dynamic>> servicesMap) {
-  return [
-    for (final service in servicesMap.values)
-      if (service["checked"] == true)
-        Text(
-            "${service["obj"].title} ${service["obj"].id} (${service["checked"]})")
-  ];
-}
-
-List<Widget> getSelectedServices1(List<Service> selectedServices) {
-  return [for (var service in selectedServices) Text(service.title)];
-}
 
 void _showModalBottomSheet(
   BuildContext context,

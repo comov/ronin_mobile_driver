@@ -8,6 +8,8 @@ import 'package:car_helper/screens/order/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
+import 'package:car_helper/entities/car.dart';
+
 
 class OrderCreateArgs {
   Map<int, Map<String, dynamic>> servicesMaps = {};
@@ -27,6 +29,7 @@ class _OrderNewState extends State<OrderNew> {
   String customerComment = "";
   String pickUpAddress = "";
 
+
   // final Map<int, Map<String, dynamic>> _servicesMap = {};
 
   @override
@@ -37,6 +40,9 @@ class _OrderNewState extends State<OrderNew> {
     final services = args.servicesMaps;
 
     FocusManager.instance.primaryFocus?.unfocus();
+
+    List<Car> carList = [];
+
 
     // for (final i in services) {
     //   _servicesMap[i.id] = {"checked": false, "obj": i};
@@ -89,6 +95,7 @@ class _OrderNewState extends State<OrderNew> {
             ),
             const Padding(
               padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+              for (car in carList)
               child: Text("Выберите Авто:"),
             ),
             const Padding(
