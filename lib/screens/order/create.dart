@@ -3,9 +3,12 @@ import 'dart:async';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/resources/api_order_create.dart';
 import 'package:car_helper/screens/home/index.dart';
+import 'package:car_helper/screens/home/new_order.dart';
 import 'package:car_helper/screens/order/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
+
 
 class OrderCreateArgs {
   Iterable<Map<String, dynamic>> servicesMap = {};
@@ -40,14 +43,63 @@ class _OrderNewState extends State<OrderNew> {
     return Scaffold(
       appBar: AppBar(title: const Text("Создание заказа")),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+
         children: [
-          const Text("Что входит в услугу"),
-          const Text("Описание того, что входит в услугу"),
-          ElevatedButton(
-            onPressed: () {
-              // _showModalBottomSheet(context, _servicesMap);
+
+          const Text("Форма заказа", style: TextStyle(fontSize: 34),),
+          const Text("Все заявки обрабатываются в течении 2х часов, начинаем выполнять на следующий день, чтобы заранее могли забронировать очередь в СТО", style: TextStyle(fontSize: 15),),
+         Card(
+           child: ExpansionTileCard(
+             title: Text('Выбранные услуги'),
+             children: <Widget>[
+               const Divider(
+                 thickness: 1.0,
+                 height: 1.0,
+               ),
+               Align(
+                 alignment: Alignment.center,
+                 child: Padding(
+                   padding: const EdgeInsets.symmetric(
+                     // horizontal: 16.0,
+                     // vertical: 8.0,
+                   ),
+                   child: Column(
+                     children: <Widget>[
+                       const SizedBox(height: 5),
+                       for (var item in servicesMap.values.toList())
+                         if (item["checked"] == true)
+                           Text('${item["obj"].title}'),
+
+                       // const SizedBox(height: 5),
+                     ],
+                   ),
+                 ),
+               ),
+             ],
+           ),
+         ),
+          Text("Выберите Авто:"),
+          Text("Адрес откуда забрать авто:"),
+          TextField(
+            onChanged: (whereisthecar) {
             },
-            child: const Text("Выбирете услугу"),
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: '',
+            ),
+          ),
+          Text("Выберите удобное для Вас время:"),
+          Text("тут какой-то пикер"),
+          Divider(),
+          Text("Пожелания\Комментарии"),
+          TextField(
+            onChanged: (customerComment) {
+            },
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: '',
+            ),
           ),
           ElevatedButton(
             onPressed: () {
