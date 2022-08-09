@@ -117,9 +117,7 @@ class _IndexState extends State<Index> with MainState {
             title: Text(widgetOptions[_selectedBottom]![0]),
             toolbarHeight: 30.0,
           ),
-          body: Center(
-            child: widgetOptions[_selectedBottom]![1](context),
-          ),
+          body: widgetOptions[_selectedBottom]![1](context),
           bottomNavigationBar: BottomNavigationBar(
             // backgroundColor: Colors.white10,
             // elevation: 0,

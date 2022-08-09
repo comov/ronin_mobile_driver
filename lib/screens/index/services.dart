@@ -31,136 +31,166 @@ Widget renderOrders(BuildContext context) {
   final controller = Get.put(selectedServiceController);
 
   return FutureBuilder<String>(
-      future: loadInitialData(),
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: Text("Загрузка...")),
-          );
-        }
+    future: loadInitialData(),
+    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Scaffold(
+          body: Center(child: Text("Загрузка...")),
+        );
+      }
 
-        if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Ошибка при загрузке приложения :("),
-                  Text("${snapshot.error}"),
-                ],
-              ),
+      if (snapshot.hasError) {
+        return Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Ошибка при загрузке приложения :("),
+                Text("${snapshot.error}"),
+              ],
             ),
-          );
-        }
+          ),
+        );
+      }
 
-        switch (snapshot.data!) {
-          case "tokenNotFound":
-            {
-              debugPrint("authToken is empty: $authToken");
-              return const SignIn();
-            }
-          case "":
-            {
-              debugPrint("authToken is expired: $authToken");
-              return const SignIn();
-            }
-        }
-        final categoriesBlock = GridView.count(
-          crossAxisCount: 2,
-          childAspectRatio: 1.4,
-          padding: const EdgeInsets.all(20),
-          children: List.generate(categories.length, (index) {
-            return TextButton(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
-                    ),
-                    width: double.infinity,
-                    height: 100,
-                    // padding: EdgeInsets.all(32),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        categories[index].title,
-                        style: const TextStyle(color: Colors.white),
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                      ),
+      switch (snapshot.data!) {
+        case "tokenNotFound":
+          {
+            debugPrint("authToken is empty: $authToken");
+            return const SignIn();
+          }
+        case "":
+          {
+            debugPrint("authToken is expired: $authToken");
+            return const SignIn();
+          }
+      }
+      final categoriesBlock = GridView.count(
+        crossAxisCount: 2,
+        childAspectRatio: 1.65,
+        children: List.generate(categories.length, (index) {
+          return TextButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.only(left: 4, right: 4),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.black87,
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                  ),
+                  width: double.infinity,
+                  height: 100,
+                  // padding: EdgeInsets.all(32),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      categories[index].title,
+                      style: const TextStyle(color: Colors.white),
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                ],
-              ),
-              onPressed: () async {
-                _showModalBottomSheet(
-                  context,
-                  servicesMap,
-                  categories[index].services,
-                );
-              },
-            );
-          }),
-        );
+                ),
+              ],
+            ),
+            onPressed: () async {
+              _showModalBottomSheet(
+                context,
+                servicesMap,
+                categories[index].services,
+              );
+            },
+          );
+        }),
+      );
 
-        final view = ListView(
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           children: [
-            SizedBox(
-              height: 280,
+            Expanded(
               child: categoriesBlock,
             ),
             Card(
-              //     child: Column(
-              //   // children: getSelectedServices(servicesMap),
-              //   children: getSelectedServices1(selectedServices),
-              // )
-              child: GetBuilder<SelectedServiceController>(
-                init: selectedServiceController,
-                builder: (value) => getSelectedServicesCard(
-                  context,
-                  controller,
-                  value,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GetBuilder<SelectedServiceController>(
+                  init: selectedServiceController,
+                  builder: (value) => getSelectedServicesCard(
+                    context,
+                    controller,
+                    value,
+                  ),
                 ),
               ),
-            )
+            ),
           ],
-        );
-
-        return view;
-      });
+        ),
+      );
+    },
+  );
 }
 
 Widget getSelectedServicesCard(context, controller, value) {
   List<Widget> children = [];
   if (value.isEmpty()) {
-    children.add(Text(value.emptyData));
+    children.add(
+      const ListTile(
+        title: Text("Выберите категорию и тип услуги"),
+        subtitle: Text(
+          "Вы можете выбрать услуги с разных категорий и"
+          " оформить заказ на удобное вам время",
+        ),
+      ),
+    );
   } else {
+    List<Widget> services = [];
+
     for (var item in value.servicesMap.values.toList()) {
       if (item.checked == true) {
-        children.add(Column(children: [
-          TextButton(
-            onPressed: () {
-              controller.checked(
-                item.service.id,
-                !item.checked,
-              );
-            },
-            child: Text(item.service.title),
-          ),
-        ]));
+        final serviceItem = CheckboxListTile(
+          title: Text(item.service.title),
+          value: item.checked,
+          onChanged: (bool? value) {
+            controller.checked(item.service.id, value);
+          },
+        );
+        services.add(serviceItem);
       }
     }
 
     children.add(
-      ElevatedButton(
+      const Align(
+        alignment: Alignment.topLeft,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 8.0),
+          child: Text("Выбранные услуги"),
+        ),
+      ),
+    );
+    children.add(
+      Container(
+        constraints: const BoxConstraints(maxHeight: 260),
+        // height: 380,
+        child: SingleChildScrollView(
+          child: Column(
+            children: services,
+          ),
+        ),
+      ),
+    );
+    children.add(
+      SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.black,
+          ),
+          child: const Text("Продолжить"),
           onPressed: () {
             Navigator.pushNamed(
               context,
@@ -170,11 +200,14 @@ Widget getSelectedServicesCard(context, controller, value) {
               ),
             );
           },
-          child: const Text("Оформить заказ")),
+        ),
+      ),
     );
   }
 
-  return Column(children: children);
+  return Column(
+    children: children,
+  );
 }
 
 void _showModalBottomSheet(

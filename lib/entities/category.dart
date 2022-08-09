@@ -14,7 +14,13 @@ class Category {
   factory Category.fromJson(Map<String, dynamic> json) {
     final services = <Service>[];
     for (final item in json["services"]) {
-      services.add(Service(id: item["id"], title: item["title"]));
+      services.add(
+        Service(
+          id: item["id"],
+          title: item["title"],
+          description: item["description"],
+        ),
+      );
     }
     return Category(
       title: json["title"],
@@ -49,7 +55,13 @@ List<Category> decodeCategories(List<dynamic> categoriesJson) {
   for (final item in categoriesJson) {
     final List<Service> services = [];
     for (final i in item["services"]) {
-      services.add(Service(id: i["id"], title: i["title"]));
+      services.add(
+        Service(
+          id: i["id"],
+          title: i["title"],
+          description: i["description"],
+        ),
+      );
     }
 
     final category = Category(

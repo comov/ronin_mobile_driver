@@ -12,11 +12,7 @@ late String authToken;
 
 List<Order> orders = [];
 
-Widget bottomOrders(
-  BuildContext context,
-  // List<Category> categories,
-  // List<Order> orders,
-) {
+Widget bottomOrders(BuildContext context) {
   return FutureBuilder<String>(
     future: loadInitialData1(),
     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {

@@ -64,11 +64,16 @@ class Order {
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
-
     final services = <Service>[];
 
     for (final item in json["services"]) {
-      services.add(Service(id: item["id"], title: item["title"]));
+      services.add(
+        Service(
+          id: item["id"],
+          title: item["title"],
+          description: item["description"],
+        ),
+      );
     }
     final photos = <Photo>[];
     if (json["photos"] != null) {
