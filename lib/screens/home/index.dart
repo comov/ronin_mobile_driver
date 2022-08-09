@@ -9,10 +9,11 @@ import 'package:car_helper/screens/home/new_order.dart';
 import 'package:car_helper/screens/home/orders.dart';
 import 'package:car_helper/screens/home/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String homeIcon = "assets/images/icon/tabbarhome.svg";
+const String homeIcon = "assets/images/icon/taskbar.svg";
 const String servicesIcon = "assets/images/icon/TabBarServices.svg";
 const String ordersIcon = "assets/images/icon/TabBarOrders.svg";
 const String profileIcon = "assets/images/icon/TabBarProfile.svg";
@@ -49,6 +50,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    SystemChannels.textInput.invokeMethod('TexInput.hide');
     super.initState();
 
     widgetOptions = {
@@ -114,6 +116,7 @@ class _HomeState extends State<Home> {
               debugPrint("authToken is expired: $authToken");
               return const SignIn();
             }
+
         }
         return Scaffold(
           appBar: AppBar(title: Text(widgetOptions[_selectedBottom]![0])),

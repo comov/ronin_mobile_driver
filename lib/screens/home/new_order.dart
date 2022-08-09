@@ -16,15 +16,11 @@ String phoneNumber = "";
 String refreshKey = "";
 
 List<Category> categories = [];
-List<Service> selectedServices = [];
 
 final Map<int, Map<String, dynamic>> servicesMap = {};
 
 Widget newOrder(
   BuildContext context,
-  // List<Category> categories,
-  // List<Order> orders,
-  // Map<int, Map<String, dynamic>> servicesMap,
 ) {
   final selectedServiceController = SelectedServiceController();
   selectedServiceController.setMap(servicesMap);
@@ -106,7 +102,6 @@ Widget newOrder(
                   context,
                   servicesMap,
                   categories[index].services,
-                  selectedServices,
                 );
               },
             );
@@ -131,26 +126,27 @@ Widget newOrder(
                     if (value.isEmpty())
                       Text(value.emptyData)
                     else
-                      ElevatedButton(onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          "/order/new",
-                          arguments: OrderCreateArgs(servicesMap: value.servicesMap.values),
-                        );
-                      }, child: const Text("Оформить заказ")),
-                      for (var item in value.servicesMap.values.toList())
-                        if (item["checked"] == true)
-                          Column(children: [
-                            TextButton(
-                              onPressed: () {
-                                controller.checked(
-                                    item["obj"].id, !item["checked"]);
-                              },
-                              child: Text('${item["obj"].title}'),
-                            ),
-                          ]),
-
-
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              "/order/new",
+                              arguments: OrderCreateArgs(
+                                  servicesMaps: value.servicesMap),
+                            );
+                          },
+                          child: const Text("Оформить заказ")),
+                    for (var item in value.servicesMap.values.toList())
+                      if (item["checked"] == true)
+                        Column(children: [
+                          TextButton(
+                            onPressed: () {
+                              controller.checked(
+                                  item["obj"].id, !item["checked"]);
+                            },
+                            child: Text('${item["obj"].title}'),
+                          ),
+                        ]),
                   ],
                 ),
               ),
@@ -179,7 +175,6 @@ void _showModalBottomSheet(
   BuildContext context,
   Map<int, Map<String, dynamic>> servicesMap,
   List<Service> services,
-  List<Service> selectedServices,
 ) {
   showModalBottomSheet<void>(
     context: context,
@@ -187,7 +182,6 @@ void _showModalBottomSheet(
       return ListOfServices(
         servicesMap: servicesMap,
         services: services,
-        selectedServices: selectedServices,
       );
     },
   );
@@ -270,29 +264,24 @@ class ListOfServices extends StatefulWidget {
     Key? key,
     required this.servicesMap,
     required this.services,
-    required this.selectedServices,
   }) : super(key: key);
   final Map<int, Map<String, dynamic>> servicesMap;
   final List<Service> services;
-  final List<Service> selectedServices;
 
   @override
   State<ListOfServices> createState() => _ListOfServicesState(
         servicesMap: servicesMap,
         services: services,
-        selectedServices: selectedServices,
       );
 }
 
 class _ListOfServicesState extends State<ListOfServices> {
   final Map<int, Map<String, dynamic>> servicesMap;
   final List<Service> services;
-  final List<Service> selectedServices;
 
   _ListOfServicesState({
     required this.servicesMap,
     required this.services,
-    required this.selectedServices,
   });
 
   @override
@@ -312,17 +301,6 @@ class _ListOfServicesState extends State<ListOfServices> {
                   onChanged: (bool? value) {
                     setState(() {
                       controller.checked(services[index].id, value!);
-                      // if (selectedServices.contains(services[index])) {
-                      //   selectedServices.remove(services[index]);
-                      //   debugPrint("exist");
-                      //   debugPrint("selected: $selectedServices");
-                      //   controller.removeData(services[index]);
-                      // } else {
-                      //   controller.addData(services[index]);
-                      //
-                      //   selectedServices.add(services[index]);
-                      //   debugPrint("selected: $selectedServices");
-                      // }
                     });
                   },
                 );
