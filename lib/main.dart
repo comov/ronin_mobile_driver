@@ -35,8 +35,15 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(3)),
           ),
         ),
-        buttonTheme: const ButtonThemeData(
-          buttonColor: Colors.black,
+        inputDecorationTheme: const InputDecorationTheme(
+          labelStyle: TextStyle(color: Colors.black),
+          fillColor: Colors.black,
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.black),
+          ),
+        ),
+        textTheme: const TextTheme(
+          labelSmall: TextStyle(color: Colors.black),
         ),
         appBarTheme: const AppBarTheme(
           centerTitle: false,
@@ -61,6 +68,8 @@ class MyApp extends StatelessWidget {
         "/debug": (BuildContext context) => const DebugPage(),
         "/test": (BuildContext context) => const TestPage(),
       },
+      debugShowCheckedModeBanner: false,
+      showSemanticsDebugger: false,
     );
   }
 }
