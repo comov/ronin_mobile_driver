@@ -13,7 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String homeIcon = "assets/images/icon/tabbarhome.svg";
+const String homeIcon = "assets/images/icon/TabBarHome.svg";
 const String servicesIcon = "assets/images/icon/TabBarServices.svg";
 const String ordersIcon = "assets/images/icon/TabBarOrders.svg";
 const String profileIcon = "assets/images/icon/TabBarProfile.svg";
@@ -84,7 +84,6 @@ class _HomeState extends State<Home> {
     return FutureBuilder<String>(
       future: loadInitialData(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        // AsyncSnapshot<Your object type>
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: Text("Загрузка...")),
@@ -116,10 +115,12 @@ class _HomeState extends State<Home> {
               debugPrint("authToken is expired: $authToken");
               return const SignIn();
             }
-
         }
         return Scaffold(
-          appBar: AppBar(title: Text(widgetOptions[_selectedBottom]![0])),
+          appBar: AppBar(
+            title: Text(widgetOptions[_selectedBottom]![0]),
+            toolbarHeight: 30.0,
+          ),
           body: Center(
             child: widgetOptions[_selectedBottom]![1](
               context,

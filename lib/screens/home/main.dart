@@ -8,7 +8,6 @@ Widget bottomCategories(
   BuildContext context,
   // List<Category> categories,
   // List<Order> orders,
-  // Map<int, Map<String, dynamic>> servicesMap,
 ) {
   return ListView.separated(
     padding: const EdgeInsets.all(8),

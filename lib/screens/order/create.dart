@@ -1,20 +1,18 @@
 import 'dart:async';
 
+import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/resources/api_order_create.dart';
+import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/screens/home/index.dart';
 import 'package:car_helper/screens/home/new_order.dart';
 import 'package:car_helper/screens/order/detail.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:expansion_tile_card/expansion_tile_card.dart';
-import 'package:car_helper/entities/car.dart';
-
-import '../../resources/api_user_profile.dart';
-
 
 class OrderCreateArgs {
-  Map<int, Map<String, dynamic>> servicesMaps = {};
+  Map<int, SelectedService> servicesMaps = {};
 
   OrderCreateArgs({required this.servicesMaps});
 }
@@ -23,7 +21,6 @@ class OrderNew extends StatefulWidget {
   const OrderNew({Key? key}) : super(key: key);
 
   @override
-
   State<OrderNew> createState() => _OrderNewState();
 }
 
@@ -33,29 +30,13 @@ class _OrderNewState extends State<OrderNew> {
   String pickUpAddress = "";
   List<Car> carList = [];
 
-
-
-
-
-  // final Map<int, Map<String, dynamic>> _servicesMap = {};
-
   @override
   Widget build(BuildContext context) {
     loadFromStorage();
     final args = ModalRoute.of(context)!.settings.arguments as OrderCreateArgs;
 
     final services = args.servicesMaps;
-
     FocusManager.instance.primaryFocus?.unfocus();
-
-
-
-
-
-
-    // for (final i in services) {
-    //   _servicesMap[i.id] = {"checked": false, "obj": i};
-    //  }
 
     return Scaffold(
       appBar: AppBar(title: const Text("Создание заказа")),
@@ -91,9 +72,7 @@ class _OrderNewState extends State<OrderNew> {
                         children: <Widget>[
                           const SizedBox(height: 5),
                           for (var item in servicesMap.values.toList())
-                            if (item["checked"] == true)
-                              Text('${item["obj"].title}'),
-
+                            if (item.checked == true) Text(item.service.title),
                           // const SizedBox(height: 5),
                         ],
                       ),
@@ -102,23 +81,21 @@ class _OrderNewState extends State<OrderNew> {
                 ],
               ),
             ),
-             Padding(
-              padding: const EdgeInsets.only(top:8.0, bottom: 8.0),
-
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Column(
-              children: [
-                //возможно нужен контроллер
-                if (carList.isEmpty)
-                   const Text("У вас нету добавленных авто, можете добавить тут. ссылка на страничку добавления авто")
-                else
-                  const Text("Выберите Авто:")
-
-              ],
-
-             )
+                children: [
+                  //возможно нужен контроллер
+                  if (carList.isEmpty)
+                    const Text(
+                        "У вас нету добавленных авто, можете добавить тут. ссылка на страничку добавления авто")
+                  else
+                    const Text("Выберите Авто:")
+                ],
+              ),
             ),
             const Padding(
-              padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Text("Адрес откуда забрать авто:"),
             ),
             SizedBox(
@@ -127,19 +104,20 @@ class _OrderNewState extends State<OrderNew> {
                 onChanged: (text) => {pickUpAddress = text},
                 autofocus: true,
                 keyboardType: TextInputType.streetAddress,
-
                 decoration: InputDecoration(
                   labelText: "Название улицы, номер дома",
                   focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: const BorderSide(
-                        color: Colors.blue,
-                      )),
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: const BorderSide(
+                      color: Colors.blue,
+                    ),
+                  ),
                   enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
-                      )),
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: const BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
                 ),
                 initialValue: pickUpAddress,
                 validator: (value) {
@@ -150,22 +128,21 @@ class _OrderNewState extends State<OrderNew> {
                 },
               ),
             ),
-             Padding(
-              padding: const EdgeInsets.only(top:8.0, bottom: 8.0),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Column(
                 children: const [
                   Text("Выберите удобное для Вас время:"),
-
                 ],
-              )
+              ),
             ),
             const Padding(
-              padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Text("тут какой-то пикер"),
             ),
             const Divider(),
             const Padding(
-              padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Text("Пожелания/Комментарии"),
             ),
             TextField(
@@ -179,7 +156,12 @@ class _OrderNewState extends State<OrderNew> {
             ),
             ElevatedButton(
               onPressed: () {
-                _createOrder(services).then((order) {
+                final List<int> selectedServices = [
+                  for (final item in services.values)
+                    if (item.checked == true) item.service.id
+                ];
+
+                _createOrder(selectedServices).then((order) {
                   if (order != null) {
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       "/home",
@@ -206,32 +188,19 @@ class _OrderNewState extends State<OrderNew> {
     final pf = await SharedPreferences.getInstance();
     authToken = pf.getString("auth_token") ?? "";
 
-    // List<Car> carList = [];
-
-
     final getCarListResponse = await getCustomerCars(authToken);
     carList = getCarListResponse.cars;
-    debugPrint("debug");
-
-    debugPrint(carList.toString());
-
     return Future.value("Ok");
   }
 
-  Future<Order?> _createOrder(
-    Map<int, Map<String, dynamic>> checkedServices,
-  ) async {
-    final List<int> services = [];
-    checkedServices.forEach((id, info) {
-      if (info["checked"] == true) {
-        // debugPrint(services);
-        services.add(id);
-      }
-    });
+  Future<Order?> _createOrder(List<int> checkedServices) async {
+    final response = await createOrder(
+      authToken,
+      checkedServices,
+      customerComment,
+      pickUpAddress,
+    );
 
-    final response =
-        await createOrder(authToken, services, customerComment, pickUpAddress);
-    debugPrint("comment: $customerComment");
     switch (response.statusCode) {
       case 200:
         {

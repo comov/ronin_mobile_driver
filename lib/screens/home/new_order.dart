@@ -1,15 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/service.dart';
 import 'package:car_helper/resources/api_categories.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
+import 'package:car_helper/screens/order/create.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../order/create.dart';
 
 String authToken = "";
 String phoneNumber = "";
@@ -17,11 +15,16 @@ String refreshKey = "";
 
 List<Category> categories = [];
 
-final Map<int, Map<String, dynamic>> servicesMap = {};
+class SelectedService {
+  var checked = false;
+  final Service service;
 
-Widget newOrder(
-  BuildContext context,
-) {
+  SelectedService({required this.service});
+}
+
+final Map<int, SelectedService> servicesMap = {};
+
+Widget newOrder(BuildContext context) {
   final selectedServiceController = SelectedServiceController();
   selectedServiceController.setMap(servicesMap);
 
@@ -132,19 +135,22 @@ Widget newOrder(
                               context,
                               "/order/new",
                               arguments: OrderCreateArgs(
-                                  servicesMaps: value.servicesMap),
+                                servicesMaps: value.servicesMap,
+                              ),
                             );
                           },
                           child: const Text("Оформить заказ")),
                     for (var item in value.servicesMap.values.toList())
-                      if (item["checked"] == true)
+                      if (item.checked == true)
                         Column(children: [
                           TextButton(
                             onPressed: () {
                               controller.checked(
-                                  item["obj"].id, !item["checked"]);
+                                item.service.id,
+                                !item.checked,
+                              );
                             },
-                            child: Text('${item["obj"].title}'),
+                            child: Text(item.service.title),
                           ),
                         ]),
                   ],
@@ -158,10 +164,9 @@ Widget newOrder(
       });
 }
 
-
 void _showModalBottomSheet(
   BuildContext context,
-  Map<int, Map<String, dynamic>> servicesMap,
+  Map<int, SelectedService> servicesMap,
   List<Service> services,
 ) {
   showModalBottomSheet<void>(
@@ -177,46 +182,24 @@ void _showModalBottomSheet(
 
 Future<String> loadInitialData() async {
   final pf = await SharedPreferences.getInstance();
-
   var authToken = pf.getString("auth_token") ?? "";
 
-  final categoriesJson = pf.getString("categories") ?? "";
-  if (categoriesJson == "" || categoriesJson == "[]") {
-    final categoriesResponse = await getCategories(authToken);
-    switch (categoriesResponse.statusCode) {
-      case 200:
-        {
-          categories = categoriesResponse.categories;
-        }
-        break;
-      case 401:
-        {
-          return Future.value("tokenExpired");
-        }
-    }
-
-    pf.setString("categories", jsonEncode(encodeCategories(categories)));
-  } else {
-    final categoriesResponse = await getCategories(authToken);
-    switch (categoriesResponse.statusCode) {
-      case 200:
-        {
-          categories = categoriesResponse.categories;
-        }
-        break;
-      case 401:
-        {
-          return Future.value("tokenExpired");
-        }
-    }
-    pf.setString("categories", jsonEncode(encodeCategories(categories)));
-
-    categories = decodeCategories(jsonDecode(categoriesJson));
+  final categoriesResponse = await getCategories(authToken);
+  switch (categoriesResponse.statusCode) {
+    case 200:
+      {
+        categories = categoriesResponse.categories;
+      }
+      break;
+    case 401:
+      {
+        return Future.value("tokenExpired");
+      }
   }
 
   for (final category in categories) {
     for (final service in category.services) {
-      servicesMap[service.id] = {"checked": false, "obj": service};
+      servicesMap[service.id] = SelectedService(service: service);
     }
   }
 
@@ -226,20 +209,20 @@ Future<String> loadInitialData() async {
 class SelectedServiceController extends GetxController {
   String emptyData = "Выберите сервисы";
 
-  late final Map<int, Map<String, dynamic>> servicesMap;
+  late final Map<int, SelectedService> servicesMap;
 
-  void setMap(Map<int, Map<String, dynamic>> map) {
+  void setMap(Map<int, SelectedService> map) {
     servicesMap = map;
   }
 
   void checked(int serviceId, bool? value) {
-    servicesMap[serviceId]?["checked"] = value!;
+    servicesMap[serviceId]?.checked = value!;
     update();
   }
 
   bool isEmpty() {
     for (final service in servicesMap.values.toList()) {
-      if (service["checked"] == true) {
+      if (service.checked == true) {
         return false;
       }
     }
@@ -253,7 +236,7 @@ class ListOfServices extends StatefulWidget {
     required this.servicesMap,
     required this.services,
   }) : super(key: key);
-  final Map<int, Map<String, dynamic>> servicesMap;
+  final Map<int, SelectedService> servicesMap;
   final List<Service> services;
 
   @override
@@ -264,7 +247,7 @@ class ListOfServices extends StatefulWidget {
 }
 
 class _ListOfServicesState extends State<ListOfServices> {
-  final Map<int, Map<String, dynamic>> servicesMap;
+  final Map<int, SelectedService> servicesMap;
   final List<Service> services;
 
   _ListOfServicesState({
@@ -285,7 +268,7 @@ class _ListOfServicesState extends State<ListOfServices> {
               itemBuilder: (context, index) {
                 return CheckboxListTile(
                   title: Text(services[index].title),
-                  value: servicesMap[services[index].id]?["checked"],
+                  value: servicesMap[services[index].id]?.checked,
                   onChanged: (bool? value) {
                     setState(() {
                       controller.checked(services[index].id, value!);

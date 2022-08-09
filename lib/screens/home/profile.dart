@@ -19,7 +19,6 @@ Widget bottomProfile(
   BuildContext context,
   // List<Category> categories,
   // List<Order> orders,
-  // Map<int, Map<String, dynamic>> servicesMap,
 ) {
   return FutureBuilder<String>(
     future: loadInitialData(),
