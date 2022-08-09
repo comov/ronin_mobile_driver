@@ -1,7 +1,7 @@
 import 'package:car_helper/screens/authorization/auth_screen.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:car_helper/screens/debug_page_screen.dart';
-import 'package:car_helper/screens/home/index.dart';
+import 'package:car_helper/screens/index/index.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:car_helper/screens/order/detail.dart';
 import 'package:car_helper/screens/test_page_screen.dart';
@@ -19,9 +19,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "CarHelpers",
-      initialRoute: "/home",
+      initialRoute: "/index",
       routes: {
-        "/home": (BuildContext context) => const Home(),
+        "/index": (BuildContext context) => const Index(),
         "/signin": (BuildContext context) => const SignIn(),
         "/auth": (BuildContext context) => const Auth(),
         "/order/new": (BuildContext context) => const OrderNew(),

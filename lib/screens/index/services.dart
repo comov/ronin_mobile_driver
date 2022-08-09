@@ -24,7 +24,7 @@ class SelectedService {
 
 final Map<int, SelectedService> servicesMap = {};
 
-Widget newOrder(BuildContext context) {
+Widget renderOrders(BuildContext context) {
   final selectedServiceController = SelectedServiceController();
   selectedServiceController.setMap(servicesMap);
 
@@ -124,36 +124,10 @@ Widget newOrder(BuildContext context) {
               // )
               child: GetBuilder<SelectedServiceController>(
                 init: selectedServiceController,
-                builder: (value) => Column(
-                  children: <Widget>[
-                    if (value.isEmpty())
-                      Text(value.emptyData)
-                    else
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              "/order/new",
-                              arguments: OrderCreateArgs(
-                                servicesMaps: value.servicesMap,
-                              ),
-                            );
-                          },
-                          child: const Text("Оформить заказ")),
-                    for (var item in value.servicesMap.values.toList())
-                      if (item.checked == true)
-                        Column(children: [
-                          TextButton(
-                            onPressed: () {
-                              controller.checked(
-                                item.service.id,
-                                !item.checked,
-                              );
-                            },
-                            child: Text(item.service.title),
-                          ),
-                        ]),
-                  ],
+                builder: (value) => getSelectedServicesCard(
+                  context,
+                  controller,
+                  value,
                 ),
               ),
             )
@@ -162,6 +136,45 @@ Widget newOrder(BuildContext context) {
 
         return view;
       });
+}
+
+Widget getSelectedServicesCard(context, controller, value) {
+  List<Widget> children = [];
+  if (value.isEmpty()) {
+    children.add(Text(value.emptyData));
+  } else {
+    for (var item in value.servicesMap.values.toList()) {
+      if (item.checked == true) {
+        children.add(Column(children: [
+          TextButton(
+            onPressed: () {
+              controller.checked(
+                item.service.id,
+                !item.checked,
+              );
+            },
+            child: Text(item.service.title),
+          ),
+        ]));
+      }
+    }
+
+    children.add(
+      ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              "/order/new",
+              arguments: OrderCreateArgs(
+                servicesMaps: value.servicesMap,
+              ),
+            );
+          },
+          child: const Text("Оформить заказ")),
+    );
+  }
+
+  return Column(children: children);
 }
 
 void _showModalBottomSheet(

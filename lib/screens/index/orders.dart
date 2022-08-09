@@ -8,9 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final DateFormat formatter = DateFormat("d MMMM yyyy, hh:mm");
 
-String authToken = "";
-String phoneNumber = "";
-String refreshKey = "";
+late String authToken;
 
 List<Order> orders = [];
 
@@ -99,9 +97,7 @@ Widget bottomOrders(
 Future<String> loadInitialData1() async {
   final pf = await SharedPreferences.getInstance();
 
-  var authToken = pf.getString("auth_token") ?? "";
-  var phoneNumber = pf.getString("phone_number") ?? "";
-  var refreshKey = pf.getString("refresh_key") ?? "";
+  authToken = pf.getString("auth_token") ?? "";
 
   final getOrderListResponse = await getOrders(authToken);
   orders = getOrderListResponse.orders;

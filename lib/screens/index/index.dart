@@ -1,19 +1,18 @@
 import 'package:car_helper/entities/car.dart';
-import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/entities/service.dart';
 import 'package:car_helper/entities/user.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
-import 'package:car_helper/screens/home/main.dart';
-import 'package:car_helper/screens/home/new_order.dart';
-import 'package:car_helper/screens/home/orders.dart';
-import 'package:car_helper/screens/home/profile.dart';
+import 'package:car_helper/screens/index/main.dart';
+import 'package:car_helper/screens/index/orders.dart';
+import 'package:car_helper/screens/index/profile.dart';
+import 'package:car_helper/screens/index/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String homeIcon = "assets/images/icon/TabBarHome.svg";
+const String homeIcon = "assets/images/icon/TabBarMain.svg";
 const String servicesIcon = "assets/images/icon/TabBarServices.svg";
 const String ordersIcon = "assets/images/icon/TabBarOrders.svg";
 const String profileIcon = "assets/images/icon/TabBarProfile.svg";
@@ -25,17 +24,14 @@ class HomeArgs {
   HomeArgs({required this.initialState, this.newOrder});
 }
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class Index extends StatefulWidget {
+  const Index({Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Index> createState() => _IndexState();
 }
 
-class _HomeState extends State<Home> {
-  List<Category> categories = [];
-  List<Order> orders = [];
-
+class _IndexState extends State<Index> with MainState {
   String authToken = "";
   String phoneNumber = "";
   String refreshKey = "";
@@ -54,8 +50,8 @@ class _HomeState extends State<Home> {
     super.initState();
 
     widgetOptions = {
-      0: ["Главная", bottomCategories],
-      1: ["Новый заказ", newOrder],
+      0: ["Главная", renderMain],
+      1: ["Услуги", renderOrders],
       2: ["Заказы", bottomOrders],
       3: ["Профиль", bottomProfile],
     };
@@ -107,7 +103,7 @@ class _HomeState extends State<Home> {
         switch (snapshot.data!) {
           case "tokenNotFound":
             {
-              debugPrint("authToken is empty: $authToken");
+              debugPrint("authToken is empty: ${this.authToken}");
               return const SignIn();
             }
           case "tokenExpired":
@@ -122,12 +118,7 @@ class _HomeState extends State<Home> {
             toolbarHeight: 30.0,
           ),
           body: Center(
-            child: widgetOptions[_selectedBottom]![1](
-              context,
-              // categories,
-              // orders,
-              // _servicesMap,
-            ),
+            child: widgetOptions[_selectedBottom]![1](context),
           ),
           bottomNavigationBar: BottomNavigationBar(
             // backgroundColor: Colors.white10,
