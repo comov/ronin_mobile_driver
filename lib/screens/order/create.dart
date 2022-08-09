@@ -2,21 +2,17 @@ import 'dart:async';
 
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
-import 'package:car_helper/entities/service.dart';
 import 'package:car_helper/resources/api_order_create.dart';
 import 'package:car_helper/screens/home/index.dart';
 import 'package:car_helper/screens/order/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class OrderCreateArgs {
   final Category category;
 
   OrderCreateArgs({required this.category});
 }
-
-
 
 class OrderNew extends StatefulWidget {
   const OrderNew({Key? key}) : super(key: key);
@@ -124,5 +120,3 @@ class _OrderNewState extends State<OrderNew> {
     return Future.value(response.order);
   }
 }
-
-

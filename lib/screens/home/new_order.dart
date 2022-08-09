@@ -3,36 +3,20 @@ import 'dart:convert';
 
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/service.dart';
-import 'package:flutter/material.dart';
-import 'package:car_helper/screens/authorization/sign_in_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:car_helper/resources/api_categories.dart';
+import 'package:car_helper/screens/authorization/sign_in_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 String authToken = "";
 String phoneNumber = "";
 String refreshKey = "";
 
 List<Category> categories = [];
-List<Service> selectedservices = [];
+List<Service> selectedServices = [];
 
-
-final Map<int, Map<String, dynamic>> _servicesMap = {};
-
-var servicesMap = _servicesMap;
-
-Future<List<Service>> aStream() async {
-  List<Service> selected = [];
-
-for (var item in selectedservices) {
-
-  selected.add(item);
-}
-return selected;
-}
-
+final Map<int, Map<String, dynamic>> servicesMap = {};
 
 Widget newOrder(
   BuildContext context,
@@ -40,7 +24,10 @@ Widget newOrder(
   // List<Order> orders,
   // Map<int, Map<String, dynamic>> servicesMap,
 ) {
-  final controller = Get.put(SelectedServiceController());
+  final selectedServiceController = SelectedServiceController();
+  selectedServiceController.setMap(servicesMap);
+
+  final controller = Get.put(selectedServiceController);
 
   return FutureBuilder<String>(
       future: loadInitialData(),
@@ -83,43 +70,44 @@ Widget newOrder(
           padding: const EdgeInsets.all(20),
           children: List.generate(categories.length, (index) {
             return TextButton(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10),
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10),
-                          ),
-                        ),
-                        width: double.infinity,
-                        height: 100,
-                        // padding: EdgeInsets.all(32),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            categories[index].title,
-                            style: const TextStyle(color: Colors.white),
-                            maxLines: 2,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
                       ),
-                      // style: Theme.of(context).textTheme.headline5,
-                    ]),
-                onPressed: () async {
-                  _showModalBottomSheet(
-                    context,
-                    servicesMap,
-                    categories[index].services,
-                    selectedservices,
-                  );
-                });
+                    ),
+                    width: double.infinity,
+                    height: 100,
+                    // padding: EdgeInsets.all(32),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        categories[index].title,
+                        style: const TextStyle(color: Colors.white),
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              onPressed: () async {
+                _showModalBottomSheet(
+                  context,
+                  servicesMap,
+                  categories[index].services,
+                  selectedServices,
+                );
+              },
+            );
           }),
         );
 
@@ -130,44 +118,34 @@ Widget newOrder(
               child: categoriesBlock,
             ),
             Card(
-            //     child: Column(
-            //   // children: getSelectedServices(servicesMap),
-            //   children: getSelectedServices1(selectedservices),
-            // )
-              child: Container(
-                child: GetBuilder<SelectedServiceController>(
-                  init: SelectedServiceController(),
-                  builder: (value) =>
-                       Column(
-                         children: <Widget>[
-                           if (value.choosenData.isEmpty)
-                             Text('${value.emptyData}' ),
-
-                           if (value.choosenData.isNotEmpty)
-                           for (var item in value.choosenData)
-                             TextButton(
-                                 onPressed: () {
-                                   controller.removeData(item);
-                                 },
-                                 child: Text('${item}'))
-
-
-
-
-
-                         ],
-
-                       )
-
+              //     child: Column(
+              //   // children: getSelectedServices(servicesMap),
+              //   children: getSelectedServices1(selectedServices),
+              // )
+              child: GetBuilder<SelectedServiceController>(
+                init: selectedServiceController,
+                builder: (value) => Column(
+                  children: <Widget>[
+                    if (value.isEmpty())
+                      Text(value.emptyData)
+                    else
+                      for (var item in value.servicesMap.values.toList())
+                        if (item["checked"] == true)
+                          TextButton(
+                            onPressed: () {
+                              controller.checked(
+                                  item["obj"].id, !item["checked"]);
+                            },
+                            child: Text('${item["obj"].title}'),
+                          )
+                  ],
                 ),
-
-              )
+              ),
             )
           ],
         );
 
         return view;
-
       });
 }
 
@@ -180,34 +158,29 @@ List<Widget> getSelectedServices(Map<int, Map<String, dynamic>> servicesMap) {
   ];
 }
 
-List<Widget> getSelectedServices1(List<Service> selectedservice) {
-  return [for (var service in selectedservices) Text(service.title)];
+List<Widget> getSelectedServices1(List<Service> selectedServices) {
+  return [for (var service in selectedServices) Text(service.title)];
 }
 
 void _showModalBottomSheet(
   BuildContext context,
   Map<int, Map<String, dynamic>> servicesMap,
   List<Service> services,
-  List<Service> selectedservices,
+  List<Service> selectedServices,
 ) {
   showModalBottomSheet<void>(
     context: context,
     builder: (context) {
-
-        return ListOfServices(
-          servicesMap: servicesMap,
-          services: services,
-          selectedservices: selectedservices,
-        );
-
+      return ListOfServices(
+        servicesMap: servicesMap,
+        services: services,
+        selectedServices: selectedServices,
+      );
     },
   );
 }
 
-
-
 Future<String> loadInitialData() async {
-  // selectedservices = [];
   final pf = await SharedPreferences.getInstance();
 
   var authToken = pf.getString("auth_token") ?? "";
@@ -248,33 +221,34 @@ Future<String> loadInitialData() async {
 
   for (final category in categories) {
     for (final service in category.services) {
-      _servicesMap[service.id] = {"checked": false, "obj": service};
+      servicesMap[service.id] = {"checked": false, "obj": service};
     }
   }
 
   return Future.value("Ok");
 }
 
- class SelectedServiceController extends GetxController {
-  List choosenData = [];
-  String  emptyData = "Выберите сервисы";
+class SelectedServiceController extends GetxController {
+  String emptyData = "Выберите сервисы";
 
+  late final Map<int, Map<String, dynamic>> servicesMap;
 
-  void addData(var data) {
-    // data = [];
-    choosenData.add(data);
-    debugPrint("selecteddata: $choosenData");
+  void setMap(Map<int, Map<String, dynamic>> map) {
+    servicesMap = map;
+  }
 
+  void checked(int serviceId, bool? value) {
+    servicesMap[serviceId]?["checked"] = value!;
     update();
   }
-  void removeData(var data) {
-    // data = [];
 
-
-    choosenData.remove(data);
-    debugPrint("existdata-selected: $choosenData");
-
-    update();
+  bool isEmpty() {
+    for (final service in servicesMap.values.toList()) {
+      if (service["checked"] == true) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 
@@ -283,29 +257,30 @@ class ListOfServices extends StatefulWidget {
     Key? key,
     required this.servicesMap,
     required this.services,
-    required this.selectedservices,
-
+    required this.selectedServices,
   }) : super(key: key);
   final Map<int, Map<String, dynamic>> servicesMap;
   final List<Service> services;
-  final List<Service> selectedservices;
+  final List<Service> selectedServices;
 
   @override
   State<ListOfServices> createState() => _ListOfServicesState(
-      servicesMap: servicesMap,
-      services: services,
-      selectedservices: selectedservices
-  );
+        servicesMap: servicesMap,
+        services: services,
+        selectedServices: selectedServices,
+      );
 }
+
 class _ListOfServicesState extends State<ListOfServices> {
   final Map<int, Map<String, dynamic>> servicesMap;
   final List<Service> services;
-  final List<Service> selectedservices;
+  final List<Service> selectedServices;
 
-
-
-
-  _ListOfServicesState({required this.servicesMap, required this.services, required this.selectedservices});
+  _ListOfServicesState({
+    required this.servicesMap,
+    required this.services,
+    required this.selectedServices,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -323,24 +298,18 @@ class _ListOfServicesState extends State<ListOfServices> {
                   value: servicesMap[services[index].id]?["checked"],
                   onChanged: (bool? value) {
                     setState(() {
-
-                      servicesMap[services[index].id]?["checked"] = value!;
-
-                      if (selectedservices.contains(services[index])) {
-                        selectedservices.remove(services[index]);
-                        debugPrint("exist");
-                        debugPrint("selected: $selectedservices");
-                        controller.removeData(services[index]);
-
-
-                      }
-                      else  {
-                        controller.addData(services[index]);
-
-                        selectedservices.add(services[index]);
-                        debugPrint("selected: $selectedservices");
-                      }
-
+                      controller.checked(services[index].id, value!);
+                      // if (selectedServices.contains(services[index])) {
+                      //   selectedServices.remove(services[index]);
+                      //   debugPrint("exist");
+                      //   debugPrint("selected: $selectedServices");
+                      //   controller.removeData(services[index]);
+                      // } else {
+                      //   controller.addData(services[index]);
+                      //
+                      //   selectedServices.add(services[index]);
+                      //   debugPrint("selected: $selectedServices");
+                      // }
                     });
                   },
                 );

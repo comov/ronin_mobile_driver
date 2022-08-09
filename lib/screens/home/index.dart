@@ -1,7 +1,7 @@
-
 import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/order.dart';
+import 'package:car_helper/entities/service.dart';
 import 'package:car_helper/entities/user.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:car_helper/screens/home/main.dart';
@@ -11,9 +11,6 @@ import 'package:car_helper/screens/home/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../entities/service.dart';
-
 
 const String homeIcon = "assets/images/icon/tabbarhome.svg";
 const String servicesIcon = "assets/images/icon/TabBarServices.svg";
@@ -48,7 +45,7 @@ class _HomeState extends State<Home> {
   int _selectedBottom = 0;
   Map<int, List> widgetOptions = {};
 
-  List<Service> selectedservices = [];
+  List<Service> selectedServices = [];
 
   @override
   void initState() {
@@ -70,7 +67,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-
     // todo: need to implement
     // var args = ModalRoute.of(context)!.settings.arguments;
     // debugPrint("args $args");
@@ -205,7 +201,4 @@ class _HomeState extends State<Home> {
     }
     return Future.value("Ok");
   }
-
-
-
 }
