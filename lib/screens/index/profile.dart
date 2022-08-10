@@ -69,31 +69,37 @@ Widget bottomProfile(
                   child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "Фамилия: ${profile?.lastName}",
-                            textAlign: TextAlign.justify,
+                      child: ListTile(
+                        title: const Text("Данные пользователя:"),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "Фамилия: ${profile?.lastName}",
+                                textAlign: TextAlign.justify,
+                              ),
+                              Text(
+                                "Имя: ${profile?.firstName}",
+                                textAlign: TextAlign.justify,
+                              ),
+                              Text(
+                                "Номер телефона: ${profile?.phone}",
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    "/user/edit_profile",
+                                    arguments: UserEditArs(profile: profile),
+                                  );
+                                },
+                                child: const Text("Редактировать профиль"),
+                              ),
+                            ],
                           ),
-                          Text(
-                            "Имя: ${profile?.firstName}",
-                            textAlign: TextAlign.justify,
-                          ),
-                          Text(
-                            "Номер телефона: ${profile?.phone}",
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                "/user/edit_profile",
-                                arguments: UserEditArs(profile: profile),
-                              );
-                            },
-                            child: const Text("Редактировать профиль"),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -103,57 +109,77 @@ Widget bottomProfile(
             Flex(
               direction: Axis.horizontal,
               children: [
+                if (carList.isNotEmpty)
                 Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(3),
-                    itemCount: carList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ExpansionTileCard(
-                        borderRadius: BorderRadius.circular(16),
-                        shadowColor: const Color.fromRGBO(0, 0, 0, 0.5),
-                        title: Text(
-                            '${carList[index].brand} ${carList[index].model}'),
-                        subtitle: Text(carList[index].plateNumber),
-                        children: <Widget>[
-                          const Divider(
-                            thickness: 1.0,
-                            height: 1.0,
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                children: <Widget>[
-                                  Text("id: ${carList[index].id.toString()}"),
-                                  Text("Марка авто: ${carList[index].brand}"),
-                                  Text("Модель авто: ${carList[index].model}"),
-                                  Text(
-                                      "Гос. Номер: ${carList[index].plateNumber}"),
-                                  Text("VIN авто: ${carList[index].vin}"),
-                                  Text(
-                                      "Год авто: ${carList[index].year.toString()}"),
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, "/user/edit_car",
-                                            arguments: EditCarArgs(
-                                                editCar: carList[index]));
-                                      },
-                                      child: const Text("Редактировать Авто")),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const Divider(),
+
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: const Text("Авто пользователя:"),
+                        subtitle: ListView.separated(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.all(3),
+                          itemCount: carList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ExpansionTileCard(
+                              borderRadius: BorderRadius.circular(16),
+                              shadowColor: const Color.fromRGBO(0, 0, 0, 0.5),
+                              title: Text(
+                                  '${carList[index].brand} ${carList[index].model}'),
+                              subtitle: Text(carList[index].plateNumber),
+                              children: <Widget>[
+                                const Divider(
+                                  thickness: 1.0,
+                                  height: 1.0,
+                                ),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Text("id: ${carList[index].id.toString()}"),
+                                        Text("Марка авто: ${carList[index].brand}"),
+                                        Text("Модель авто: ${carList[index].model}"),
+                                        Text(
+                                            "Гос. Номер: ${carList[index].plateNumber}"),
+                                        Text("VIN авто: ${carList[index].vin}"),
+                                        Text(
+                                            "Год авто: ${carList[index].year.toString()}"),
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pushNamed(
+                                                  context, "/user/edit_car",
+                                                  arguments: EditCarArgs(
+                                                      editCar: carList[index]));
+                                            },
+                                            child: const Text("Редактировать Авто")),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                          separatorBuilder: (BuildContext context, int index) =>
+                              const Divider(),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
+            ),
+            ElevatedButton(
+              onPressed: () {
+                delFromStorage();
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  "/signin",
+                      (route) => false,
+                );
+              },
+              child: const Text("Выйти"),
             ),
             Flex(
               direction: Axis.horizontal,
@@ -172,16 +198,6 @@ Widget bottomProfile(
                         Text("refreshKey: $refreshKey"),
                         const Divider(),
 
-                        ElevatedButton(
-                          onPressed: () {
-                            delFromStorage();
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              "/signin",
-                              (route) => false,
-                            );
-                          },
-                          child: const Text("Выйти"),
-                        ),
                       ],
                     ),
                   ),

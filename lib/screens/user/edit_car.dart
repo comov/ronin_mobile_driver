@@ -197,7 +197,7 @@ class _EditCarState extends State<EditCar> {
                             ),
                           ),
                           validator: (value) {
-                              if (value!.length >= 4) {
+                              if (value!.length >= 5) {
                                 return "Поле может быть больше 4 символов";
                               }
 
