@@ -34,6 +34,28 @@ Future<ProfileResponse> getProfile(String authToken) async {
   );
 }
 
+Future<ProfileResponse> editProfile(String authToken, String firstName, String lastName) async {
+  final response = await http.put(
+    Uri.parse("https://stage.i-10.win/api/v1/user/profile"),
+    headers: <String, String>{
+      "Content-Type": "application/json; charset=UTF-8",
+      "Authorization": "Bearer $authToken",
+    },
+    body: jsonEncode({"first_name": firstName, "last_name": lastName}),
+
+  );
+  if (response.statusCode == 200) {
+    return ProfileResponse(
+      statusCode: response.statusCode,
+      profile: Profile.fromJson(jsonDecode(response.body)),
+    );
+  }
+  return ProfileResponse(
+    statusCode: response.statusCode,
+    error: ApiErrorResponse.fromJson(jsonDecode(response.body)),
+  );
+}
+
 class CarListResponse {
   final int statusCode;
 
