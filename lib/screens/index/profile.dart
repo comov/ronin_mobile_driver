@@ -3,7 +3,7 @@ import 'package:car_helper/entities/user.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/resources/refresh.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
-import 'package:car_helper/screens/user/edit.dart';
+import 'package:car_helper/screens/user/edit_profile.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -86,7 +86,7 @@ Widget bottomProfile(
                             onPressed: () {
                               Navigator.pushNamed(
                                 context,
-                                "/user/user_edit",
+                                "/user/edit_profile",
                                 arguments: UserEditArs(profile: profile),
                               );
                             },
@@ -164,8 +164,6 @@ Widget bottomProfile(
                         Text("refreshKey: $refreshKey"),
                         const Divider(),
 
-                        const Text("##### Кнопки #####"),
-                        Row(),
                         ElevatedButton(
                           onPressed: () {
                             delFromStorage();

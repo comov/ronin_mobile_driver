@@ -194,7 +194,7 @@ class _CreateCarState extends State<CreateCar> {
                       // );
                     });
                   },
-                  child: const Text("Создать заказ"),
+                  child: const Text("Добавить авто"),
                 ),
               ],
             ),
