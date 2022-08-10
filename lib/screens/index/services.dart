@@ -116,6 +116,9 @@ Widget renderOrders(BuildContext context) {
               child: categoriesBlock,
             ),
             Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16)
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: GetBuilder<SelectedServiceController>(

@@ -20,6 +20,7 @@ class _UserEditState extends State<UserEdit> {
     final args = ModalRoute.of(context)!.settings.arguments as UserEditArs;
     final profile = args.profile;
 
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Редактирование профиля"),
@@ -29,67 +30,82 @@ class _UserEditState extends State<UserEdit> {
           fontSize: 20,
         ),
       ),
-      body: ListView(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Flex(
-            direction: Axis.horizontal,
-            children: [
-              Expanded(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const SizedBox(height: 5),
-                          Text("Ваш номер телефона: ${profile?.phone}"),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                    title: const Text("Данные профиля"),
+                    subtitle: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        children: [
+                          // Text("Ваш номер телефона: ${profile?.phone}"),
                           TextField(
                             onChanged: (val) {
                               profile?.firstName = val;
                             },
-                            decoration: const InputDecoration(
-                              border: UnderlineInputBorder(),
-                              hintText: 'Введите имя ',
+                            decoration:  InputDecoration(
+                              border: const UnderlineInputBorder(),
+                              labelText: profile?.firstName,
+                              hintText: "Введите имя",
                             ),
                           ),
                           TextField(
                             onChanged: (val) {
                               profile?.lastName = val;
                             },
-                            decoration: const InputDecoration(
-                              border: UnderlineInputBorder(),
-                              hintText: 'Введите фамилию',
+                            decoration:  InputDecoration(
+                              border: const UnderlineInputBorder(),
+                              labelText: profile?.lastName,
+                              hintText: "Введите фамилию",
                             ),
                           ),
-                          const SizedBox(height: 5),
-                        ]),
-                  ),
-                ),
+                        ],
+                      ),
+                    )),
               ),
-            ],
-          ),
-          Flex(
-            direction: Axis.horizontal,
-            children: [
-              Expanded(
-                child: Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const <Widget>[Text("Добавить новое авто")],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {},
-              child: const Text("Сохранить"),
             ),
-          )
-        ],
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  title: const Text("Добавить новое авто"),
+                  subtitle: Column(
+                    children: const <Widget>[
+                      TextButton(onPressed: null, child: Text("Добавить Авто")),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  title: const Text("Удаление профиля"),
+                  subtitle: Column(
+                    children: const <Widget>[
+                      TextButton(
+                          onPressed: null, child: Text("Удаление профиля")),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text("Сохранить"),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -98,3 +114,4 @@ class _UserEditState extends State<UserEdit> {
     return Future.value("Ok");
   }
 }
+

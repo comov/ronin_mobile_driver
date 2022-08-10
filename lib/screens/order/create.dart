@@ -41,9 +41,16 @@ class _OrderNewState extends State<OrderNew> {
       future: loadFromStorage(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         return Scaffold(
-          appBar: AppBar(title: const Text("Создание заказа")),
+          appBar: AppBar(
+            title: const Text("Создание заказа"),
+            titleTextStyle: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
           body: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             child: ListView(
               // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -55,32 +62,32 @@ class _OrderNewState extends State<OrderNew> {
                   "Все заявки обрабатываются в течении 2х часов, начинаем выполнять на следующий день, чтобы заранее могли забронировать очередь в СТО",
                   style: TextStyle(fontSize: 15),
                 ),
-                Card(
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
                   child: ExpansionTileCard(
+                    borderRadius: BorderRadius.circular(16),
+                    shadowColor: const Color.fromRGBO(0, 0, 0, 0.5),
                     title: const Text('Выбранные услуги'),
                     children: <Widget>[
                       const Divider(
                         thickness: 1.0,
                         height: 1.0,
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              // horizontal: 16.0,
-                              // vertical: 8.0,
-                              ),
+
+                         Padding(
+                          padding: const EdgeInsets.all(16.0),
                           child: Column(
                             children: <Widget>[
-                              const SizedBox(height: 5),
                               for (var item in servicesMap.values.toList())
                                 if (item.checked == true)
-                                  Text(item.service.title),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                      child: Text(item.service.title)),
                               // const SizedBox(height: 5),
                             ],
                           ),
                         ),
-                      ),
+
                     ],
                   ),
                 ),
@@ -94,8 +101,7 @@ class _OrderNewState extends State<OrderNew> {
                             "У вас нету добавленных авто, можете добавить тут. ссылка на страничку добавления авто")
                       else
                         const Text("Выберите Авто:"),
-                      for (final car in carList)
-                          Text(car.displayName())
+                      for (final car in carList) Text(car.displayName())
                     ],
                   ),
                 ),
@@ -103,34 +109,37 @@ class _OrderNewState extends State<OrderNew> {
                   padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
                   child: Text("Адрес откуда забрать авто:"),
                 ),
-                SizedBox(
-                  height: 40,
-                  child: TextFormField(
-                    onChanged: (text) => {pickUpAddress = text},
-                    autofocus: true,
-                    keyboardType: TextInputType.streetAddress,
-                    decoration: InputDecoration(
-                      labelText: "Название улицы, номер дома",
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: const BorderSide(
-                          color: Colors.blue,
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: SizedBox(
+                    height: 40,
+                    child: TextFormField(
+                      onChanged: (text) => {pickUpAddress = text},
+                      autofocus: true,
+                      keyboardType: TextInputType.streetAddress,
+                      decoration: InputDecoration(
+                        labelText: "Название улицы, номер дома",
+                        focusedBorder: UnderlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: const BorderSide(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
+                      initialValue: pickUpAddress,
+                      validator: (value) {
+                        if (value?.length != 12) {
+                          return "Не больше 50 символов";
+                        }
+                        return null;
+                      },
                     ),
-                    initialValue: pickUpAddress,
-                    validator: (value) {
-                      if (value?.length != 12) {
-                        return "Не больше 50 символов";
-                      }
-                      return null;
-                    },
                   ),
                 ),
                 Padding(

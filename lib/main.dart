@@ -21,6 +21,14 @@ class MyApp extends StatelessWidget {
       title: "CarHelpers",
       initialRoute: "/index",
       theme: ThemeData(
+
+        scaffoldBackgroundColor: const Color.fromRGBO(245, 245, 245, 1),
+        cardTheme: CardTheme(
+          shadowColor: const Color.fromRGBO(0, 0, 0, 0.5),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             onPrimary: Colors.white,

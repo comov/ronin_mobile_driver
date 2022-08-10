@@ -57,136 +57,133 @@ Widget bottomProfile(
           }
       }
 
-      return ListView(
-        children: <Widget>[
-          Flex(
-            direction: Axis.horizontal,
-            children: [
-              Expanded(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: <Widget>[
+            Flex(
+              direction: Axis.horizontal,
+              children: [
+                Expanded(
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "Фамилия: ${profile?.lastName}",
+                            textAlign: TextAlign.justify,
+                          ),
+                          Text(
+                            "Имя: ${profile?.firstName}",
+                            textAlign: TextAlign.justify,
+                          ),
+                          Text(
+                            "Номер телефона: ${profile?.phone}",
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                "/user/user_edit",
+                                arguments: UserEditArs(profile: profile),
+                              );
+                            },
+                            child: const Text("Редактировать профиль"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Flex(
+              direction: Axis.horizontal,
+              children: [
+                Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(3),
+                    itemCount: carList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ExpansionTileCard(
+                        borderRadius: BorderRadius.circular(16),
+                        shadowColor: const Color.fromRGBO(0, 0, 0, 0.5),
+                          title: Text(
+                              '${carList[index].brand} ${carList[index].model}'),
+                          subtitle: Text(carList[index].plateNumber),
+                          children: <Widget>[
+                            const Divider(
+                              thickness: 1.0,
+                              height: 1.0,
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    Text("id: ${carList[index].id.toString()}"),
+                                    Text("Марка авто: ${carList[index].brand}"),
+                                    Text("Модель авто: ${carList[index].model}"),
+                                    Text(
+                                        "Гос. Номер: ${carList[index].plateNumber}"),
+                                    Text("VIN авто: ${carList[index].vin}"),
+                                    Text(
+                                        "Год авто: ${carList[index].year.toString()}"),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+
+                    },
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const Divider(),
+                  ),
+                ),
+              ],
+            ),
+            Flex(
+              direction: Axis.horizontal,
+              children: [
+                Expanded(
+                  child: Card(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        const SizedBox(height: 5),
-                        Text(
-                          "Фамилия: ${profile?.lastName}",
-                          textAlign: TextAlign.justify,
-                        ),
-                        Text(
-                          "Имя: ${profile?.firstName}",
-                          textAlign: TextAlign.start,
-                        ),
-                        Text(
-                          "Номер телефона: ${profile?.phone}",
-                        ),
-                        const SizedBox(height: 5),
-                        TextButton(
+                        // todo: Need to delete phoneNumber, authToken, refreshKey from this page
+                        const Text("##### Хранилище приложения #####"),
+                        const Divider(),
+                        Text("phoneNumber: $phoneNumber"),
+                        const Divider(),
+                        Text("authToken: $authToken"),
+                        const Divider(),
+                        Text("refreshKey: $refreshKey"),
+                        const Divider(),
+
+                        const Text("##### Кнопки #####"),
+                        Row(),
+                        ElevatedButton(
                           onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              "/user/user_edit",
-                              arguments: UserEditArs(profile: profile),
+                            delFromStorage();
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              "/signin",
+                              (route) => false,
                             );
                           },
-                          child: const Text("Редактировать профиль"),
+                          child: const Text("Выйти"),
                         ),
                       ],
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Flex(
-            direction: Axis.horizontal,
-            children: [
-              Expanded(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  // padding: const EdgeInsets.all(1),
-                  itemCount: carList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: ExpansionTileCard(
-                        title: Text(
-                            '${carList[index].brand} ${carList[index].model}'),
-                        subtitle: Text(carList[index].plateNumber),
-                        children: <Widget>[
-                          const Divider(
-                            thickness: 1.0,
-                            height: 1.0,
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  // horizontal: 16.0,
-                                  // vertical: 8.0,
-                                  ),
-                              child: Column(
-                                children: <Widget>[
-                                  const SizedBox(height: 5),
-                                  Text("id: ${carList[index].id.toString()}"),
-                                  Text("Марка авто: ${carList[index].brand}"),
-                                  Text("Модель авто: ${carList[index].model}"),
-                                  Text(
-                                      "Гос. Номер: ${carList[index].plateNumber}"),
-                                  Text("VIN авто: ${carList[index].vin}"),
-                                  Text(
-                                      "Год авто: ${carList[index].year.toString()}"),
-                                  // const SizedBox(height: 5),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const Divider(),
-                ),
-              ),
-            ],
-          ),
-          Flex(
-            direction: Axis.horizontal,
-            children: [
-              Expanded(
-                child: Card(
-                  child: Column(
-                    children: <Widget>[
-                      // todo: Need to delete phoneNumber, authToken, refreshKey from this page
-                      const Text("##### Хранилище приложения #####"),
-                      const Divider(),
-                      Text("phoneNumber: $phoneNumber"),
-                      const Divider(),
-                      Text("authToken: $authToken"),
-                      const Divider(),
-                      Text("refreshKey: $refreshKey"),
-                      const Divider(),
-
-                      const Text("##### Кнопки #####"),
-                      Row(),
-                      ElevatedButton(
-                        onPressed: () {
-                          delFromStorage();
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            "/signin",
-                            (route) => false,
-                          );
-                        },
-                        child: const Text("Выйти"),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       );
     },
   );
@@ -205,7 +202,6 @@ Future<String> loadInitialData() async {
   phoneNumber = pf.getString("phone_number") ?? "";
   refreshKey = pf.getString("refresh_key") ?? "";
 
-  if (profile == null) {
     final profileResponse = await getProfile(authToken);
     switch (profileResponse.statusCode) {
       case 200:
@@ -229,7 +225,7 @@ Future<String> loadInitialData() async {
           }
         }
     }
-  }
+
 
   final getCarListResponse = await getCustomerCars(authToken);
   carList = getCarListResponse.cars;
