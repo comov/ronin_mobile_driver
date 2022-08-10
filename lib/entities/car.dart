@@ -1,12 +1,12 @@
 class Car {
-  final int id;
-  final String brand;
-  final String model;
-  final String plateNumber;
-  final String? vin;
-  final int year;
-  final String createdAt;
-  final String modifiedAt;
+  int id;
+  String brand;
+  String model;
+  String plateNumber;
+  String? vin;
+  int year;
+  String createdAt;
+  String modifiedAt;
   bool expanded;
 
   Car({

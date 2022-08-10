@@ -3,6 +3,7 @@ import 'package:car_helper/entities/user.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/resources/refresh.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
+import 'package:car_helper/screens/user/edit_car.dart';
 import 'package:car_helper/screens/user/edit_profile.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
@@ -111,35 +112,42 @@ Widget bottomProfile(
                       return ExpansionTileCard(
                         borderRadius: BorderRadius.circular(16),
                         shadowColor: const Color.fromRGBO(0, 0, 0, 0.5),
-                          title: Text(
-                              '${carList[index].brand} ${carList[index].model}'),
-                          subtitle: Text(carList[index].plateNumber),
-                          children: <Widget>[
-                            const Divider(
-                              thickness: 1.0,
-                              height: 1.0,
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: <Widget>[
-                                    Text("id: ${carList[index].id.toString()}"),
-                                    Text("Марка авто: ${carList[index].brand}"),
-                                    Text("Модель авто: ${carList[index].model}"),
-                                    Text(
-                                        "Гос. Номер: ${carList[index].plateNumber}"),
-                                    Text("VIN авто: ${carList[index].vin}"),
-                                    Text(
-                                        "Год авто: ${carList[index].year.toString()}"),
-                                  ],
-                                ),
+                        title: Text(
+                            '${carList[index].brand} ${carList[index].model}'),
+                        subtitle: Text(carList[index].plateNumber),
+                        children: <Widget>[
+                          const Divider(
+                            thickness: 1.0,
+                            height: 1.0,
+                          ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: <Widget>[
+                                  Text("id: ${carList[index].id.toString()}"),
+                                  Text("Марка авто: ${carList[index].brand}"),
+                                  Text("Модель авто: ${carList[index].model}"),
+                                  Text(
+                                      "Гос. Номер: ${carList[index].plateNumber}"),
+                                  Text("VIN авто: ${carList[index].vin}"),
+                                  Text(
+                                      "Год авто: ${carList[index].year.toString()}"),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, "/user/edit_car",
+                                            arguments: EditCarArgs(
+                                                editCar: carList[index]));
+                                      },
+                                      child: const Text("Редактировать Авто")),
+                                ],
                               ),
                             ),
-                          ],
-                        );
-
+                          ),
+                        ],
+                      );
                     },
                     separatorBuilder: (BuildContext context, int index) =>
                         const Divider(),
@@ -200,30 +208,29 @@ Future<String> loadInitialData() async {
   phoneNumber = pf.getString("phone_number") ?? "";
   refreshKey = pf.getString("refresh_key") ?? "";
 
-    final profileResponse = await getProfile(authToken);
-    switch (profileResponse.statusCode) {
-      case 200:
-        {
-          profile = profileResponse.profile;
+  final profileResponse = await getProfile(authToken);
+  switch (profileResponse.statusCode) {
+    case 200:
+      {
+        profile = profileResponse.profile;
+      }
+      break;
+    case 401:
+      {
+        final refreshResponse = await refreshToken(refreshKey);
+        if (refreshResponse.statusCode == 200) {
+          authToken = refreshResponse.auth!.token;
+          refreshKey = refreshResponse.auth!.refreshKey;
+          saveAuthData(authToken, refreshKey);
+          break;
+        } else {
+          debugPrint(
+              "refreshResponse.statusCode: ${refreshResponse.statusCode}");
+          debugPrint("refreshResponse.error: ${refreshResponse.error}");
+          return Future.value("tokenExpired");
         }
-        break;
-      case 401:
-        {
-          final refreshResponse = await refreshToken(refreshKey);
-          if (refreshResponse.statusCode == 200) {
-            authToken = refreshResponse.auth!.token;
-            refreshKey = refreshResponse.auth!.refreshKey;
-            saveAuthData(authToken, refreshKey);
-            break;
-          } else {
-            debugPrint(
-                "refreshResponse.statusCode: ${refreshResponse.statusCode}");
-            debugPrint("refreshResponse.error: ${refreshResponse.error}");
-            return Future.value("tokenExpired");
-          }
-        }
-    }
-
+      }
+  }
 
   final getCarListResponse = await getCustomerCars(authToken);
   carList = getCarListResponse.cars;

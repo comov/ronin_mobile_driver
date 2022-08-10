@@ -64,7 +64,8 @@ class _AuthState extends State<Auth> {
                             (route) => false,
                           );
                         }
-                      });
+                      }
+                      );
                     }
                   },
                   child: const Text("Отправить"),

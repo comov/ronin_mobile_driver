@@ -36,6 +36,7 @@ class _OrderNewState extends State<OrderNew> {
 
     final services = args.servicesMaps;
     FocusManager.instance.primaryFocus?.unfocus();
+    final formKey = GlobalKey<FormState>();
 
     return FutureBuilder<String>(
       future: loadFromStorage(),
@@ -51,148 +52,168 @@ class _OrderNewState extends State<OrderNew> {
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ListView(
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Форма заказа",
-                  style: TextStyle(fontSize: 34),
-                ),
-                const Text(
-                  "Все заявки обрабатываются в течении 2х часов, начинаем выполнять на следующий день, чтобы заранее могли забронировать очередь в СТО",
-                  style: TextStyle(fontSize: 15),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: ExpansionTileCard(
-                    borderRadius: BorderRadius.circular(16),
-                    shadowColor: const Color.fromRGBO(0, 0, 0, 0.5),
-                    title: const Text('Выбранные услуги'),
-                    children: <Widget>[
-                      const Divider(
-                        thickness: 1.0,
-                        height: 1.0,
-                      ),
-
-                         Padding(
+            child: Form(
+              key: formKey,
+              child: ListView(
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Форма заказа",
+                    style: TextStyle(fontSize: 34),
+                  ),
+                  const Text(
+                    "Все заявки обрабатываются в течении 2х часов, начинаем выполнять на следующий день, чтобы заранее могли забронировать очередь в СТО",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: ExpansionTileCard(
+                      borderRadius: BorderRadius.circular(16),
+                      shadowColor: const Color.fromRGBO(0, 0, 0, 0.5),
+                      title: const Text('Выбранные услуги'),
+                      children: <Widget>[
+                        const Divider(
+                          thickness: 1.0,
+                          height: 1.0,
+                        ),
+                        Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
                             children: <Widget>[
                               for (var item in servicesMap.values.toList())
                                 if (item.checked == true)
                                   Align(
-                                    alignment: Alignment.centerLeft,
+                                      alignment: Alignment.centerLeft,
                                       child: Text(item.service.title)),
                               // const SizedBox(height: 5),
                             ],
                           ),
                         ),
-
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  child: Column(
-                    children: [
-                      //возможно нужен контроллер
-                      if (carList.isEmpty)
-                        const Text(
-                            "У вас нету добавленных авто, можете добавить тут. ссылка на страничку добавления авто")
-                      else
-                        const Text("Выберите Авто:"),
-                      for (final car in carList) Text(car.displayName())
-                    ],
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  child: Text("Адрес откуда забрать авто:"),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  child: SizedBox(
-                    height: 40,
-                    child: TextFormField(
-                      onChanged: (text) => {pickUpAddress = text},
-                      autofocus: true,
-                      keyboardType: TextInputType.streetAddress,
-                      decoration: InputDecoration(
-                        labelText: "Название улицы, номер дома",
-                        focusedBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: const BorderSide(
-                            color: Colors.blue,
-                          ),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                      initialValue: pickUpAddress,
-                      validator: (value) {
-                        if (value?.length != 12) {
-                          return "Не больше 50 символов";
-                        }
-                        return null;
-                      },
+                      ],
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  child: Column(
-                    children: const [
-                      Text("Выберите удобное для Вас время:"),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Column(
+                      children: [
+                        //возможно нужен контроллер
+                        if (carList.isEmpty)
+                          const Text(
+                              "У вас нету добавленных авто, можете добавить тут. ссылка на страничку добавления авто")
+                        else
+                          const Text("Выберите Авто:"),
+                        for (final car in carList) Text(car.displayName())
+                      ],
+                    ),
                   ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  child: Text("тут какой-то пикер"),
-                ),
-                const Divider(),
-                const Padding(
-                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  child: Text("Пожелания/Комментарии"),
-                ),
-                TextField(
-                  onChanged: (text) {
-                    customerComment = text;
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: '',
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Text("Адрес откуда забрать авто:"),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    final List<int> selectedServices = [
-                      for (final item in services.values)
-                        if (item.checked == true) item.service.id
-                    ];
-
-                    _createOrder(selectedServices).then((order) {
-                      if (order != null) {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          "/index",
-                          (route) => false,
-                          arguments: HomeArgs(initialState: 1, newOrder: order),
-                        );
-                        Navigator.pushNamed(
-                          context,
-                          "/order/detail",
-                          arguments: OrderDetailArgs(order: order),
-                        );
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: SizedBox(
+                      height: 40,
+                      child: TextFormField(
+                        onChanged: (text) => {pickUpAddress = text},
+                        autofocus: true,
+                        keyboardType: TextInputType.streetAddress,
+                        decoration: InputDecoration(
+                          labelText: "Название улицы, номер дома",
+                          focusedBorder: UnderlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                            borderSide: const BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                            borderSide: const BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value!.length >= 50) {
+                            return "Поле может быть больше 50 символов";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Column(
+                      children: const [
+                        Text("Выберите удобное для Вас время:"),
+                      ],
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Text("тут какой-то пикер"),
+                  ),
+                  const Divider(),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Text("Пожелания/Комментарии"),
+                  ),
+                  TextFormField(
+                    onChanged: (text) => {customerComment = text},
+                    autofocus: true,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      hintText: "Ваше пожелания и предложение о работах с Вашим авто",
+                      focusedBorder: UnderlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: const BorderSide(
+                          color: Colors.blue,
+                        ),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value!.length >= 50) {
+                        return "Поле может быть больше 50 символов";
                       }
-                    });
-                  },
-                  child: const Text("Создать заказ"),
-                ),
-              ],
+                      return null;
+                    },
+                  ),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        final List<int> selectedServices = [
+                          for (final item in services.values)
+                            if (item.checked == true) item.service.id
+                        ];
+
+                        _createOrder(selectedServices).then((order) {
+                          if (order != null) {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              "/index",
+                              (route) => false,
+                              arguments:
+                                  HomeArgs(initialState: 1, newOrder: order),
+                            );
+                            Navigator.pushNamed(
+                              context,
+                              "/order/detail",
+                              arguments: OrderDetailArgs(order: order),
+                            );
+                          }
+                        });
+                      }
+                    },
+                    child: const Text("Создать заказ"),
+                  ),
+                ],
+              ),
             ),
           ),
         );
