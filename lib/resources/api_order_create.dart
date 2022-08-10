@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:car_helper/entities/api.dart';
 import 'package:car_helper/entities/order.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class CreateOrderResponse {
@@ -34,7 +33,6 @@ Future<CreateOrderResponse> createOrder(
     );
 
   }
-  debugPrint("1-3");
 
   return CreateOrderResponse(
     statusCode: response.statusCode,

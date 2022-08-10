@@ -76,8 +76,16 @@ class _UserEditState extends State<UserEdit> {
                 child: ListTile(
                   title: const Text("Добавить новое авто"),
                   subtitle: Column(
-                    children: const <Widget>[
-                      TextButton(onPressed: null, child: Text("Добавить Авто")),
+                    children:  <Widget>[
+                      TextButton(onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          "/user/create_car",
+
+                        );
+                      },
+
+                          child: Text("Добавить Авто")),
                     ],
                   ),
                 ),

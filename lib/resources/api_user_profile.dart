@@ -67,3 +67,21 @@ Future<CarListResponse> getCustomerCars(String authToken) async {
   }
   return res;
 }
+
+Future<CarListResponse> createCar(String authToken, String brand, String model, int year, String plateNumber, String vin) async {
+  final response = await http.post(
+    Uri.parse("https://stage.i-10.win/api/v1/user/cars"),
+    headers: <String, String>{
+      "Content-Type": "application/json; charset=UTF-8",
+      "Authorization": "Bearer $authToken",
+    },
+    body: jsonEncode({"brand": brand, "model": model, "year": year, "plate_number": plateNumber, "vin": vin}),
+
+  );
+  final res = CarListResponse(statusCode: response.statusCode, cars: []);
+  if (response.statusCode == 200) {
+    res.parseJson(jsonDecode(response.body));
+  }
+  return res;
+}
+
