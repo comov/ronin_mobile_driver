@@ -203,7 +203,21 @@ class _CreateCarState extends State<CreateCar> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         _createCar().then(
-                          (response) {
+                          (value) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Result'),
+                                content: Text('Result is $value'),
+                                actions: [
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Go Back'))
+                                ],
+                              ),
+                            );
                             // Navigator.of(context).pushNamedAndRemoveUntil(
                             //   "/user/edit",
                             //       (route) => false,

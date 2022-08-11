@@ -116,8 +116,8 @@ class _EditCarState extends State<EditCar> {
                             ),
                           ),
                           validator: (value) {
-                            if (value!.length >= 10) {
-                              return "Поле может быть больше 10 символов";
+                            if (value!.length >= 16) {
+                              return "Поле может быть больше 15 символов";
                             }
                             return null;
                           },
@@ -170,8 +170,8 @@ class _EditCarState extends State<EditCar> {
                             ),
                           ),
                           validator: (value) {
-                            if (value!.length >= 12) {
-                              return "Поле может быть больше 12 символов";
+                            if (value!.length >= 16) {
+                              return "Поле может быть больше 15 символов";
                             }
                             return null;
                           },
@@ -197,9 +197,9 @@ class _EditCarState extends State<EditCar> {
                             ),
                           ),
                           validator: (value) {
-                              if (value!.length >= 5) {
-                                return "Поле может быть больше 4 символов";
-                              }
+                            if (value!.length >= 5) {
+                              return "Поле может быть больше 4 символов";
+                            }
 
                             return null;
                           },
@@ -207,15 +207,25 @@ class _EditCarState extends State<EditCar> {
                       ],
                     )),
                   ]),
+                  Card(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _deleteCar(carItem).then((value) {
+                          if (value == 200) {
+                            Navigator.pop(context);
+                          }
+                        });
+                      },
+                      child: const Text("Удалить авто"),
+                    ),
+                  ),
                   ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
-                        _editCar(carItem).then((response) {
-                          // Navigator.of(context).pushNamedAndRemoveUntil(
-                          //   "/user/edit",
-                          //       (route) => false,
-                          //   // arguments: HomeArgs(initialState: 2),
-                          // );
+                        _editCar(carItem).then((value) {
+                          if (value == 200) {
+                            Navigator.pop(context, true);
+                          }
                         });
                       }
                     },
@@ -250,6 +260,27 @@ class _EditCarState extends State<EditCar> {
       case 403:
         {
           debugPrint("У Вас превышен лимит авто: ${response.statusCode}");
+          break;
+        }
+      default:
+        {
+          debugPrint("Ошибка при редактировании Авто: ${response.statusCode}");
+          debugPrint("response.error!.error=${response.error!.error}");
+          debugPrint("response.error!.message=${response.error!.message}");
+          break;
+        }
+    }
+
+    return Future.value(response.statusCode);
+  }
+
+  Future<int> _deleteCar(carItem) async {
+    final response = await deleteCar(authToken, carItem.id);
+    switch (response.statusCode) {
+      case 200:
+        {
+          final car = response.cars;
+          debugPrint("Авто было отредактировано! Card.id: $car");
           break;
         }
       default:

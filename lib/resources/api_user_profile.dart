@@ -34,7 +34,8 @@ Future<ProfileResponse> getProfile(String authToken) async {
   );
 }
 
-Future<ProfileResponse> editProfile(String authToken, String firstName, String lastName) async {
+Future<ProfileResponse> editProfile(
+    String authToken, String firstName, String lastName) async {
   final response = await http.put(
     Uri.parse("https://stage.i-10.win/api/v1/user/profile"),
     headers: <String, String>{
@@ -42,7 +43,6 @@ Future<ProfileResponse> editProfile(String authToken, String firstName, String l
       "Authorization": "Bearer $authToken",
     },
     body: jsonEncode({"first_name": firstName, "last_name": lastName}),
-
   );
   if (response.statusCode == 200) {
     return ProfileResponse(
@@ -67,15 +67,14 @@ Future<ProfileResponse> deleteProfile(String authToken) async {
   if (response.statusCode == 200) {
     return ProfileResponse(
       statusCode: response.statusCode,
-      profile: Profile.fromJson(jsonDecode(response.body)),
+      // profile: Profile.fromJson(jsonDecode(response.body)),
     );
   }
   return ProfileResponse(
     statusCode: response.statusCode,
-    error: ApiErrorResponse.fromJson(jsonDecode(response.body)),
+    // error: ApiErrorResponse.fromJson(jsonDecode(response.body)),
   );
 }
-
 
 class CarListResponse {
   final int statusCode;
@@ -111,15 +110,21 @@ Future<CarListResponse> getCustomerCars(String authToken) async {
   return res;
 }
 
-Future<CarListResponse> createCar(String authToken, String brand, String model, int year, String vin, String plateNumber) async {
+Future<CarListResponse> createCar(String authToken, String brand, String model,
+    int year, String vin, String plateNumber) async {
   final response = await http.post(
     Uri.parse("https://stage.i-10.win/api/v1/user/cars"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
     },
-    body: jsonEncode({"brand": brand, "model": model, "year": year, "plate_number": plateNumber, "vin": vin}),
-
+    body: jsonEncode({
+      "brand": brand,
+      "model": model,
+      "year": year,
+      "plate_number": plateNumber,
+      "vin": vin
+    }),
   );
   final res = CarListResponse(statusCode: response.statusCode, cars: []);
   if (response.statusCode == 200) {
@@ -128,20 +133,41 @@ Future<CarListResponse> createCar(String authToken, String brand, String model, 
   return res;
 }
 
-
-Future<CarListResponse> editCar(String authToken, int id, String brand, String model, int year, String plateNumber, String vin) async {
+Future<CarListResponse> editCar(String authToken, int id, String brand,
+    String model, int year, String plateNumber, String vin) async {
   final response = await http.put(
     Uri.parse("https://stage.i-10.win/api/v1/user/cars/$id"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
     },
-    body: jsonEncode({"brand": brand, "model": model, "year": year, "plate_number": plateNumber, "vin": vin}),
-
+    body: jsonEncode({
+      "brand": brand,
+      "model": model,
+      "year": year,
+      "plate_number": plateNumber,
+      "vin": vin
+    }),
   );
   final res = CarListResponse(statusCode: response.statusCode, cars: []);
   if (response.statusCode == 200) {
     res.parseJson(jsonDecode(response.body));
+  }
+  return res;
+}
+
+Future<CarListResponse> deleteCar(String authToken, int id) async {
+  final response = await http.delete(
+    Uri.parse("https://stage.i-10.win/api/v1/user/cars/$id"),
+    headers: <String, String>{
+      "Content-Type": "application/json; charset=UTF-8",
+      "Authorization": "Bearer $authToken",
+    },
+  );
+  final res = CarListResponse(statusCode: response.statusCode, cars: []);
+  if (response.statusCode == 200) {
+    // res.parseJson(jsonDecode(response.body));
+    // res = response.statusCode;
   }
   return res;
 }
