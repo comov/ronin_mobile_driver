@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:car_helper/entities/api.dart';
+import 'package:car_helper/main.dart';
 import 'package:http/http.dart' as http;
 
 class SignInResponse {
@@ -11,7 +12,7 @@ class SignInResponse {
 
 Future<SignInResponse> sigIn(String phoneNumber) async {
   final response = await http.post(
-    Uri.parse("https://stage.i-10.win/api/v1/signin?phone=$phoneNumber"),
+    Uri.parse("$backendURL/api/v1/signin?phone=$phoneNumber"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
     },

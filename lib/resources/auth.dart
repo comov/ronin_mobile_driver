@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:car_helper/entities/api.dart';
+import 'package:car_helper/main.dart';
 import 'package:http/http.dart' as http;
 
 class AuthResponse {
@@ -14,7 +15,7 @@ class AuthResponse {
 
 Future<AuthResponse> auth(String phoneNumber, String otp) async {
   final response = await http.post(
-    Uri.parse("https://stage.i-10.win/api/v1/auth?phone=$phoneNumber&otp=$otp"),
+    Uri.parse("$backendURL/api/v1/auth?phone=$phoneNumber&otp=$otp"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
     },

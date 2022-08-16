@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:car_helper/entities/api.dart';
 import 'package:car_helper/entities/category.dart';
+import 'package:car_helper/main.dart';
 import 'package:http/http.dart' as http;
 
 class CategoryListResponse {
@@ -25,7 +26,7 @@ class CategoryListResponse {
 
 Future<CategoryListResponse> getCategories(String authToken) async {
   final response = await http.get(
-    Uri.parse("https://stage.i-10.win/api/v1/services"),
+    Uri.parse("$backendURL/api/v1/services"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:car_helper/entities/api.dart';
 import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/entities/user.dart';
+import 'package:car_helper/main.dart';
 import 'package:http/http.dart' as http;
 
 class ProfileResponse {
@@ -16,7 +17,7 @@ class ProfileResponse {
 
 Future<ProfileResponse> getProfile(String authToken) async {
   final response = await http.get(
-    Uri.parse("https://stage.i-10.win/api/v1/user/profile"),
+    Uri.parse("$backendURL/api/v1/user/profile"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
@@ -37,7 +38,7 @@ Future<ProfileResponse> getProfile(String authToken) async {
 Future<ProfileResponse> editProfile(
     String authToken, String firstName, String lastName) async {
   final response = await http.put(
-    Uri.parse("https://stage.i-10.win/api/v1/user/profile"),
+    Uri.parse("$backendURL/api/v1/user/profile"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
@@ -58,7 +59,7 @@ Future<ProfileResponse> editProfile(
 
 Future<ProfileResponse> deleteProfile(String authToken) async {
   final response = await http.delete(
-    Uri.parse("https://stage.i-10.win/api/v1/user/profile"),
+    Uri.parse("$backendURL/api/v1/user/profile"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
@@ -97,7 +98,7 @@ class CarListResponse {
 
 Future<CarListResponse> getCustomerCars(String authToken) async {
   final response = await http.get(
-    Uri.parse("https://stage.i-10.win/api/v1/user/cars"),
+    Uri.parse("$backendURL/api/v1/user/cars"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
@@ -113,7 +114,7 @@ Future<CarListResponse> getCustomerCars(String authToken) async {
 Future<CarListResponse> createCar(String authToken, String brand, String model,
     int year, String vin, String plateNumber) async {
   final response = await http.post(
-    Uri.parse("https://stage.i-10.win/api/v1/user/cars"),
+    Uri.parse("$backendURL/api/v1/user/cars"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
@@ -136,7 +137,7 @@ Future<CarListResponse> createCar(String authToken, String brand, String model,
 Future<CarListResponse> editCar(String authToken, int id, String brand,
     String model, int year, String plateNumber, String vin) async {
   final response = await http.put(
-    Uri.parse("https://stage.i-10.win/api/v1/user/cars/$id"),
+    Uri.parse("$backendURL/api/v1/user/cars/$id"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
@@ -158,7 +159,7 @@ Future<CarListResponse> editCar(String authToken, int id, String brand,
 
 Future<CarListResponse> deleteCar(String authToken, int id) async {
   final response = await http.delete(
-    Uri.parse("https://stage.i-10.win/api/v1/user/cars/$id"),
+    Uri.parse("$backendURL/api/v1/user/cars/$id"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
