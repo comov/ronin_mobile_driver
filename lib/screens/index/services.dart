@@ -6,6 +6,7 @@ import 'package:car_helper/resources/api_categories.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -85,13 +86,27 @@ Widget renderOrders(BuildContext context) {
                   width: double.infinity,
                   height: 100,
                   // padding: EdgeInsets.all(32),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      categories[index].title,
-                      style: const TextStyle(color: Colors.white),
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16,top: 16),
+                    child: Column(
+                      // mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            categories[index].title,
+                            style: const TextStyle(color: Colors.white, fontSize: 15),
+                            maxLines: 2,
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                        const Spacer(),
+
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: SvgPicture.network(categories[index].image, height: 40, width: 40,),
+                        )
+                      ],
                     ),
                   ),
                 ),
@@ -304,28 +319,38 @@ class _ListOfServicesState extends State<ListOfServices> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(SelectedServiceController());
-    return SizedBox(
-      height: 500,
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: services.length,
-              itemBuilder: (context, index) {
-                return CheckboxListTile(
-                  title: Text(services[index].title),
-                  value: servicesMap[services[index].id]?.checked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      controller.checked(services[index].id, value!);
-                    });
-                  },
-                );
-              },
+    return ListView(
+      children: [
+      SizedBox(
+        height: 500,
+        child: Column(
+          children: [
+            Expanded(
+
+              child: ListView.builder(
+                itemCount: services.length,
+                itemBuilder: (context, index) {
+                  return CheckboxListTile(
+                    title: Text(services[index].title),
+                    value: servicesMap[services[index].id]?.checked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        controller.checked(services[index].id, value!);
+                      });
+                    },
+                  );
+                },
+
+              ),
             ),
-          ),
-        ],
+            ElevatedButton(onPressed: () {
+              Navigator.pop(context);
+
+            }, child: const Text("Добавить"))
+          ],
+        ),
       ),
+      ],
     );
   }
 }

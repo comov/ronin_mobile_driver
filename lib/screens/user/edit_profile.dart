@@ -124,6 +124,7 @@ class _UserEditState extends State<UserEdit> {
                           children: <Widget>[
                             TextButton(
                                 onPressed: () {
+                                  //TO DO need to add check if customer has 3 cars in profile
                                   Navigator.pushNamed(
                                     context,
                                     "/user/create_car",
@@ -141,10 +142,39 @@ class _UserEditState extends State<UserEdit> {
                       child: ListTile(
                         title: const Text("Удаление профиля"),
                         subtitle: Column(
-                          children: const <Widget>[
+                          children: <Widget>[
                             TextButton(
-                                onPressed: null,
-                                child: Text("Удаление профиля")),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Удаление профиля'),
+                                      content: const Text('Вы уверены?'),
+                                      actions: [
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              _deleteProfile().then((response) {
+                                                if (response == 200) {
+                                                  delFromStorage();
+                                                  Navigator.of(context)
+                                                      .pushNamedAndRemoveUntil(
+                                                    "/signin",
+                                                    (route) => false,
+                                                  );
+                                                }
+
+                                              });
+                                            },
+                                            child: const Text(
+                                              'Удалить',
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ))
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: const Text("Удаление профиля")),
                           ],
                         ),
                       ),
@@ -161,9 +191,7 @@ class _UserEditState extends State<UserEdit> {
                             //       (route) => false,
                             //   // arguments: HomeArgs(initialState: 2),
                             // );
-                          }
-                          );
-
+                          });
                         }
                       },
                       child: const Text("Сохранить"),
@@ -186,7 +214,8 @@ class _UserEditState extends State<UserEdit> {
   }
 
   Future<int> _editProfile(profile) async {
-    final response = await editProfile(authToken, profile.firstName, profile.lastName);
+    final response =
+        await editProfile(authToken, profile.firstName, profile.lastName);
     switch (response.statusCode) {
       case 200:
         {
@@ -196,7 +225,8 @@ class _UserEditState extends State<UserEdit> {
         }
       default:
         {
-          debugPrint("Ошибка при редактировании профиля: ${response.statusCode}");
+          debugPrint(
+              "Ошибка при редактировании профиля: ${response.statusCode}");
           debugPrint("response.error!.error=${response.error!.error}");
           debugPrint("response.error!.message=${response.error!.message}");
           break;
@@ -204,5 +234,33 @@ class _UserEditState extends State<UserEdit> {
     }
 
     return Future.value(response.statusCode);
+  }
+
+  Future<int> _deleteProfile() async {
+    final response = await deleteProfile(authToken);
+    switch (response.statusCode) {
+      case 200:
+        {
+          final profile = response.profile;
+          debugPrint("Профиль был отредактирован! Card.id: $profile");
+          break;
+        }
+      default:
+        {
+          debugPrint(
+              "Ошибка при редактировании профиля: ${response.statusCode}");
+          debugPrint("response.error!.error=${response.error!.error}");
+          debugPrint("response.error!.message=${response.error!.message}");
+          break;
+        }
+    }
+
+    return Future.value(response.statusCode);
+  }
+
+  void delFromStorage() async {
+    final pf = await SharedPreferences.getInstance();
+    pf.remove("auth_token");
+    pf.remove("refresh_key");
   }
 }
