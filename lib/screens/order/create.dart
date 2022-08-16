@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-
 class OrderCreateArgs {
   Map<int, SelectedService> servicesMaps = {};
 
@@ -31,6 +30,8 @@ class _OrderNewState extends State<OrderNew> {
   String customerComment = "";
   String pickUpAddress = "";
   List<Car> carList = [];
+  final now = DateTime.now();
+  DateTime? pickUpTime;
 
   @override
   Widget build(BuildContext context) {
@@ -114,8 +115,7 @@ class _OrderNewState extends State<OrderNew> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: SizedBox(
-                      height: 40,
+
                       child: TextFormField(
                         onChanged: (text) => {pickUpAddress = text},
                         autofocus: true,
@@ -143,34 +143,35 @@ class _OrderNewState extends State<OrderNew> {
                         },
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: Column(
-                      children: const [
-                        Text("Выберите удобное для Вас время:"),
-                      ],
-                    ),
-                  ),
-                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: TextButton(
-                        onPressed: () {
-                          DatePicker.showDateTimePicker(context,
-                              showTitleActions: true,
-                              minTime: DateTime.now().add(const Duration(hours: 2)),
-                              // maxTime: DateTime.now(),
-                              onChanged: (date) {
-                                print('change $date');
-                              }, onConfirm: (date) {
-                                print('confirm $date');
-                              }, currentTime: DateTime.now(), locale: LocaleType.ru);
-                        },
-                        child: const Text(
-                          'show date time picker (Russian)',
-                          style: TextStyle(color: Colors.blue),
-                        )
-                    )
+
+                  Row(
+                    children: [
+                      Column(
+                        children: const [
+                          Text("Выберите удобное для Вас время:"),
+                        ],
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            DatePicker.showDateTimePicker(context,
+                                showTitleActions: true,
+                                minTime: DateTime.now(),
+                                maxTime:
+                                    DateTime.now().add(const Duration(days: 7)),
+                                onChanged: (date) {
+                             pickUpTime = date;
+                            }, onConfirm: (date) {
+                                  pickUpTime = date;
+                            },
+                                currentTime: DateTime.now()
+                                    .add(const Duration(hours: 2)),
+                                locale: LocaleType.ru);
+                          },
+                          child: const Text(
+                            'Выбрать дату',
+                            style: TextStyle(color: Colors.blue),
+                          ))
+                    ],
                   ),
                   const Divider(),
                   const Padding(
@@ -182,7 +183,8 @@ class _OrderNewState extends State<OrderNew> {
                     autofocus: true,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
-                      hintText: "Ваше пожелания и предложение о работах с Вашим авто",
+                      hintText:
+                          "Ваше пожелания и предложение о работах с Вашим авто",
                       focusedBorder: UnderlineInputBorder(
                         borderRadius: BorderRadius.circular(25.0),
                         borderSide: const BorderSide(
@@ -202,7 +204,6 @@ class _OrderNewState extends State<OrderNew> {
                       return null;
                     },
                   ),
-
                   ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
@@ -254,7 +255,9 @@ class _OrderNewState extends State<OrderNew> {
       checkedServices,
       customerComment,
       pickUpAddress,
+      pickUpTime?.toIso8601String(),
     );
+    debugPrint('time pickupTime: ${pickUpTime?.toIso8601String()}');
 
     switch (response.statusCode) {
       case 200:
