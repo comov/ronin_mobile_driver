@@ -152,9 +152,25 @@ class _OrderNewState extends State<OrderNew> {
                       ],
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: Text("тут какой-то пикер"),
+                   Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: TextButton(
+                        onPressed: () {
+                          DatePicker.showDateTimePicker(context,
+                              showTitleActions: true,
+                              minTime: DateTime.now().add(const Duration(hours: 2)),
+                              // maxTime: DateTime.now(),
+                              onChanged: (date) {
+                                print('change $date');
+                              }, onConfirm: (date) {
+                                print('confirm $date');
+                              }, currentTime: DateTime.now(), locale: LocaleType.ru);
+                        },
+                        child: const Text(
+                          'show date time picker (Russian)',
+                          style: TextStyle(color: Colors.blue),
+                        )
+                    )
                   ),
                   const Divider(),
                   const Padding(
