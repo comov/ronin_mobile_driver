@@ -73,7 +73,7 @@ class _OrderDetailState extends State<OrderDetail> {
               ),
             ],
           ),
-          Text("Фотографии до: ${order.photos.}"),
+          Text("Фотографии до: ${order.photos}"),
           Text("Фотографии после: ${order.photos}"),
 
         ],
