@@ -21,14 +21,25 @@ class _OrderDetailState extends State<OrderDetail> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as OrderDetailArgs;
     final order = args.order;
+    var before = order.photos.where((element) => element?.kind == 0).toList();
+    String? beforeImage;
+    for (var element in before) {
+      beforeImage = element?.imageUrl;
+    }
+    var after = order.photos.where((element) => element?.kind == 1);
+    String? afterImage;
+    for (var element in after) {
+      afterImage = element?.imageUrl;
+    }
+
     final DateFormat formatter = DateFormat("d MMMM yyyy, hh:mm");
 
     return Scaffold(
       appBar: AppBar(title: const Text("Создание заказа")),
-      body: Column(
+      body: ListView(
         children: [
           Text("ID заявки: ${order.id}"),
-          Text("Заявка создана: ${order.createdAt.day.toString()}"),
+          Text("Заявка создана: ${formatter.format(order.createdAt)}"),
           Text("Заявка обновлена: ${order.modifiedAt}"),
           Text("Статус: ${order.status}"),
           const Divider(),
@@ -63,19 +74,23 @@ class _OrderDetailState extends State<OrderDetail> {
                 child: Column(
                   children: <Widget>[
                     for (var item in order.services)
-
                       Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(item.title)),
+                          alignment: Alignment.centerLeft,
+                          child: Text(item.title)),
                     // const SizedBox(height: 5),
                   ],
                 ),
               ),
             ],
           ),
-          Text("Фотографии до: ${order.photos}"),
-          Text("Фотографии после: ${order.photos}"),
-
+          const Text("Фотографии до:"),
+          before.isNotEmpty
+              ? Image.network("$beforeImage")
+              : const Text(""),
+          const Text("Фотографии после:"),
+          after.isNotEmpty
+              ? Image.network("$afterImage")
+              : const Text(""),
         ],
       ),
     );

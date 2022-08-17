@@ -46,7 +46,7 @@ class Order {
   final Driver? driver;
   final Employee? employee;
   final List<Service> services;
-  final List<Photo> photos;
+  final List<Photo?> photos;
 
   const Order({
     required this.id,
@@ -87,7 +87,7 @@ class Order {
       comment: json["comment"],
       status: json["status"],
       pickUpAddress: json["pick_up_address"],
-      pickUpTime:  DateTime.tryParse(json["pick_up_time"].toString()),
+      pickUpTime: DateTime.tryParse(json["pick_up_time"].toString()),
       createdAt: DateTime.parse(json["created_at"]),
       modifiedAt: json["modified_at"],
       car: json["car"] == null ? Car.empty() : Car.fromJson(json["car"]),
@@ -99,6 +99,9 @@ class Order {
           : Employee.fromJson(json["employee"]),
       services: services,
       photos: photos,
+      // photos: json["photos"] == null ? Photo.empty() : Photo.fromJson(json["photos"]),
+
     );
   }
 }
+

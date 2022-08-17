@@ -9,13 +9,20 @@ Map<int, String> photoKindMap = {
 };
 
 class Photo {
-  final int kind;
+  late final int kind;
   final String imageUrl;
 
-  const Photo({
+   Photo({
     required this.kind,
     required this.imageUrl,
   });
+
+  factory Photo.empty() {
+    return  Photo(
+        kind: 0,
+        imageUrl: "",
+       );
+  }
 
   factory Photo.fromJson(Map<String, dynamic> json) {
     return Photo(
@@ -30,9 +37,9 @@ class Photo {
       "image_url": imageUrl,
     };
   }
-
-  @override
-  String toString() {
-    return "$imageUrl (#$kind)";
-  }
+  //
+  // @override
+  // String toString() {
+  //   return "$imageUrl (#$kind)";
+  // }
 }
