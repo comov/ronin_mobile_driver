@@ -342,12 +342,18 @@ class _ListOfServicesState extends State<ListOfServices> {
               },
             ),
           ),
-          ElevatedButton(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
 
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Добавить"))
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Добавить")),
+            ),
+          )
         ],
       ),
     );

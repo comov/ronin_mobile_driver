@@ -21,7 +21,7 @@ class _OrderDetailState extends State<OrderDetail> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as OrderDetailArgs;
     final order = args.order;
-    var before = order.photos.where((element) => element?.kind == 0).toList();
+    var before = order.photos.where((element) => element?.kind == 0);
     var after = order.photos.where((element) => element?.kind == 1);
 
 

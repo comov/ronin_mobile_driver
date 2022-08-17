@@ -62,24 +62,17 @@ Widget bottomOrders(BuildContext context) {
                   arguments: OrderDetailArgs(order: orders[index]),
                 );
               },
-              child: RichText(
-                text: TextSpan(
-                  children: <InlineSpan>[
-                    TextSpan(text: "${orders[index].id}"),
-                    const WidgetSpan(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 20),
-                      ),
-                    ),
-                    TextSpan(text: formatter.format(orders[index].createdAt)),
-                    const WidgetSpan(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 20, left: 10),
-                      ),
-                    ),
-                    TextSpan(text: orders[index].status),
-                  ],
-                ),
+              child: Row(
+                children: [
+                  Text(orders[index].id.toString()),
+                  const Spacer(),
+                  Text(formatter.format(orders[index].createdAt)),
+                  const Spacer(),
+                  SizedBox(
+                    width: 100,
+                      child: Text(orders[index].status, maxLines: 2, style: const TextStyle(color: Colors.blue),)
+                  ),
+                ],
               ),
             ),
           );
