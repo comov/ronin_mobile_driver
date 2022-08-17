@@ -22,15 +22,8 @@ class _OrderDetailState extends State<OrderDetail> {
     final args = ModalRoute.of(context)!.settings.arguments as OrderDetailArgs;
     final order = args.order;
     var before = order.photos.where((element) => element?.kind == 0).toList();
-    String? beforeImage;
-    for (var element in before) {
-      beforeImage = element?.imageUrl;
-    }
     var after = order.photos.where((element) => element?.kind == 1);
-    String? afterImage;
-    for (var element in after) {
-      afterImage = element?.imageUrl;
-    }
+
 
     final DateFormat formatter = DateFormat("d MMMM yyyy, hh:mm");
 
@@ -84,13 +77,22 @@ class _OrderDetailState extends State<OrderDetail> {
             ],
           ),
           const Text("Фотографии до:"),
-          before.isNotEmpty
-              ? Image.network("$beforeImage")
-              : const Text(""),
+          Column(
+            children: [
+              for (var image in before )
+                if (image != null)
+                Image.network(image.imageUrl)
+            ],
+          ),
           const Text("Фотографии после:"),
-          after.isNotEmpty
-              ? Image.network("$afterImage")
-              : const Text(""),
+
+          Column(
+            children: [
+              for (var image in after )
+                if (image != null)
+                  Image.network(image.imageUrl)
+            ],
+          ),
         ],
       ),
     );
