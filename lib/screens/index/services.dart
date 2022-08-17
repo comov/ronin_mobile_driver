@@ -87,7 +87,7 @@ Widget renderOrders(BuildContext context) {
                   height: 100,
                   // padding: EdgeInsets.all(32),
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 16,top: 16),
+                    padding: const EdgeInsets.only(left: 16, top: 16),
                     child: Column(
                       // mainAxisSize: MainAxisSize.max,
                       children: [
@@ -95,16 +95,20 @@ Widget renderOrders(BuildContext context) {
                           alignment: Alignment.topLeft,
                           child: Text(
                             categories[index].title,
-                            style: const TextStyle(color: Colors.white, fontSize: 15),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 15),
                             maxLines: 2,
                             textAlign: TextAlign.start,
                           ),
                         ),
                         const Spacer(),
-
                         Align(
                           alignment: Alignment.bottomRight,
-                          child: SvgPicture.network(categories[index].image, height: 40, width: 40,),
+                          child: SvgPicture.network(
+                            categories[index].image,
+                            height: 40,
+                            width: 40,
+                          ),
                         )
                       ],
                     ),
@@ -132,8 +136,7 @@ Widget renderOrders(BuildContext context) {
             ),
             Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16)
-              ),
+                  borderRadius: BorderRadius.circular(16)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: GetBuilder<SelectedServiceController>(
@@ -319,38 +322,34 @@ class _ListOfServicesState extends State<ListOfServices> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(SelectedServiceController());
-    return ListView(
-      children: [
-      SizedBox(
-        height: 500,
-        child: Column(
-          children: [
-            Expanded(
-
-              child: ListView.builder(
-                itemCount: services.length,
-                itemBuilder: (context, index) {
-                  return CheckboxListTile(
-                    title: Text(services[index].title),
-                    value: servicesMap[services[index].id]?.checked,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        controller.checked(services[index].id, value!);
-                      });
-                    },
-                  );
-                },
-
-              ),
+    return SizedBox(
+      height: 500,
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: services.length,
+              itemBuilder: (context, index) {
+                return CheckboxListTile(
+                  title: Text(services[index].title),
+                  value: servicesMap[services[index].id]?.checked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      controller.checked(services[index].id, value!);
+                    });
+                  },
+                );
+              },
             ),
-            ElevatedButton(onPressed: () {
-              Navigator.pop(context);
+          ),
+          ElevatedButton(
 
-            }, child: const Text("Добавить"))
-          ],
-        ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Добавить"))
+        ],
       ),
-      ],
     );
   }
 }

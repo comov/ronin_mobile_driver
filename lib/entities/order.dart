@@ -39,7 +39,7 @@ class Order {
   final String? comment;
   final String status;
   final String? pickUpAddress;
-  final String? pickUpTime;
+  final DateTime? pickUpTime;
   final DateTime createdAt;
   final String modifiedAt;
   final Car? car;
@@ -52,7 +52,7 @@ class Order {
     required this.id,
     required this.comment,
     required this.pickUpAddress,
-    required this.pickUpTime,
+    this.pickUpTime,
     required this.status,
     required this.car,
     required this.driver,
@@ -87,7 +87,7 @@ class Order {
       comment: json["comment"],
       status: json["status"],
       pickUpAddress: json["pick_up_address"],
-      pickUpTime: json["pick_up_time"],
+      pickUpTime:  DateTime.tryParse(json["pick_up_time"].toString()),
       createdAt: DateTime.parse(json["created_at"]),
       modifiedAt: json["modified_at"],
       car: json["car"] == null ? Car.empty() : Car.fromJson(json["car"]),

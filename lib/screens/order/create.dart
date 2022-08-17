@@ -10,7 +10,7 @@ import 'package:car_helper/screens/order/detail.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_datetime_picker_bdaya/flutter_datetime_picker_bdaya.dart';
 
 class OrderCreateArgs {
   Map<int, SelectedService> servicesMaps = {};
@@ -30,8 +30,7 @@ class _OrderNewState extends State<OrderNew> {
   String customerComment = "";
   String pickUpAddress = "";
   List<Car> carList = [];
-  final now = DateTime.now();
-  DateTime? pickUpTime;
+  DateTime pickUpTime = DateTime.now().add(const Duration(hours: 2)).toUtc();
 
   @override
   Widget build(BuildContext context) {
@@ -115,35 +114,33 @@ class _OrderNewState extends State<OrderNew> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-
-                      child: TextFormField(
-                        onChanged: (text) => {pickUpAddress = text},
-                        autofocus: true,
-                        keyboardType: TextInputType.streetAddress,
-                        decoration: InputDecoration(
-                          labelText: "Название улицы, номер дома",
-                          focusedBorder: UnderlineInputBorder(
-                            borderRadius: BorderRadius.circular(25.0),
-                            borderSide: const BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderRadius: BorderRadius.circular(25.0),
-                            borderSide: const BorderSide(
-                              color: Colors.grey,
-                            ),
+                    child: TextFormField(
+                      onChanged: (text) => {pickUpAddress = text},
+                      // autofocus: true,
+                      keyboardType: TextInputType.streetAddress,
+                      decoration: InputDecoration(
+                        labelText: "Название улицы, номер дома",
+                        focusedBorder: UnderlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: const BorderSide(
+                            color: Colors.blue,
                           ),
                         ),
-                        validator: (value) {
-                          if (value!.length >= 50) {
-                            return "Поле может быть больше 50 символов";
-                          }
-                          return null;
-                        },
+                        enabledBorder: UnderlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
                       ),
+                      validator: (value) {
+                        if (value!.length >= 50) {
+                          return "Поле может быть больше 50 символов";
+                        }
+                        return null;
+                      },
                     ),
-
+                  ),
                   Row(
                     children: [
                       Column(
@@ -159,17 +156,19 @@ class _OrderNewState extends State<OrderNew> {
                                 maxTime:
                                     DateTime.now().add(const Duration(days: 7)),
                                 onChanged: (date) {
-                             pickUpTime = date;
+                              pickUpTime = date.toUtc();
                             }, onConfirm: (date) {
-                                  pickUpTime = date;
+                              pickUpTime = date.toUtc();
                             },
                                 currentTime: DateTime.now()
                                     .add(const Duration(hours: 2)),
                                 locale: LocaleType.ru);
                           },
-                          child: const Text(
-                            'Выбрать дату',
+                          child:  Text(
+                            '${pickUpTime}',
                             style: TextStyle(color: Colors.blue),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ))
                     ],
                   ),
@@ -180,7 +179,7 @@ class _OrderNewState extends State<OrderNew> {
                   ),
                   TextFormField(
                     onChanged: (text) => {customerComment = text},
-                    autofocus: true,
+                    // autofocus: true,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       hintText:
@@ -250,14 +249,15 @@ class _OrderNewState extends State<OrderNew> {
   }
 
   Future<Order?> _createOrder(List<int> checkedServices) async {
+    // var pickUpTimeNew = format.format(pickUpTime!);
+
     final response = await createOrder(
       authToken,
       checkedServices,
       customerComment,
       pickUpAddress,
-      pickUpTime?.toIso8601String(),
+      pickUpTime.toIso8601String(),
     );
-    debugPrint('time pickupTime: ${pickUpTime?.toIso8601String()}');
 
     switch (response.statusCode) {
       case 200:

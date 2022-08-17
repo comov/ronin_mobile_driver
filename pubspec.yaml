@@ -43,6 +43,7 @@ dependencies:
   sentry_flutter: ^6.9.0
   get:
   flutter_datetime_picker: ^1.5.1
+  flutter_datetime_picker_bdaya: ^2.0.0
 
 dev_dependencies:
   flutter_test:
