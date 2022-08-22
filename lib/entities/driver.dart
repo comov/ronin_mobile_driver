@@ -1,5 +1,5 @@
 class Driver {
-  final int id;
+  // final int id;
   final String phone;
   final String firstName;
   final String lastName;
@@ -7,7 +7,7 @@ class Driver {
   final String modifiedAt;
 
   const Driver({
-    required this.id,
+    // required this.id,
     required this.phone,
     required this.firstName,
     required this.lastName,
@@ -17,7 +17,7 @@ class Driver {
 
   factory Driver.fromJson(Map<String, dynamic> json) {
     return Driver(
-      id: json["id"],
+      // id: json["id"],
       phone: json["phone"],
       firstName: json["first_name"],
       lastName: json["last_name"],
@@ -28,7 +28,7 @@ class Driver {
 
   factory Driver.empty() {
     return const Driver(
-      id: 0,
+      // id: 0,
       phone: "",
       firstName: "",
       lastName: "",
