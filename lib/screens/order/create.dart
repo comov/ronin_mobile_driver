@@ -45,22 +45,15 @@ class _OrderNewState extends State<OrderNew> {
     FocusManager.instance.primaryFocus?.unfocus();
     final formKey = GlobalKey<FormState>();
 
-
-
     return FutureBuilder<String>(
       future: loadFromStorage(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text("Создание заказа"),
-            titleTextStyle: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
+
           ),
           body: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
             child: Form(
               key: formKey,
               child: ListView(
@@ -102,52 +95,64 @@ class _OrderNewState extends State<OrderNew> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
+                    padding: const EdgeInsets.only(top: 8, bottom: 8.0),
                     child: Column(
                       children: [
                         if (carList.isEmpty)
                           carIsEmpty()
                         else
-                          InkWell(
-                            onTap: () {
-                              showCupertinoModalPopup<void>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return _buildBottomPicker(
-                                        _buildCupertinoPicker());
-                                  });
-                            },
-                            child: Column(
-                              children: [
-                                const Text("Выберите авто"),
-                                Text(selectItem.plateNumber)
-                              ],
-                            ),
+                          Row(
+                            children: [
+                              const Text(
+                                "Выберите авто:",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                  onTap: () {
+                                    showCupertinoModalPopup<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return _buildBottomPicker(
+                                              _buildCupertinoPicker());
+                                        });
+                                  },
+                                  child: Text(
+                                    selectItem.plateNumber,
+                                    style: const TextStyle(
+                                        fontSize: 15, color: Colors.red),
+                                  )),
+                            ],
                           )
                       ],
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 8.0),
-                    child: Text("Адрес откуда забрать авто:"),
-                  ),
+
+                   const Padding(
+                     padding: EdgeInsets.only(bottom: 8.0),
+                     child: Text(
+                        "Адрес откуда забрать авто:",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                   ),
+
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: TextFormField(
                       onChanged: (text) => {pickUpAddress = text},
                       // autofocus: true,
-                      keyboardType: TextInputType.streetAddress,
+                      keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        labelText: "Название улицы, номер дома",
+                        hintText:
+                        "Название улицы, номер дома",
                         focusedBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                           borderSide: const BorderSide(
                             color: Colors.blue,
                           ),
                         ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: const BorderSide(
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
                             color: Colors.grey,
                           ),
                         ),
@@ -160,40 +165,45 @@ class _OrderNewState extends State<OrderNew> {
                       },
                     ),
                   ),
-                  Column(
-                    children: const [
-                      Text("Выберите удобное для Вас время:"),
-                    ],
-                  ),
-                  TextButton(
-                      onPressed: () {
-                        DatePicker.showDateTimePicker(context,
-                            showTitleActions: true,
-                            minTime: DateTime.now(),
-                            maxTime:
-                                DateTime.now().add(const Duration(days: 7)),
-                            onChanged: (date) {
-
-                        }, onConfirm: (date) {
+                  Row(
+                    children: [
+                      const Text(
+                        "Удобное для Вас время:",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            DatePicker.showDateTimePicker(context,
+                                showTitleActions: true,
+                                minTime: DateTime.now(),
+                                maxTime:
+                                    DateTime.now().add(const Duration(days: 7)),
+                                onChanged: (date) {}, onConfirm: (date) {
                               setState(() {
                                 pickUpTime = date.toUtc();
                                 pickUpTimeToSrv = date.toUtc();
-
-
-                              });},
-                            currentTime: pickUpTime?.toLocal(), locale: LocaleType.ru);
-                      },
-                      child: Text( pickUpTime == null ? "Выбрать время" : "${pickUpTime?.toLocal()}"
-                        ,
-                        style: const TextStyle(color: Colors.blue),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      )),
-
+                              });
+                            },
+                                currentTime: pickUpTime?.toLocal(),
+                                locale: LocaleType.ru);
+                          },
+                          child: Text(
+                            pickUpTime == null
+                                ? "Выбрать время"
+                                : "${pickUpTime?.toLocal()}",
+                            style: const TextStyle(color: Colors.blue),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          )),
+                    ],
+                  ),
                   const Divider(),
                   const Padding(
                     padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: Text("Пожелания/Комментарии"),
+                    child: Text(
+                      "Пожелания/Комментарии",
+                      style: TextStyle(fontSize: 15),
+                    ),
                   ),
                   TextFormField(
                     onChanged: (text) => {customerComment = text},
@@ -246,7 +256,7 @@ class _OrderNewState extends State<OrderNew> {
                         });
                       }
                     },
-                    child: const Text("Создать заказ"),
+                    child: const Text("Оформить заказ"),
                   ),
                 ],
               ),
@@ -272,15 +282,13 @@ class _OrderNewState extends State<OrderNew> {
   }
 
   Future<Order?> _createOrder(List<int> checkedServices) async {
-
     final response = await createOrder(
-      authToken,
-      checkedServices,
-      customerComment,
-      pickUpAddress,
-      pickUpTimeToSrv?.toIso8601String(),
-      selectItem.id
-    );
+        authToken,
+        checkedServices,
+        customerComment,
+        pickUpAddress,
+        pickUpTimeToSrv?.toIso8601String(),
+        selectItem.id);
 
     switch (response.statusCode) {
       case 200:

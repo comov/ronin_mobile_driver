@@ -117,11 +117,8 @@ Widget renderOrders(BuildContext context) {
               ],
             ),
             onPressed: () async {
-              _showModalBottomSheet(
-                context,
-                servicesMap,
-                categories[index].services,
-              );
+              _showModalBottomSheet(context, servicesMap,
+                  categories[index].services, categories[index].title);
             },
           );
         }),
@@ -232,14 +229,15 @@ void _showModalBottomSheet(
   BuildContext context,
   Map<int, SelectedService> servicesMap,
   List<Service> services,
+  String categoryTitle,
 ) {
   showModalBottomSheet<void>(
     context: context,
     builder: (context) {
       return ListOfServices(
-        servicesMap: servicesMap,
-        services: services,
-      );
+          servicesMap: servicesMap,
+          services: services,
+          categoryTitle: categoryTitle);
     },
   );
 }
@@ -299,25 +297,31 @@ class ListOfServices extends StatefulWidget {
     Key? key,
     required this.servicesMap,
     required this.services,
+    required this.categoryTitle,
   }) : super(key: key);
   final Map<int, SelectedService> servicesMap;
   final List<Service> services;
+  final String categoryTitle;
 
   @override
-  State<ListOfServices> createState() => _ListOfServicesState(
-        servicesMap: servicesMap,
-        services: services,
-      );
+  State<ListOfServices> createState() {
+    return _ListOfServicesState(
+      servicesMap: servicesMap,
+      services: services,
+      categoryTitle: categoryTitle,
+    );
+  }
 }
 
 class _ListOfServicesState extends State<ListOfServices> {
   final Map<int, SelectedService> servicesMap;
   final List<Service> services;
+  final String categoryTitle;
 
-  _ListOfServicesState({
-    required this.servicesMap,
-    required this.services,
-  });
+  _ListOfServicesState(
+      {required this.servicesMap,
+      required this.services,
+      required this.categoryTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -326,6 +330,25 @@ class _ListOfServicesState extends State<ListOfServices> {
       height: 500,
       child: Column(
         children: [
+          ListTile(
+            title: Text(
+              categoryTitle,
+              style: const TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.left,
+            ),
+            subtitle: const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text("Выберите тип услуги",
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.grey),
+                  textAlign: TextAlign.left),
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: services.length,
@@ -347,7 +370,6 @@ class _ListOfServicesState extends State<ListOfServices> {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-
                   onPressed: () {
                     Navigator.pop(context);
                   },
