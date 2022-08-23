@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:car_helper/entities/api.dart';
 import 'package:car_helper/entities/order.dart';
 import 'package:car_helper/main.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class CreateOrderResponse {
@@ -16,7 +15,7 @@ class CreateOrderResponse {
 }
 
 Future<CreateOrderResponse> createOrder(
-    String authToken, List<int> services, String comment, String pickUpAddress, String? pickUpTime) async {
+    String authToken, List<int> services, String comment, String pickUpAddress, String? pickUpTime, int carId) async {
 
   final response = await http.post(
     Uri.parse("$backendURL/api/v1/user/order"),
@@ -24,7 +23,7 @@ Future<CreateOrderResponse> createOrder(
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
     },
-    body: jsonEncode({"services": services, "comment": comment, "pick_up_address": pickUpAddress, "pick_up_time": pickUpTime}),
+    body: jsonEncode({"services": services, "comment": comment, "pick_up_address": pickUpAddress, "pick_up_time": pickUpTime, "car_id": carId}),
   );
 
 

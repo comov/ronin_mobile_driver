@@ -65,6 +65,7 @@ class _IndexState extends State<Index> with MainState {
 
   @override
   Widget build(BuildContext context) {
+
     // todo: need to implement
     // var args = ModalRoute.of(context)!.settings.arguments;
     // debugPrint("args $args");

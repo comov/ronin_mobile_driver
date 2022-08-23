@@ -25,21 +25,24 @@ class _OrderDetailState extends State<OrderDetail> {
     var after = order.photos.where((element) => element?.kind == 1);
 
 
-    final DateFormat formatter = DateFormat("d MMMM yyyy, hh:mm");
+    final DateFormat formatter = DateFormat("d MMMM yyyy, HH:mm");
+
+
 
     return Scaffold(
       appBar: AppBar(title: const Text("Создание заказа")),
       body: ListView(
         children: [
           Text("ID заявки: ${order.id}"),
-          Text("Заявка создана: ${formatter.format(order.createdAt)}"),
-          Text("Заявка обновлена: ${order.modifiedAt}"),
+          Text("Заявка создана: ${formatter.format(order.createdAt.toLocal())}"),
+
+          Text("Заявка обновлена: ${formatter.format(order.modifiedAt.toLocal())}"),
           Text("Статус: ${order.status}"),
           const Divider(),
           Text("Адрес откуда забрать авто: ${order.pickUpAddress}"),
           order.pickUpTime != null
               ? Text(
-                  "Время выполнения заявки: ${formatter.format(order.pickUpTime!)} ")
+                  "Время выполнения заявки: ${formatter.format(order.pickUpTime!.toLocal())} ")
               : const Text("Время выполнения заявки:"),
           Text(
               "ФИО Вашего менеджера: ${order.employee?.lastName} ${order.employee?.firstName}"),

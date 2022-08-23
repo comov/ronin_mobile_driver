@@ -8,6 +8,7 @@ import 'package:car_helper/screens/index/index.dart';
 import 'package:car_helper/screens/index/services.dart';
 import 'package:car_helper/screens/order/detail.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_datetime_picker_bdaya/flutter_datetime_picker_bdaya.dart';
@@ -30,7 +31,11 @@ class _OrderNewState extends State<OrderNew> {
   String customerComment = "";
   String pickUpAddress = "";
   List<Car> carList = [];
-  DateTime pickUpTime = DateTime.now().add(const Duration(hours: 2)).toUtc();
+  DateTime? pickUpTime;
+  DateTime? pickUpTimeToSrv;
+  late Car selectItem;
+  int value = 0;
+  final double _kPickerSheetHeight = 216.0;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +44,8 @@ class _OrderNewState extends State<OrderNew> {
     final services = args.servicesMaps;
     FocusManager.instance.primaryFocus?.unfocus();
     final formKey = GlobalKey<FormState>();
+
+
 
     return FutureBuilder<String>(
       future: loadFromStorage(),
@@ -95,25 +102,37 @@ class _OrderNewState extends State<OrderNew> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    padding: const EdgeInsets.only(bottom: 8.0),
                     child: Column(
                       children: [
-                        //возможно нужен контроллер
                         if (carList.isEmpty)
-                          const Text(
-                              "У вас нету добавленных авто, можете добавить тут. ссылка на страничку добавления авто")
+                          carIsEmpty()
                         else
-                          const Text("Выберите Авто:"),
-                        for (final car in carList) Text(car.displayName())
+                          InkWell(
+                            onTap: () {
+                              showCupertinoModalPopup<void>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return _buildBottomPicker(
+                                        _buildCupertinoPicker());
+                                  });
+                            },
+                            child: Column(
+                              children: [
+                                const Text("Выберите авто"),
+                                Text(selectItem.plateNumber)
+                              ],
+                            ),
+                          )
                       ],
                     ),
                   ),
                   const Padding(
-                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    padding: EdgeInsets.only(bottom: 8.0),
                     child: Text("Адрес откуда забрать авто:"),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    padding: const EdgeInsets.only(bottom: 8.0),
                     child: TextFormField(
                       onChanged: (text) => {pickUpAddress = text},
                       // autofocus: true,
@@ -141,37 +160,36 @@ class _OrderNewState extends State<OrderNew> {
                       },
                     ),
                   ),
-                  Row(
-                    children: [
-                      Column(
-                        children: const [
-                          Text("Выберите удобное для Вас время:"),
-                        ],
-                      ),
-                      TextButton(
-                          onPressed: () {
-                            DatePicker.showDateTimePicker(context,
-                                showTitleActions: true,
-                                minTime: DateTime.now(),
-                                maxTime:
-                                    DateTime.now().add(const Duration(days: 7)),
-                                onChanged: (date) {
-                              pickUpTime = date.toUtc();
-                            }, onConfirm: (date) {
-                              pickUpTime = date.toUtc();
-                            },
-                                currentTime: DateTime.now()
-                                    .add(const Duration(hours: 2)),
-                                locale: LocaleType.ru);
-                          },
-                          child:  Text(
-                            '${pickUpTime}',
-                            style: TextStyle(color: Colors.blue),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ))
+                  Column(
+                    children: const [
+                      Text("Выберите удобное для Вас время:"),
                     ],
                   ),
+                  TextButton(
+                      onPressed: () {
+                        DatePicker.showDateTimePicker(context,
+                            showTitleActions: true,
+                            minTime: DateTime.now(),
+                            maxTime:
+                                DateTime.now().add(const Duration(days: 7)),
+                            onChanged: (date) {
+
+                        }, onConfirm: (date) {
+                              setState(() {
+                                pickUpTime = date.toUtc();
+                                pickUpTimeToSrv = date.toUtc();
+
+
+                              });},
+                            currentTime: pickUpTime?.toLocal(), locale: LocaleType.ru);
+                      },
+                      child: Text( pickUpTime == null ? "Выбрать время" : "${pickUpTime?.toLocal()}"
+                        ,
+                        style: const TextStyle(color: Colors.blue),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      )),
+
                   const Divider(),
                   const Padding(
                     padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
@@ -245,18 +263,23 @@ class _OrderNewState extends State<OrderNew> {
 
     final getCarListResponse = await getCustomerCars(authToken);
     carList = getCarListResponse.cars;
+
+    if (carList.isNotEmpty) {
+      selectItem = carList.first;
+    }
+
     return Future.value("Ok");
   }
 
   Future<Order?> _createOrder(List<int> checkedServices) async {
-    // var pickUpTimeNew = format.format(pickUpTime!);
 
     final response = await createOrder(
       authToken,
       checkedServices,
       customerComment,
       pickUpAddress,
-      pickUpTime.toIso8601String(),
+      pickUpTimeToSrv?.toIso8601String(),
+      selectItem.id
     );
 
     switch (response.statusCode) {
@@ -276,5 +299,66 @@ class _OrderNewState extends State<OrderNew> {
     }
 
     return Future.value(response.order);
+  }
+
+  Widget carIsEmpty() {
+    return Row(
+      children: [
+        const Text("У Вас нету добавленных авто, можете добавить"),
+        TextButton(
+            onPressed: () {
+              //TO DO need to add check if customer has 3 cars in profile
+              Navigator.pushNamed(
+                context,
+                "/user/create_car",
+              );
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: const Text("тут")),
+      ],
+    );
+  }
+
+  Widget _buildCupertinoPicker() {
+    return CupertinoPicker(
+      magnification: 1.5,
+      backgroundColor: Colors.white,
+      itemExtent: 40,
+      looping: false,
+      children: carList
+          .map((item) => Center(
+                child: Text(item.plateNumber),
+              ))
+          .toList(),
+      onSelectedItemChanged: (index) {
+        setState(() => value = index);
+        selectItem = carList[index];
+      },
+    );
+  }
+
+  Widget _buildBottomPicker(Widget picker) {
+    return Container(
+      height: _kPickerSheetHeight,
+      padding: const EdgeInsets.only(top: 6.0),
+      color: CupertinoColors.white,
+      child: DefaultTextStyle(
+        style: const TextStyle(
+          color: CupertinoColors.black,
+          fontSize: 22.0,
+        ),
+        child: GestureDetector(
+          onTap: () {},
+          child: SafeArea(
+            top: false,
+            child: picker,
+          ),
+        ),
+      ),
+    );
   }
 }

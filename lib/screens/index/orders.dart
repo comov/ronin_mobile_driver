@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final DateFormat formatter = DateFormat("d MMMM yyyy, hh:mm");
-
+final DateFormat formatter = DateFormat("d MMMM yyyy, HH:mm");
 late String authToken;
 
 List<Order> orders = [];
@@ -66,7 +65,7 @@ Widget bottomOrders(BuildContext context) {
                 children: [
                   Text(orders[index].id.toString()),
                   const Spacer(),
-                  Text(formatter.format(orders[index].createdAt)),
+                  Text(formatter.format(orders[index].createdAt.toLocal())),
                   const Spacer(),
                   SizedBox(
                     width: 100,
@@ -85,6 +84,7 @@ Widget bottomOrders(BuildContext context) {
 
 Future<String> loadInitialData1() async {
   final pf = await SharedPreferences.getInstance();
+
 
   authToken = pf.getString("auth_token") ?? "";
 

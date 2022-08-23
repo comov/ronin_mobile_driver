@@ -7,7 +7,6 @@ class Car {
   int year;
   String createdAt;
   String modifiedAt;
-  bool expanded;
 
   Car({
     required this.id,
@@ -18,7 +17,6 @@ class Car {
     required this.year,
     required this.createdAt,
     required this.modifiedAt,
-    this.expanded = false,
   });
 
   factory Car.fromJson(Map<String, dynamic> json) {

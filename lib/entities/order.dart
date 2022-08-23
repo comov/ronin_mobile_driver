@@ -41,7 +41,7 @@ class Order {
   final String? pickUpAddress;
   final DateTime? pickUpTime;
   final DateTime createdAt;
-  final String modifiedAt;
+  final DateTime modifiedAt;
   final Car? car;
   final Driver? driver;
   final Employee? employee;
@@ -87,9 +87,9 @@ class Order {
       comment: json["comment"],
       status: json["status"],
       pickUpAddress: json["pick_up_address"],
-      pickUpTime: DateTime.tryParse(json["pick_up_time"].toString()),
+      pickUpTime: DateTime.tryParse(json["pick_up_time"]),
       createdAt: DateTime.parse(json["created_at"]),
-      modifiedAt: json["modified_at"],
+      modifiedAt: DateTime.parse(json["modified_at"]),
       car: json["car"] == null ? Car.empty() : Car.fromJson(json["car"]),
       driver: json["driver"] == null
           ? Driver.empty()
@@ -102,6 +102,18 @@ class Order {
       // photos: json["photos"] == null ? Photo.empty() : Photo.fromJson(json["photos"]),
 
     );
+  }
+}
+
+
+extension DateTimeExtension on DateTime {
+  static DateTime parseUtc(String formattedDate) => DateTime.parse(formattedDate);
+
+  static DateTime? tryParseUtc(String? formattedDate) {
+    if (formattedDate != null) {
+      return DateTime.tryParse(formattedDate);
+    }
+    return null;
   }
 }
 
