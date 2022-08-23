@@ -36,6 +36,7 @@ class _UserEditState extends State<UserEdit> {
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
+
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),

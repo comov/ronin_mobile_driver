@@ -47,36 +47,46 @@ Widget bottomOrders(BuildContext context) {
             return const SignIn();
           }
       }
-      return ListView.separated(
-        padding: const EdgeInsets.all(8),
-        itemCount: orders.length,
-        itemBuilder: (BuildContext context, int index) {
-          return SizedBox(
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  "/order/detail",
-                  arguments: OrderDetailArgs(order: orders[index]),
-                );
-              },
-              child: Row(
-                children: [
-                  Text(orders[index].id.toString()),
-                  const Spacer(),
-                  Text(formatter.format(orders[index].createdAt.toLocal())),
-                  const Spacer(),
-                  SizedBox(
-                    width: 100,
-                      child: Text(orders[index].status, maxLines: 2, style: const TextStyle(color: Colors.blue),)
-                  ),
-                ],
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Заказы"),
+          titleTextStyle: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 34,
+          ),
+        ),
+        body: ListView.separated(
+          padding: const EdgeInsets.all(8),
+          itemCount: orders.length,
+          itemBuilder: (BuildContext context, int index) {
+            return SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    "/order/detail",
+                    arguments: OrderDetailArgs(order: orders[index]),
+                  );
+                },
+                child: Row(
+                  children: [
+                    Text(orders[index].id.toString()),
+                    const Spacer(),
+                    Text(formatter.format(orders[index].createdAt.toLocal())),
+                    const Spacer(),
+                    SizedBox(
+                      width: 100,
+                        child: Text(orders[index].status, maxLines: 2, style: const TextStyle(color: Colors.blue),)
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) => const Divider(),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) => const Divider(),
+        ),
       );
     },
   );

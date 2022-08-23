@@ -124,29 +124,39 @@ Widget renderOrders(BuildContext context) {
         }),
       );
 
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: categoriesBlock,
-            ),
-            Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: GetBuilder<SelectedServiceController>(
-                  init: selectedServiceController,
-                  builder: (value) => getSelectedServicesCard(
-                    context,
-                    controller,
-                    value,
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Услуги"),
+          titleTextStyle: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 34,
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: categoriesBlock,
+              ),
+              Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: GetBuilder<SelectedServiceController>(
+                    init: selectedServiceController,
+                    builder: (value) => getSelectedServicesCard(
+                      context,
+                      controller,
+                      value,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     },

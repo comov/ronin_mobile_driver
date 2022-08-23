@@ -71,6 +71,10 @@ class MyApp extends StatelessWidget {
           labelSmall: TextStyle(color: Colors.black),
         ),
         appBarTheme: const AppBarTheme(
+          actionsIconTheme: IconThemeData(
+            color: Colors.black,
+            opacity: 10.0
+          ),
           centerTitle: false,
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.transparent,
