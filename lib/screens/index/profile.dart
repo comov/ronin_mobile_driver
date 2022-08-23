@@ -68,17 +68,31 @@ Widget bottomProfile(
             fontSize: 34,
           ),
           actions: [
-          PopupMenuButton<int>(
-             icon: const Icon(Icons.settings),
-               itemBuilder: (context) => [
-                 const PopupMenuItem<int>(value: 0, child: Text("Пригласить друзей")),
-                 const PopupMenuItem<int>(value: 1,child: Text("Пользовательские соглашения"),),
-                 PopupMenuItem<int>(value: 2,child: Row(children: const [Icon(Icons.logout), SizedBox(width: 8,), Text("Выход")],),)
-               ],
-             onSelected: (item) => selectedItem(context,item),
-           )
+            PopupMenuButton<int>(
+              icon: const Icon(Icons.settings),
+              itemBuilder: (context) => [
+                const PopupMenuItem<int>(
+                    value: 0, child: Text("Пригласить друзей")),
+                const PopupMenuItem<int>(
+                  value: 1,
+                  child: Text("Пользовательские соглашения"),
+                ),
+                PopupMenuItem<int>(
+                  value: 2,
+                  child: Row(
+                    children: const [
+                      Icon(Icons.logout),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text("Выход")
+                    ],
+                  ),
+                )
+              ],
+              onSelected: (item) => selectedItem(context, item),
+            )
           ],
-
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -114,7 +128,7 @@ Widget bottomProfile(
                                     Navigator.pushNamed(
                                       context,
                                       "/user/edit_profile",
-                                      arguments: UserEditArs(profile: profile),
+                                      arguments: UserEditArs(profile: profile, userCars: carList),
                                     );
                                   },
                                   child: const Text("Редактировать профиль"),
@@ -145,7 +159,8 @@ Widget bottomProfile(
                               itemBuilder: (BuildContext context, int index) {
                                 return ExpansionTileCard(
                                   borderRadius: BorderRadius.circular(16),
-                                  shadowColor: const Color.fromRGBO(0, 0, 0, 0.5),
+                                  shadowColor:
+                                      const Color.fromRGBO(0, 0, 0, 0.5),
                                   title: Text(
                                       '${carList[index].brand} ${carList[index].model}'),
                                   subtitle: Text(carList[index].plateNumber),
@@ -212,6 +227,7 @@ void delFromStorage() async {
   pf.remove("auth_token");
   pf.remove("refresh_key");
 }
+
 void selectedItem(BuildContext context, item) {
   switch (item) {
     case 0:
@@ -226,10 +242,9 @@ void selectedItem(BuildContext context, item) {
       delFromStorage();
       Navigator.of(context).pushNamedAndRemoveUntil(
         "/signin",
-            (route) => false,
+        (route) => false,
       );
       break;
-
   }
 }
 

@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class EditCarArgs {
   Car editCar;
-
   EditCarArgs({required this.editCar});
 }
 

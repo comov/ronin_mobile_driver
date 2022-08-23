@@ -3,10 +3,15 @@ import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../entities/car.dart';
+
 class UserEditArs {
   final Profile? profile;
+  List<Car> userCars = [];
 
-  UserEditArs({required this.profile});
+  UserEditArs({required this.profile,
+    required this.userCars,
+  });
 }
 
 class UserEdit extends StatefulWidget {
@@ -24,6 +29,7 @@ class _UserEditState extends State<UserEdit> {
     final formKey = GlobalKey<FormState>();
     final args = ModalRoute.of(context)!.settings.arguments as UserEditArs;
     final profile = args.profile;
+    final userCar = args.userCars;
 
     return FutureBuilder<String>(
       future: loadFromStorage(),
@@ -123,6 +129,9 @@ class _UserEditState extends State<UserEdit> {
                         title: const Text("Добавить новое авто"),
                         subtitle: Column(
                           children: <Widget>[
+                            if (userCar.length >= 3)
+                              const Text("Можно добавить не более 3х авто")
+                            else
                             TextButton(
                                 onPressed: () {
                                   //TO DO need to add check if customer has 3 cars in profile
