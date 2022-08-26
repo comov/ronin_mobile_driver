@@ -315,6 +315,7 @@ class ListOfServices extends StatefulWidget {
 
   @override
   State<ListOfServices> createState() {
+    // ignore: no_logic_in_create_state
     return _ListOfServicesState(
       servicesMap: servicesMap,
       services: services,

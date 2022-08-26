@@ -4,7 +4,6 @@ import 'package:car_helper/screens/debug_page_screen.dart';
 import 'package:car_helper/screens/index/index.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:car_helper/screens/order/detail.dart';
-import 'package:car_helper/screens/test_page_screen.dart';
 import 'package:car_helper/screens/user/create_car.dart';
 import 'package:car_helper/screens/user/edit_car.dart';
 import 'package:car_helper/screens/user/edit_profile.dart';
@@ -97,7 +96,6 @@ class MyApp extends StatelessWidget {
         "/user/create_car": (BuildContext context) => const CreateCar(),
         "/user/edit_car": (BuildContext context) => const EditCar(),
         "/debug": (BuildContext context) => const DebugPage(),
-        "/test": (BuildContext context) => const TestPage(),
       },
       debugShowCheckedModeBanner: false,
       showSemanticsDebugger: false,

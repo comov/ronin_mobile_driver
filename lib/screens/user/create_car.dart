@@ -207,14 +207,14 @@ class _CreateCarState extends State<CreateCar> {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: Text('Result'),
-                                content: Text('Result is $value'),
+                                title: const Text('Результат'),
+                                content: Text('код $value'),
                                 actions: [
                                   ElevatedButton(
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
-                                      child: Text('Go Back'))
+                                      child: const Text('Назад'))
                                 ],
                               ),
                             );

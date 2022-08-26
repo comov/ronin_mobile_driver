@@ -15,7 +15,7 @@ mixin MainState {
         ),
       ),
       body: ListView(
-        children: [
+        children: const [
           Text("Какие-то блоки и ещё что-то"),
         ],
       ),

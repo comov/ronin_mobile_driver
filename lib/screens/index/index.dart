@@ -104,7 +104,7 @@ class _IndexState extends State<Index> with MainState {
         switch (snapshot.data!) {
           case "tokenNotFound":
             {
-              debugPrint("authToken is empty: ${this.authToken}");
+              debugPrint("authToken is empty: $authToken");
               return const SignIn();
             }
           case "tokenExpired":
