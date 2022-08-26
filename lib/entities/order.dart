@@ -87,7 +87,7 @@ class Order {
       comment: json["comment"],
       status: json["status"],
       pickUpAddress: json["pick_up_address"],
-      pickUpTime: DateTime.tryParse(json["pick_up_time"]),
+      pickUpTime: DateTime.tryParse(json["pick_up_time"].toString()),
       createdAt: DateTime.parse(json["created_at"]),
       modifiedAt: DateTime.parse(json["modified_at"]),
       car: json["car"] == null ? Car.empty() : Car.fromJson(json["car"]),
