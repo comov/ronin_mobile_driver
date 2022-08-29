@@ -241,12 +241,8 @@ class _OrderNewState extends State<OrderNew> {
 
                         _createOrder(selectedServices).then((order) {
                           if (order != null) {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              "/index",
-                              (route) => false,
-                              arguments:
-                                  HomeArgs(initialState: 1, newOrder: order),
-                            );
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Index(2)), (Route<dynamic> route) => false);
+
                             Navigator.pushNamed(
                               context,
                               "/order/detail",

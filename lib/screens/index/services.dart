@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:car_helper/entities/category.dart';
 import 'package:car_helper/entities/service.dart';
 import 'package:car_helper/resources/api_categories.dart';
+import 'package:car_helper/resources/refresh.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:car_helper/screens/order/create.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,7 @@ Widget renderOrders(BuildContext context) {
             debugPrint("authToken is empty: $authToken");
             return const SignIn();
           }
-        case "":
+        case "tokenExpired":
           {
             debugPrint("authToken is expired: $authToken");
             return const SignIn();
@@ -254,8 +255,13 @@ void _showModalBottomSheet(
 
 Future<String> loadInitialData() async {
   final pf = await SharedPreferences.getInstance();
-  var authToken = pf.getString("auth_token") ?? "";
+  authToken = pf.getString("auth_token") ?? "";
+  refreshKey = pf.getString("refresh_key") ?? "";
 
+
+  if (authToken == "") {
+    return Future.value("tokenNotFound");
+  }
   final categoriesResponse = await getCategories(authToken);
   switch (categoriesResponse.statusCode) {
     case 200:
@@ -265,7 +271,18 @@ Future<String> loadInitialData() async {
       break;
     case 401:
       {
-        return Future.value("tokenExpired");
+        final refreshResponse = await refreshToken(refreshKey);
+        if (refreshResponse.statusCode == 200) {
+          authToken = refreshResponse.auth!.token;
+          refreshKey = refreshResponse.auth!.refreshKey;
+          saveAuthData(authToken, refreshKey);
+          break;
+        } else {
+          debugPrint(
+              "refreshResponse.statusCode: ${refreshResponse.statusCode}");
+          debugPrint("refreshResponse.error: ${refreshResponse.error}");
+          return Future.value("tokenExpired");
+        }
       }
   }
 
@@ -275,6 +292,13 @@ Future<String> loadInitialData() async {
     }
   }
 
+  return Future.value("Ok");
+}
+
+Future<String> saveAuthData(String token, String refreshKey) async {
+  final pf = await SharedPreferences.getInstance();
+  pf.setString("auth_token", token);
+  pf.setString("refresh_key", refreshKey);
   return Future.value("Ok");
 }
 

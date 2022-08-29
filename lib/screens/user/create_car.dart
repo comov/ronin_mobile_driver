@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
+import 'package:car_helper/screens/index/index.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -212,7 +213,7 @@ class _CreateCarState extends State<CreateCar> {
                                 actions: [
                                   ElevatedButton(
                                       onPressed: () {
-                                        Navigator.pop(context);
+                                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Index(3)), (Route<dynamic> route) => false);
                                       },
                                       child: const Text('Назад'))
                                 ],

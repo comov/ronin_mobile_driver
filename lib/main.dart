@@ -87,7 +87,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       routes: {
-        "/index": (BuildContext context) => const Index(),
+        "/index": (BuildContext context) =>  Index(0),
+        // "/indexTest": (BuildContext context) => const IndexTest(),
         "/signin": (BuildContext context) => const SignIn(),
         "/auth": (BuildContext context) => const Auth(),
         "/order/new": (BuildContext context) => const OrderNew(),

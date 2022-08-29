@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:car_helper/entities/car.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
+import 'package:car_helper/screens/index/index.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EditCarArgs {
   Car editCar;
+
   EditCarArgs({required this.editCar});
 }
 
@@ -30,8 +32,7 @@ class _EditCarState extends State<EditCar> {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    final args = ModalRoute.of(context)!.settings.arguments as EditCarArgs;
-
+    var args = ModalRoute.of(context)!.settings.arguments as EditCarArgs;
     var carItem = args.editCar;
 
     FocusManager.instance.primaryFocus?.unfocus();
@@ -41,13 +42,28 @@ class _EditCarState extends State<EditCar> {
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         return Scaffold(
           appBar: AppBar(
-              // title: const Text("Добавление авто"),
-              // titleTextStyle: const TextStyle(
-              //   color: Colors.black,
-              //   fontWeight: FontWeight.bold,
-              //   fontSize: 20,
-              // ),
-              ),
+            title: const Text("Редактирование авто"),
+            titleTextStyle: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  _deleteCar(carItem).then((value) {
+                    if (value == 200) {
+                      Navigator.pop(context);
+                    }
+                  });
+                },
+                child: const Text(
+                  "Удалить авто",
+                  style: TextStyle(color: Colors.red),
+                ),
+              )
+            ],
+          ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Form(
@@ -55,10 +71,6 @@ class _EditCarState extends State<EditCar> {
               child: ListView(
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Редактирование авто",
-                    style: TextStyle(fontSize: 34),
-                  ),
                   Flex(direction: Axis.horizontal, children: [
                     Expanded(
                         child: Column(
@@ -206,24 +218,12 @@ class _EditCarState extends State<EditCar> {
                       ],
                     )),
                   ]),
-                  Card(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _deleteCar(carItem).then((value) {
-                          if (value == 200) {
-                            Navigator.pop(context);
-                          }
-                        });
-                      },
-                      child: const Text("Удалить авто"),
-                    ),
-                  ),
                   ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
-                        _editCar(carItem).then((value) {
+                        _editCar(carItem).then((value) async {
                           if (value == 200) {
-                            Navigator.pop(context, true);
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Index(3)), (Route<dynamic> route) => false);
                           }
                         });
                       }

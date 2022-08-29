@@ -1,16 +1,14 @@
 import 'package:car_helper/entities/user.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
+import 'package:car_helper/screens/index/index.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../entities/car.dart';
-
 class UserEditArs {
   final Profile? profile;
-  List<Car> userCars = [];
 
-  UserEditArs({required this.profile,
-    required this.userCars,
+  UserEditArs({
+    required this.profile,
   });
 }
 
@@ -29,7 +27,6 @@ class _UserEditState extends State<UserEdit> {
     final formKey = GlobalKey<FormState>();
     final args = ModalRoute.of(context)!.settings.arguments as UserEditArs;
     final profile = args.profile;
-    final userCar = args.userCars;
 
     return FutureBuilder<String>(
       future: loadFromStorage(),
@@ -42,7 +39,6 @@ class _UserEditState extends State<UserEdit> {
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
-
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -126,30 +122,6 @@ class _UserEditState extends State<UserEdit> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
-                        title: const Text("Добавить новое авто"),
-                        subtitle: Column(
-                          children: <Widget>[
-                            if (userCar.length >= 3)
-                              const Text("Можно добавить не более 3х авто")
-                            else
-                            TextButton(
-                                onPressed: () {
-                                  //TO DO need to add check if customer has 3 cars in profile
-                                  Navigator.pushNamed(
-                                    context,
-                                    "/user/create_car",
-                                  );
-                                },
-                                child: const Text("Добавить Авто")),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
                         title: const Text("Удаление профиля"),
                         subtitle: Column(
                           children: <Widget>[
@@ -172,7 +144,6 @@ class _UserEditState extends State<UserEdit> {
                                                     (route) => false,
                                                   );
                                                 }
-
                                               });
                                             },
                                             child: const Text(
@@ -196,11 +167,8 @@ class _UserEditState extends State<UserEdit> {
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
                           _editProfile(profile).then((response) {
-                            // Navigator.of(context).pushNamedAndRemoveUntil(
-                            //   "/user/edit",
-                            //       (route) => false,
-                            //   // arguments: HomeArgs(initialState: 2),
-                            // );
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Index(3)), (Route<dynamic> route) => false);
+
                           });
                         }
                       },
