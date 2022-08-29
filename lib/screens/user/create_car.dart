@@ -59,6 +59,7 @@ class _CreateCarState extends State<CreateCar> {
                           onChanged: (text) => {brand = text},
                           autofocus: true,
                           keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.words,
                           decoration: InputDecoration(
                             labelText: "Марка авто",
                             focusedBorder: UnderlineInputBorder(
@@ -79,8 +80,8 @@ class _CreateCarState extends State<CreateCar> {
                               return "Поле не может быть пустым";
                             }
 
-                            if (value.length >= 10) {
-                              return "Поле может быть больше 10 символов";
+                            if (value.length >= 15) {
+                              return "Поле может быть больше 15 символов";
                             }
                             return null;
                           },
@@ -89,6 +90,7 @@ class _CreateCarState extends State<CreateCar> {
                           onChanged: (text) => {model = text},
                           autofocus: true,
                           keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.words,
                           decoration: InputDecoration(
                             labelText: "Модель авто",
                             focusedBorder: UnderlineInputBorder(
@@ -109,8 +111,8 @@ class _CreateCarState extends State<CreateCar> {
                               return "Поле не может быть пустым";
                             }
 
-                            if (value.length >= 10) {
-                              return "Поле может быть больше 10 символов";
+                            if (value.length >= 15) {
+                              return "Поле может быть больше 15 символов";
                             }
                             return null;
                           },
@@ -118,7 +120,8 @@ class _CreateCarState extends State<CreateCar> {
                         TextFormField(
                           onChanged: (text) => {plateNumber = text},
                           autofocus: true,
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.characters,
                           decoration: InputDecoration(
                             labelText: "Гос. Номер авто",
                             focusedBorder: UnderlineInputBorder(
@@ -149,6 +152,7 @@ class _CreateCarState extends State<CreateCar> {
                           onChanged: (text) => {vin = text},
                           autofocus: true,
                           keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.characters,
                           decoration: InputDecoration(
                             labelText: "VIN авто",
                             focusedBorder: UnderlineInputBorder(
@@ -165,8 +169,8 @@ class _CreateCarState extends State<CreateCar> {
                             ),
                           ),
                           validator: (value) {
-                            if (value!.length >= 12) {
-                              return "Не больше 12 символов";
+                            if (value!.length >= 18) {
+                              return "Не больше 18 символов";
                             }
                             return null;
                           },
@@ -174,7 +178,7 @@ class _CreateCarState extends State<CreateCar> {
                         TextFormField(
                           onChanged: (text) => {year = int.parse(text)},
                           autofocus: true,
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             labelText: "Год авто",
                             focusedBorder: UnderlineInputBorder(
@@ -209,13 +213,40 @@ class _CreateCarState extends State<CreateCar> {
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: const Text('Результат'),
-                                content: Text('код $value'),
+                                content: SizedBox(
+                                  height: 80,
+                                  child: Column(
+                                    children: [
+                                      if (value == 200)
+                                        const Text("Авто успешно добавлено")
+                                     else if (value == 403)
+                                        const Text("Превышен лимит авто")
+                                      else
+                                        const Text(
+                                            "Произошла ошибка добавления авто")
+                                    ],
+                                  ),
+                                ),
                                 actions: [
                                   ElevatedButton(
                                       onPressed: () {
-                                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Index(3)), (Route<dynamic> route) => false);
+                                     Navigator.pop(context);
                                       },
-                                      child: const Text('Назад'))
+                                      child: const Text('Назад')),
+
+                                if (value == 200)
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Index(3)),
+                                                (
+                                                Route<dynamic> route) => false);
+                                      },
+                                      child: const Text('В главное меню'))
+
                                 ],
                               ),
                             );

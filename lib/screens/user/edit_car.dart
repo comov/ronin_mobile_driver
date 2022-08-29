@@ -53,7 +53,10 @@ class _EditCarState extends State<EditCar> {
                 onPressed: () {
                   _deleteCar(carItem).then((value) {
                     if (value == 200) {
-                      Navigator.pop(context);
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => Index(3)),
+                          (Route<dynamic> route) => false);
                     }
                   });
                 },
@@ -79,6 +82,7 @@ class _EditCarState extends State<EditCar> {
                           onChanged: (text) => {carItem.brand = text},
                           autofocus: true,
                           keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.words,
                           initialValue: carItem.brand,
                           decoration: InputDecoration(
                             labelText: "Марка авто",
@@ -100,8 +104,8 @@ class _EditCarState extends State<EditCar> {
                               return "Поле не может быть пустым";
                             }
 
-                            if (value.length >= 10) {
-                              return "Поле может быть больше 10 символов";
+                            if (value.length >= 15) {
+                              return "Поле может быть больше 15 символов";
                             }
                             return null;
                           },
@@ -110,6 +114,7 @@ class _EditCarState extends State<EditCar> {
                           onChanged: (text) => {carItem.model = text},
                           autofocus: true,
                           keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.words,
                           initialValue: carItem.model,
                           decoration: InputDecoration(
                             labelText: "Модель авто",
@@ -128,7 +133,7 @@ class _EditCarState extends State<EditCar> {
                           ),
                           validator: (value) {
                             if (value!.length >= 16) {
-                              return "Поле может быть больше 15 символов";
+                              return "Поле может быть больше 16 символов";
                             }
                             return null;
                           },
@@ -136,7 +141,8 @@ class _EditCarState extends State<EditCar> {
                         TextFormField(
                           onChanged: (text) => {carItem.plateNumber = text},
                           autofocus: true,
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.characters,
                           initialValue: carItem.plateNumber,
                           decoration: InputDecoration(
                             labelText: "Гос. Номер авто",
@@ -164,6 +170,7 @@ class _EditCarState extends State<EditCar> {
                           onChanged: (text) => {carItem.vin = text},
                           autofocus: true,
                           keyboardType: TextInputType.text,
+                          textCapitalization: TextCapitalization.characters,
                           initialValue: carItem.vin,
                           decoration: InputDecoration(
                             labelText: "VIN номер авто",
@@ -181,8 +188,8 @@ class _EditCarState extends State<EditCar> {
                             ),
                           ),
                           validator: (value) {
-                            if (value!.length >= 16) {
-                              return "Поле может быть больше 15 символов";
+                            if (value!.length >= 18) {
+                              return "Поле может быть больше 18 символов";
                             }
                             return null;
                           },
@@ -190,7 +197,7 @@ class _EditCarState extends State<EditCar> {
                         TextFormField(
                           onChanged: (text) => {carItem.year = int.parse(text)},
                           autofocus: true,
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.number,
                           initialValue: carItem.year.toString(),
                           decoration: InputDecoration(
                             labelText: "Год авто",
@@ -223,7 +230,34 @@ class _EditCarState extends State<EditCar> {
                       if (formKey.currentState!.validate()) {
                         _editCar(carItem).then((value) async {
                           if (value == 200) {
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Index(3)), (Route<dynamic> route) => false);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Index(3)),
+                                (Route<dynamic> route) => false);
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Ошибка'),
+                                content: SizedBox(
+                                  height: 80,
+                                  child: Column(
+                                    children: const [
+                                      Text(
+                                          "Произошла ошибка редактирования авто")
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Назад')),
+                                ],
+                              ),
+                            );
                           }
                         });
                       }
