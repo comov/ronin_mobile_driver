@@ -10,7 +10,6 @@ import 'package:car_helper/screens/order/createcarfromorder.dart';
 import 'package:car_helper/screens/order/detail.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_datetime_picker_bdaya/flutter_datetime_picker_bdaya.dart';
@@ -52,10 +51,6 @@ class _OrderNewState extends State<OrderNew> {
 
     FocusManager.instance.primaryFocus?.unfocus();
     final formKey = GlobalKey<FormState>();
-
-    final selectedCarController = SelectedCarController();
-    final controller = Get.put(selectedCarController);
-
 
 
     return FutureBuilder<String>(
@@ -296,8 +291,9 @@ class _OrderNewState extends State<OrderNew> {
 
     if (carList!.isNotEmpty) {
       var item = carList?.where((element) => element.plateNumber == selectItem);
-      for (var cars in item!)
+      for (var cars in item!) {
         car = cars.id;
+      }
     }
     final response = await createOrder(
         authToken,
@@ -353,11 +349,3 @@ class _OrderNewState extends State<OrderNew> {
   }
 }
 
-class SelectedCarController extends GetxController {
-  String number = "";
-
-  void checked(String index) {
-    number = index;
-    update();
-  }
-}
