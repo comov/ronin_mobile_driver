@@ -1,8 +1,10 @@
 import 'package:car_helper/screens/authorization/auth_screen.dart';
 import 'package:car_helper/screens/authorization/sign_in_screen.dart';
 import 'package:car_helper/screens/debug_page_screen.dart';
+import 'package:car_helper/screens/index/checkerpage.dart';
 import 'package:car_helper/screens/index/index.dart';
 import 'package:car_helper/screens/order/create.dart';
+import 'package:car_helper/screens/order/createcarfromorder.dart';
 import 'package:car_helper/screens/order/detail.dart';
 import 'package:car_helper/screens/user/create_car.dart';
 import 'package:car_helper/screens/user/edit_car.dart';
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "CarHelpers",
-      initialRoute: "/index",
+      initialRoute: "/checkerPage",
       navigatorObservers: [
         SentryNavigatorObserver(),
       ],
@@ -88,10 +90,12 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         "/index": (BuildContext context) =>  Index(0),
+        "/checkerPage": (BuildContext context) =>  const CheckerPage(),
         // "/indexTest": (BuildContext context) => const IndexTest(),
         "/signin": (BuildContext context) => const SignIn(),
         "/auth": (BuildContext context) => const Auth(),
         "/order/new": (BuildContext context) => const OrderNew(),
+        "/order/create_car_from_order": (BuildContext context) => const CreateCarFromOrder(),
         "/order/detail": (BuildContext context) => const OrderDetail(),
         "/user/edit_profile": (BuildContext context) => const UserEdit(),
         "/user/create_car": (BuildContext context) => const CreateCar(),

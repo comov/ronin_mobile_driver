@@ -218,6 +218,10 @@ class _EditCarState extends State<EditCar> {
                             if (value!.length >= 5) {
                               return "Поле может быть больше 4 символов";
                             }
+                            else if (value!.length <4) {
+                              return "Поле может быть меньше 4 символов";
+
+                            }
 
                             return null;
                           },

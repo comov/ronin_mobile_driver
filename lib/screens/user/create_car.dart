@@ -20,8 +20,10 @@ class _CreateCarState extends State<CreateCar> {
   String brand = "";
   String model = "";
   int? year;
+  String yearString = "выберите год";
   String vin = "";
   String plateNumber = "";
+
 
   @override
   Widget build(BuildContext context) {
@@ -142,8 +144,8 @@ class _CreateCarState extends State<CreateCar> {
                               return "Поле не может быть пустым";
                             }
 
-                            if (value.length >= 10) {
-                              return "Поле может быть больше 10 символов";
+                            if (value.length >= 12) {
+                              return "Поле может быть больше 11 символов";
                             }
                             return null;
                           },
@@ -175,8 +177,8 @@ class _CreateCarState extends State<CreateCar> {
                             return null;
                           },
                         ),
-                        TextFormField(
-                          onChanged: (text) => {year = int.parse(text)},
+                        TextFormField(onChanged: (text) => {year = int.parse(text)},
+
                           autofocus: true,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -197,6 +199,10 @@ class _CreateCarState extends State<CreateCar> {
                           validator: (value) {
                             if (value!.length >= 5) {
                               return "Поле может быть больше 4 символов";
+                            }
+                            if (value!.length <4) {
+                              return "Поле может быть меньше 4 символов";
+
                             }
                             return null;
                           },
@@ -219,7 +225,7 @@ class _CreateCarState extends State<CreateCar> {
                                     children: [
                                       if (value == 200)
                                         const Text("Авто успешно добавлено")
-                                     else if (value == 403)
+                                      else if (value == 403)
                                         const Text("Превышен лимит авто")
                                       else
                                         const Text(
@@ -230,23 +236,20 @@ class _CreateCarState extends State<CreateCar> {
                                 actions: [
                                   ElevatedButton(
                                       onPressed: () {
-                                     Navigator.pop(context);
+                                        Navigator.pop(context);
                                       },
                                       child: const Text('Назад')),
-
-                                if (value == 200)
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Index(3)),
-                                                (
-                                                Route<dynamic> route) => false);
-                                      },
-                                      child: const Text('В главное меню'))
-
+                                  if (value == 200)
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Index(3)),
+                                              (Route<dynamic> route) => false);
+                                        },
+                                        child: const Text('В главное меню'))
                                 ],
                               ),
                             );

@@ -157,7 +157,6 @@ class _BottomProfileState extends State<BottomProfile>
                 Flex(
                   direction: Axis.horizontal,
                   children: [
-                    if (carList.isNotEmpty)
                       Expanded(
                         child: Card(
                           child: Padding(

@@ -109,6 +109,7 @@ Widget renderOrders(BuildContext context) {
                             categories[index].image,
                             height: 40,
                             width: 40,
+                            color: const Color.fromRGBO(245, 245, 245, 1),
                           ),
                         )
                       ],

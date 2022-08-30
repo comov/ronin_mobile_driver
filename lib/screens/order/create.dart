@@ -6,12 +6,15 @@ import 'package:car_helper/resources/api_order_create.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/screens/index/index.dart';
 import 'package:car_helper/screens/index/services.dart';
+import 'package:car_helper/screens/order/createcarfromorder.dart';
 import 'package:car_helper/screens/order/detail.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_datetime_picker_bdaya/flutter_datetime_picker_bdaya.dart';
+import 'package:direct_select/direct_select.dart';
 
 class OrderCreateArgs {
   Map<int, SelectedService> servicesMaps = {};
@@ -33,27 +36,38 @@ class _OrderNewState extends State<OrderNew> {
   List<Car> carList = [];
   DateTime? pickUpTime;
   DateTime? pickUpTimeToSrv;
-  late Car selectItem;
+  Car? selectItem;
+
+  int selectItemId = 0;
+
   int value = 0;
-  final double _kPickerSheetHeight = 216.0;
+
+  List<Widget> _buildCarChoose() {
+    return carList.map((e) => MySelectionItem(title: e.plateNumber)).toList();
+  }
+
+  int selectedIndex1 = 0;
 
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as OrderCreateArgs;
 
     final services = args.servicesMaps;
+
     FocusManager.instance.primaryFocus?.unfocus();
     final formKey = GlobalKey<FormState>();
+
+    final selectedCarController = SelectedCarController();
+    final controller = Get.put(selectedCarController);
 
     return FutureBuilder<String>(
       future: loadFromStorage(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         return Scaffold(
-          appBar: AppBar(
-
-          ),
+          appBar: AppBar(),
           body: Padding(
-            padding: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
+            padding:
+                const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
             child: Form(
               key: formKey,
               child: ListView(
@@ -99,52 +113,52 @@ class _OrderNewState extends State<OrderNew> {
                     child: Column(
                       children: [
                         if (carList.isEmpty)
-                          carIsEmpty()
+                          carIsEmpty(services)
                         else
-                          Row(
-                            children: [
-                              const Text(
-                                "Выберите авто:",
-                                style: TextStyle(fontSize: 15),
-                              ),
-                              const Spacer(),
-                              InkWell(
-                                  onTap: () {
-                                    showCupertinoModalPopup<void>(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return _buildBottomPicker(
-                                              _buildCupertinoPicker());
-                                        });
-                                  },
-                                  child: Text(
-                                    selectItem.plateNumber,
-                                    style: const TextStyle(
-                                        fontSize: 15, color: Colors.red),
-                                  )),
-                            ],
-                          )
+                          Flex(direction: Axis.vertical,
+                          children: [
+                            const Text("Выберите авто"),
+                            DirectSelect(
+                                itemExtent: 35.0,
+                                selectedIndex: selectedIndex1,
+                                mode: DirectSelectMode.tap,
+                                // backgroundColor: Colors.red,
+                                onSelectedItemChanged: (index) {
+                                  setState(() {
+                                    if (index != null) {
+                                      selectedIndex1 = index;
+                                      selectItem = carList[index];
+                                    }
+                                  });
+                                },
+                                items: _buildCarChoose(),
+                                child: MySelectionItem(
+                                  isForList: false,
+                                  title: carList[selectedIndex1].plateNumber,
+                                )
+                            ),
+                          ],)
+
+
                       ],
                     ),
                   ),
-
-                   const Padding(
-                     padding: EdgeInsets.only(bottom: 8.0),
-                     child: Text(
-                        "Адрес откуда забрать авто:",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                   ),
-
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      "Адрес откуда забрать авто:",
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: TextFormField(
                       onChanged: (text) => {pickUpAddress = text},
                       // autofocus: true,
                       keyboardType: TextInputType.text,
+                      initialValue: pickUpAddress,
                       decoration: InputDecoration(
-                        hintText:
-                        "Название улицы, номер дома",
+                        hintText: "Название улицы, номер дома",
                         focusedBorder: UnderlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                           borderSide: const BorderSide(
@@ -171,6 +185,7 @@ class _OrderNewState extends State<OrderNew> {
                         "Удобное для Вас время:",
                         style: TextStyle(fontSize: 15),
                       ),
+                      const Spacer(),
                       TextButton(
                           onPressed: () {
                             DatePicker.showDateTimePicker(context,
@@ -190,7 +205,7 @@ class _OrderNewState extends State<OrderNew> {
                           child: Text(
                             pickUpTime == null
                                 ? "Выбрать время"
-                                : "${pickUpTime?.toLocal()}",
+                                : DateFormat("dd-MMM-yyyy").format(pickUpTime!),
                             style: const TextStyle(color: Colors.blue),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -209,6 +224,7 @@ class _OrderNewState extends State<OrderNew> {
                     onChanged: (text) => {customerComment = text},
                     // autofocus: true,
                     keyboardType: TextInputType.text,
+                    initialValue: customerComment,
                     decoration: InputDecoration(
                       hintText:
                           "Ваше пожелания и предложение о работах с Вашим авто",
@@ -239,9 +255,14 @@ class _OrderNewState extends State<OrderNew> {
                             if (item.checked == true) item.service.id
                         ];
 
-                        _createOrder(selectedServices).then((order) {
+                        _createOrder(selectedServices, controller.number)
+                            .then((order) {
                           if (order != null) {
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Index(2)), (Route<dynamic> route) => false);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Index(2)),
+                                (Route<dynamic> route) => false);
 
                             Navigator.pushNamed(
                               context,
@@ -269,22 +290,23 @@ class _OrderNewState extends State<OrderNew> {
 
     final getCarListResponse = await getCustomerCars(authToken);
     carList = getCarListResponse.cars;
+    debugPrint("again");
 
-    if (carList.isNotEmpty) {
-      selectItem = carList.first;
-    }
+    // if (carList.isNotEmpty) {
+    //   selectItem = carList.first;
+    // }
 
     return Future.value("Ok");
   }
 
-  Future<Order?> _createOrder(List<int> checkedServices) async {
+  Future<Order?> _createOrder(List<int> checkedServices, int number) async {
     final response = await createOrder(
         authToken,
         checkedServices,
         customerComment,
         pickUpAddress,
         pickUpTimeToSrv?.toIso8601String(),
-        selectItem.id);
+        selectItem?.id ?? 0);
 
     switch (response.statusCode) {
       case 200:
@@ -305,7 +327,7 @@ class _OrderNewState extends State<OrderNew> {
     return Future.value(response.order);
   }
 
-  Widget carIsEmpty() {
+  Widget carIsEmpty(Map<int, SelectedService> services) {
     return Row(
       children: [
         const Text("У Вас нету добавленных авто, можете добавить"),
@@ -314,7 +336,10 @@ class _OrderNewState extends State<OrderNew> {
               //TO DO need to add check if customer has 3 cars in profile
               Navigator.pushNamed(
                 context,
-                "/user/create_car",
+                "/order/create_car_from_order",
+                arguments: CreateCarFromOrderArgs(
+                  servicesMaps: services,
+                ),
               );
             },
             style: TextButton.styleFrom(
@@ -326,42 +351,58 @@ class _OrderNewState extends State<OrderNew> {
       ],
     );
   }
+}
 
-  Widget _buildCupertinoPicker() {
-    return CupertinoPicker(
-      magnification: 1.5,
-      backgroundColor: Colors.white,
-      itemExtent: 40,
-      looping: false,
-      children: carList
-          .map((item) => Center(
-                child: Text(item.plateNumber),
-              ))
-          .toList(),
-      onSelectedItemChanged: (index) {
-        setState(() => value = index);
-        selectItem = carList[index];
-      },
+class SelectedCarController extends GetxController {
+  int number = 0;
+
+  void checked(int index) {
+    number = index;
+    update();
+  }
+}
+
+class MySelectionItem extends StatelessWidget {
+  final String? title;
+  final bool isForList;
+
+  const MySelectionItem({Key? key, this.title, this.isForList = true})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+
+      height: 60.0,
+      child: isForList
+          ? Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: _buildItem(context),
+            )
+          : Card(
+              margin: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Stack(
+                children: <Widget>[
+                  _buildItem(context),
+                  const Align(
+                    alignment: Alignment.centerRight,
+                    child: Icon(Icons.arrow_drop_down),
+                  )
+                ],
+              ),
+            ),
     );
   }
 
-  Widget _buildBottomPicker(Widget picker) {
+  Widget _buildItem(BuildContext context) {
     return Container(
-      height: _kPickerSheetHeight,
-      padding: const EdgeInsets.only(top: 6.0),
-      color: CupertinoColors.white,
-      child: DefaultTextStyle(
-        style: const TextStyle(
-          color: CupertinoColors.black,
-          fontSize: 22.0,
-        ),
-        child: GestureDetector(
-          onTap: () {},
-          child: SafeArea(
-            top: false,
-            child: picker,
-          ),
-        ),
+      width: MediaQuery.of(context).size.width,
+      height: 200,
+      alignment: Alignment.center,
+      child: FittedBox(
+          child: Text(
+        title!,
+      )
       ),
     );
   }
