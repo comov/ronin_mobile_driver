@@ -14,7 +14,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_datetime_picker_bdaya/flutter_datetime_picker_bdaya.dart';
-import 'package:direct_select/direct_select.dart';
 
 class OrderCreateArgs {
   Map<int, SelectedService> servicesMaps = {};
@@ -33,20 +32,17 @@ class _OrderNewState extends State<OrderNew> {
   String authToken = "";
   String customerComment = "";
   String pickUpAddress = "";
-  List<Car> carList = [];
+  List<Car>? carList = [];
   DateTime? pickUpTime;
   DateTime? pickUpTimeToSrv;
-  Car? selectItem;
 
   int selectItemId = 0;
 
-  int value = 0;
-
-  List<Widget> _buildCarChoose() {
-    return carList.map((e) => MySelectionItem(title: e.plateNumber)).toList();
-  }
+  // int value = 0;
 
   int selectedIndex1 = 0;
+  String? selectItem = "";
+
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +55,8 @@ class _OrderNewState extends State<OrderNew> {
 
     final selectedCarController = SelectedCarController();
     final controller = Get.put(selectedCarController);
+
+
 
     return FutureBuilder<String>(
       future: loadFromStorage(),
@@ -112,34 +110,25 @@ class _OrderNewState extends State<OrderNew> {
                     padding: const EdgeInsets.only(top: 8, bottom: 8.0),
                     child: Column(
                       children: [
-                        if (carList.isEmpty)
+                        if (carList!.isEmpty)
                           carIsEmpty(services)
                         else
-                          Flex(direction: Axis.vertical,
-                          children: [
-                            const Text("Выберите авто"),
-                            DirectSelect(
-                                itemExtent: 35.0,
-                                selectedIndex: selectedIndex1,
-                                mode: DirectSelectMode.tap,
-                                // backgroundColor: Colors.red,
-                                onSelectedItemChanged: (index) {
-                                  setState(() {
-                                    if (index != null) {
-                                      selectedIndex1 = index;
-                                      selectItem = carList[index];
-                                    }
-                                  });
-                                },
-                                items: _buildCarChoose(),
-                                child: MySelectionItem(
-                                  isForList: false,
-                                  title: carList[selectedIndex1].plateNumber,
-                                )
-                            ),
-                          ],)
-
-
+                          Row(
+                            children: [
+                              const Text("Выберите авто"),
+                              const Spacer(),
+                              DropdownButton(
+                                  value: selectItem,
+                                  items: carList?.map((car) { return DropdownMenuItem(value: car.plateNumber, child: Text(car.plateNumber), ); }).toList(),
+                                  onChanged: (String? newValue) {
+                                setState(() {
+                                  var item = newValue!;
+                                  selectItem = newValue;
+                                  debugPrint("item= $item");
+                                });
+                                  })
+                            ],
+                          )
                       ],
                     ),
                   ),
@@ -255,7 +244,7 @@ class _OrderNewState extends State<OrderNew> {
                             if (item.checked == true) item.service.id
                         ];
 
-                        _createOrder(selectedServices, controller.number)
+                        _createOrder(selectedServices)
                             .then((order) {
                           if (order != null) {
                             Navigator.pushAndRemoveUntil(
@@ -292,21 +281,32 @@ class _OrderNewState extends State<OrderNew> {
     carList = getCarListResponse.cars;
     debugPrint("again");
 
-    // if (carList.isNotEmpty) {
-    //   selectItem = carList.first;
-    // }
+    if (selectItem!.isEmpty) {
+      if (carList!.isNotEmpty) {
+        selectItem = carList?.first.plateNumber;
+      }
+    }
 
     return Future.value("Ok");
   }
 
-  Future<Order?> _createOrder(List<int> checkedServices, int number) async {
+  Future<Order?> _createOrder(List<int> checkedServices) async {
+    debugPrint("car - $selectItem");
+    var car;
+
+    if (carList!.isNotEmpty) {
+      var item = carList?.where((element) => element.plateNumber == selectItem);
+      for (var cars in item!)
+        car = cars.id;
+    }
     final response = await createOrder(
         authToken,
         checkedServices,
         customerComment,
         pickUpAddress,
         pickUpTimeToSrv?.toIso8601String(),
-        selectItem?.id ?? 0);
+        car ?? 0
+    );
 
     switch (response.statusCode) {
       case 200:
@@ -354,56 +354,10 @@ class _OrderNewState extends State<OrderNew> {
 }
 
 class SelectedCarController extends GetxController {
-  int number = 0;
+  String number = "";
 
-  void checked(int index) {
+  void checked(String index) {
     number = index;
     update();
-  }
-}
-
-class MySelectionItem extends StatelessWidget {
-  final String? title;
-  final bool isForList;
-
-  const MySelectionItem({Key? key, this.title, this.isForList = true})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-
-      height: 60.0,
-      child: isForList
-          ? Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: _buildItem(context),
-            )
-          : Card(
-              margin: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Stack(
-                children: <Widget>[
-                  _buildItem(context),
-                  const Align(
-                    alignment: Alignment.centerRight,
-                    child: Icon(Icons.arrow_drop_down),
-                  )
-                ],
-              ),
-            ),
-    );
-  }
-
-  Widget _buildItem(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 200,
-      alignment: Alignment.center,
-      child: FittedBox(
-          child: Text(
-        title!,
-      )
-      ),
-    );
   }
 }

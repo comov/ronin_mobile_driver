@@ -104,8 +104,8 @@ class _EditCarState extends State<EditCar> {
                               return "Поле не может быть пустым";
                             }
 
-                            if (value.length >= 15) {
-                              return "Поле может быть больше 15 символов";
+                            if (value.length >= 21) {
+                              return "Поле не может быть больше 20 символов";
                             }
                             return null;
                           },
@@ -132,8 +132,12 @@ class _EditCarState extends State<EditCar> {
                             ),
                           ),
                           validator: (value) {
-                            if (value!.length >= 16) {
-                              return "Поле может быть больше 16 символов";
+                            if (value == null || value.isEmpty) {
+                              return "Поле не может быть пустым";
+                            }
+
+                            if (value.length >= 23) {
+                              return "Поле не может быть больше 22 символов";
                             }
                             return null;
                           },
@@ -160,8 +164,8 @@ class _EditCarState extends State<EditCar> {
                             ),
                           ),
                           validator: (value) {
-                            if (value!.length >= 10) {
-                              return "Поле может быть больше 10 символов";
+                            if (value!.length >= 12) {
+                              return "Поле не может быть больше 11 символов";
                             }
                             return null;
                           },
@@ -188,8 +192,8 @@ class _EditCarState extends State<EditCar> {
                             ),
                           ),
                           validator: (value) {
-                            if (value!.length >= 18) {
-                              return "Поле может быть больше 18 символов";
+                            if (value!.length >= 21) {
+                              return "Поле не может быть больше 20 символов";
                             }
                             return null;
                           },
@@ -216,10 +220,10 @@ class _EditCarState extends State<EditCar> {
                           ),
                           validator: (value) {
                             if (value!.length >= 5) {
-                              return "Поле может быть больше 4 символов";
+                              return "Поле не может быть больше 4 символов";
                             }
-                            else if (value!.length <4) {
-                              return "Поле может быть меньше 4 символов";
+                            else if (value.length <4) {
+                              return "Поле не может быть меньше 4 символов";
 
                             }
 

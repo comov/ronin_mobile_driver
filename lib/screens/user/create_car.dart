@@ -82,8 +82,8 @@ class _CreateCarState extends State<CreateCar> {
                               return "Поле не может быть пустым";
                             }
 
-                            if (value.length >= 15) {
-                              return "Поле может быть больше 15 символов";
+                            if (value.length >= 21) {
+                              return "Поле не может быть больше 20 символов";
                             }
                             return null;
                           },
@@ -113,8 +113,8 @@ class _CreateCarState extends State<CreateCar> {
                               return "Поле не может быть пустым";
                             }
 
-                            if (value.length >= 15) {
-                              return "Поле может быть больше 15 символов";
+                            if (value.length >= 23) {
+                              return "Поле не может быть больше 22 символов";
                             }
                             return null;
                           },
@@ -145,7 +145,7 @@ class _CreateCarState extends State<CreateCar> {
                             }
 
                             if (value.length >= 12) {
-                              return "Поле может быть больше 11 символов";
+                              return "Поле не может быть больше 11 символов";
                             }
                             return null;
                           },
@@ -171,8 +171,8 @@ class _CreateCarState extends State<CreateCar> {
                             ),
                           ),
                           validator: (value) {
-                            if (value!.length >= 18) {
-                              return "Не больше 18 символов";
+                            if (value!.length >= 21) {
+                              return "Поле не может быть больше 20 символов";
                             }
                             return null;
                           },
@@ -198,10 +198,10 @@ class _CreateCarState extends State<CreateCar> {
                           ),
                           validator: (value) {
                             if (value!.length >= 5) {
-                              return "Поле может быть больше 4 символов";
+                              return "Поле не может быть больше 4 символов";
                             }
-                            if (value!.length <4) {
-                              return "Поле может быть меньше 4 символов";
+                            if (value.length <4) {
+                              return "Поле не может быть меньше 4 символов";
 
                             }
                             return null;
@@ -234,6 +234,7 @@ class _CreateCarState extends State<CreateCar> {
                                   ),
                                 ),
                                 actions: [
+                                  if (value != 200)
                                   ElevatedButton(
                                       onPressed: () {
                                         Navigator.pop(context);

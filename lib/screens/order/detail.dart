@@ -30,7 +30,14 @@ class _OrderDetailState extends State<OrderDetail> {
 
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Создание заказа")),
+      appBar: AppBar(
+        title: const Text("Детали заказа"),
+        titleTextStyle: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 34,
+        ),
+      ),
       body: ListView(
         children: [
           Text("ID заявки: ${order.id}"),
