@@ -148,6 +148,12 @@ class _EditCarState extends State<EditCar> {
                           keyboardType: TextInputType.text,
                           textCapitalization: TextCapitalization.characters,
                           initialValue: carItem.plateNumber,
+                          toolbarOptions: const ToolbarOptions(
+                            copy: true,
+                            cut: true,
+                            paste: false,
+                            selectAll: false,
+                          ),
                           decoration: InputDecoration(
                             labelText: "Гос. Номер авто",
                             focusedBorder: UnderlineInputBorder(
@@ -203,6 +209,12 @@ class _EditCarState extends State<EditCar> {
                           autofocus: true,
                           keyboardType: TextInputType.number,
                           initialValue: carItem.year.toString(),
+                          toolbarOptions: const ToolbarOptions(
+                            copy: true,
+                            cut: true,
+                            paste: false,
+                            selectAll: false,
+                          ),
                           decoration: InputDecoration(
                             labelText: "Год авто",
                             focusedBorder: UnderlineInputBorder(

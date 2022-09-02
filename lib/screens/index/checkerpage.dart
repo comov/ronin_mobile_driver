@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:car_helper/entities/user.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/resources/refresh.dart';
@@ -70,18 +72,14 @@ class _CheckerPage extends State<CheckerPage>  {
               return const SignIn();
             }
         }
-        return Index(0
-            // appBar: AppBar(
-            //   title: Text(widgetOptions[_selectedBottom]![0]),
-            // ),
-        );
+        return Index(0);
 
       },
     );
   }
 
   Future<String> loadInitialData() async {
-    final pf = await SharedPreferences.getInstance();
+    var pf = await SharedPreferences.getInstance();
 
     authToken = pf.getString("auth_token") ?? "";
     phoneNumber = pf.getString("phone_number") ?? "";
@@ -100,13 +98,17 @@ class _CheckerPage extends State<CheckerPage>  {
         break;
       case 401:
         {
+          debugPrint(refreshKey);
+
           final refreshResponse = await refreshToken(refreshKey);
           if (refreshResponse.statusCode == 200) {
+
             authToken = refreshResponse.auth!.token;
             refreshKey = refreshResponse.auth!.refreshKey;
-            saveAuthData(authToken, refreshKey);
+
             break;
           } else {
+
             debugPrint(
                 "refreshResponse.statusCode: ${refreshResponse.statusCode}");
             debugPrint("refreshResponse.error: ${refreshResponse.error}");
@@ -115,13 +117,6 @@ class _CheckerPage extends State<CheckerPage>  {
         }
     }
 
-    return Future.value("Ok");
-  }
-
-  Future<String> saveAuthData(String token, String refreshKey) async {
-    final pf = await SharedPreferences.getInstance();
-    pf.setString("auth_token", token);
-    pf.setString("refresh_key", refreshKey);
     return Future.value("Ok");
   }
 }

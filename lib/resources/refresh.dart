@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:car_helper/entities/api.dart';
 import 'package:car_helper/main.dart';
 import 'package:car_helper/resources/auth.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 Future<AuthResponse> refreshToken(String refreshToken) async {
@@ -12,7 +13,7 @@ Future<AuthResponse> refreshToken(String refreshToken) async {
       "Content-Type": "application/json; charset=UTF-8",
     },
   );
-
+debugPrint(response.body);
   if (response.statusCode == 200) {
     return AuthResponse(
       statusCode: response.statusCode,

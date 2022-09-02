@@ -280,7 +280,7 @@ class _BottomProfileState extends State<BottomProfile>
   }
 
   Future<String> loadInitialData() async {
-    final pf = await SharedPreferences.getInstance();
+    var pf = await SharedPreferences.getInstance();
 
     authToken = pf.getString("auth_token") ?? "";
     phoneNumber = pf.getString("phone_number") ?? "";
@@ -291,27 +291,30 @@ class _BottomProfileState extends State<BottomProfile>
     }
 
     final profileResponse = await getProfile(authToken);
-    switch (profileResponse.statusCode) {
-      case 200:
-        {
-          profile = profileResponse.profile;
-        }
-        break;
-      case 401:
-        {
-          final refreshResponse = await refreshToken(refreshKey);
-          if (refreshResponse.statusCode == 200) {
-            authToken = refreshResponse.auth!.token;
-            refreshKey = refreshResponse.auth!.refreshKey;
-            saveAuthData(authToken, refreshKey);
-            break;
-          } else {
-            debugPrint(
-                "refreshResponse.statusCode: ${refreshResponse.statusCode}");
-            debugPrint("refreshResponse.error: ${refreshResponse.error}");
-            return Future.value("tokenExpired");
+    {
+      switch (profileResponse.statusCode) {
+        case 200:
+          {
+            profile = profileResponse.profile;
           }
-        }
+          break;
+        case 401:
+          {
+            final refreshResponse = await refreshToken(refreshKey);
+            if (refreshResponse.statusCode == 200) {
+              authToken = refreshResponse.auth!.token;
+              refreshKey = refreshResponse.auth!.refreshKey;
+              pf.setString("auth_token", authToken);
+              pf.setString("refresh_key", refreshKey);
+              break;
+            } else {
+              debugPrint(
+                  "refreshResponse.statusCode: ${refreshResponse.statusCode}");
+              debugPrint("refreshResponse.error: ${refreshResponse.error}");
+              return Future.value("tokenExpired");
+            }
+          }
+      }
     }
 
     final getCarListResponse = await getCustomerCars(authToken);
@@ -320,10 +323,5 @@ class _BottomProfileState extends State<BottomProfile>
     return Future.value("Ok");
   }
 
-  Future<String> saveAuthData(String token, String refreshKey) async {
-    final pf = await SharedPreferences.getInstance();
-    pf.setString("auth_token", token);
-    pf.setString("refresh_key", refreshKey);
-    return Future.value("Ok");
-  }
+
 }

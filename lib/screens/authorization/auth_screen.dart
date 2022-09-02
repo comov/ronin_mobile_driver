@@ -58,7 +58,7 @@ class _AuthState extends State<Auth> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       authCallBack().then((value) {
-                        if (value == "Ok") {
+                        if (value == 200) {
                           Navigator.of(context).pushNamedAndRemoveUntil(
                             "/index",
                             (route) => false,
@@ -114,7 +114,7 @@ class _AuthState extends State<Auth> {
     }
   }
 
-  Future<String> authCallBack() async {
+  Future<int> authCallBack() async {
     final response = await auth(phoneNumber, otpCode);
     switch (response.statusCode) {
       case 200:
@@ -130,6 +130,6 @@ class _AuthState extends State<Auth> {
           break;
         }
     }
-    return Future.value("Ok");
+    return Future.value(response.statusCode);
   }
 }

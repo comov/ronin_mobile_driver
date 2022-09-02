@@ -1,5 +1,6 @@
 import 'package:car_helper/resources/signin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignIn extends StatefulWidget {
@@ -22,6 +23,8 @@ class _SignInState extends State<SignIn> {
     final pf = await SharedPreferences.getInstance();
     pf.setString("phone_number", value);
   }
+
+  final String separator = '';
 
   @override
   Widget build(BuildContext context) {
@@ -49,58 +52,68 @@ class _SignInState extends State<SignIn> {
 
           final formKey = GlobalKey<FormState>();
           return Scaffold(
-              body: Column(
+              body: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("Для входа в приложение, требуется авторизация."),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        onChanged: (text) => {phoneNumber = text},
-                        autofocus: true,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: "Номер телефона",
-                          hintText: "996",
+                  Form(
+                    key: formKey,
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Для входа в приложение, требуется авторизация.",
+                          textAlign: TextAlign.left,
                         ),
-                        initialValue: phoneNumber,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Номер телефона не может быть пустым";
-                          }
-                          if (value.length != 12) {
-                            return "Номерт телефона должен быть в международном формате";
-                          }
+                        TextFormField(
+                          onChanged: (text) => {phoneNumber = text},
+                          autofocus: true,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp("[0-9$separator]"))
+                          ],
+                          decoration: const InputDecoration(
+                            labelText: "Номер телефона",
+                            hintText: "996",
+                          ),
+                          initialValue: phoneNumber,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Номер телефона не может быть пустым";
+                            }
+                            if (value.length != 12) {
+                              return "Номерт телефона должен быть в международном формате";
+                            }
 
-                          return null;
-                        },
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            singInCallBack().then((value) {
-                              if (value == "Ok") {
-                                Navigator.pushNamed(context, "/auth");
-                              }
-                            });
-                          }
-                        },
-                        child: const Text("Зарегистрироваться"),
-                      ),
-                    ],
+                            return null;
+                          },
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              singInCallBack().then((value) {
+                                if (value == 200) {
+                                  Navigator.pushNamed(context, "/auth");
+                                }
+                              });
+                            }
+                          },
+                          child: const Text("Зарегистрироваться"),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
             ],
-          ));
+          ),
+                ),
+              ));
         });
   }
 
-  Future<String> singInCallBack() async {
+  Future<int> singInCallBack() async {
     final response = await sigIn(phoneNumber);
     switch (response.statusCode) {
       case 200:
@@ -118,6 +131,6 @@ class _SignInState extends State<SignIn> {
         }
     }
 
-    return Future.value("Ok");
+    return Future.value(response.statusCode);
   }
 }

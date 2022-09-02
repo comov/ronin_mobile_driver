@@ -264,27 +264,30 @@ Future<String> loadInitialData() async {
     return Future.value("tokenNotFound");
   }
   final categoriesResponse = await getCategories(authToken);
-  switch (categoriesResponse.statusCode) {
-    case 200:
-      {
-        categories = categoriesResponse.categories;
-      }
-      break;
-    case 401:
-      {
-        final refreshResponse = await refreshToken(refreshKey);
-        if (refreshResponse.statusCode == 200) {
-          authToken = refreshResponse.auth!.token;
-          refreshKey = refreshResponse.auth!.refreshKey;
-          saveAuthData(authToken, refreshKey);
-          break;
-        } else {
-          debugPrint(
-              "refreshResponse.statusCode: ${refreshResponse.statusCode}");
-          debugPrint("refreshResponse.error: ${refreshResponse.error}");
-          return Future.value("tokenExpired");
+  {
+    switch (categoriesResponse.statusCode) {
+      case 200:
+        {
+          categories = categoriesResponse.categories;
         }
-      }
+        break;
+      case 401:
+        {
+          final refreshResponse = await refreshToken(refreshKey);
+          if (refreshResponse.statusCode == 200) {
+            authToken = refreshResponse.auth!.token;
+            refreshKey = refreshResponse.auth!.refreshKey;
+            pf.setString("auth_token", authToken);
+            pf.setString("refresh_key", refreshKey);
+            break;
+          } else {
+            debugPrint(
+                "refreshResponse.statusCode: ${refreshResponse.statusCode}");
+            debugPrint("refreshResponse.error: ${refreshResponse.error}");
+            return Future.value("tokenExpired");
+          }
+        }
+    }
   }
 
   for (final category in categories) {
@@ -296,12 +299,6 @@ Future<String> loadInitialData() async {
   return Future.value("Ok");
 }
 
-Future<String> saveAuthData(String token, String refreshKey) async {
-  final pf = await SharedPreferences.getInstance();
-  pf.setString("auth_token", token);
-  pf.setString("refresh_key", refreshKey);
-  return Future.value("Ok");
-}
 
 class SelectedServiceController extends GetxController {
   String emptyData = "Выберите сервисы";

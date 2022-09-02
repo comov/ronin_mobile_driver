@@ -102,40 +102,43 @@ Future<String> loadInitialData() async {
   final pf = await SharedPreferences.getInstance();
   authToken = pf.getString("auth_token") ?? "";
   refreshKey = pf.getString("refresh_key") ?? "";
+  debugPrint("orderlist $refreshKey");
+  debugPrint("orderlist $authToken");
+
 
   if (authToken == "") {
     return Future.value("tokenNotFound");
   }
 
   final getOrderListResponse = await getOrders(authToken);
-  switch (getOrderListResponse.statusCode) {
-    case 200:
-      {
-        orders = getOrderListResponse.orders;
-      }
-      break;
-    case 401:
-      {
-        final refreshResponse = await refreshToken(refreshKey);
-        if (refreshResponse.statusCode == 200) {
-          authToken = refreshResponse.auth!.token;
-          refreshKey = refreshResponse.auth!.refreshKey;
-          saveAuthData(authToken, refreshKey);
-          break;
-        } else {
-          debugPrint(
-              "refreshResponse.statusCode: ${refreshResponse.statusCode}");
-          debugPrint("refreshResponse.error: ${refreshResponse.error}");
-          return Future.value("tokenExpired");
+  {
+    switch (getOrderListResponse.statusCode) {
+      case 200:
+        {
+          orders = getOrderListResponse.orders;
         }
-      }
+        break;
+      case 401:
+        {
+          final refreshResponse = await refreshToken(refreshKey);
+          if (refreshResponse.statusCode == 200) {
+            debugPrint("orderlist case- 401-200");
+
+            authToken = refreshResponse.auth!.token;
+            refreshKey = refreshResponse.auth!.refreshKey;
+            pf.setString("auth_token", authToken);
+            pf.setString("refresh_key", refreshKey);
+            break;
+          } else {
+            debugPrint(
+                "refreshResponse.statusCode: ${refreshResponse.statusCode}");
+            debugPrint("refreshResponse.error: ${refreshResponse.error}");
+            return Future.value("tokenExpired");
+          }
+        }
+    }
   }
   return Future.value("Ok");
 }
 
-Future<String> saveAuthData(String token, String refreshKey) async {
-  final pf = await SharedPreferences.getInstance();
-  pf.setString("auth_token", token);
-  pf.setString("refresh_key", refreshKey);
-  return Future.value("Ok");
-}
+

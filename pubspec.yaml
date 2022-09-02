@@ -44,6 +44,7 @@ dependencies:
   get:
   flutter_datetime_picker_bdaya: ^2.0.0
   flutter_picker: ^2.0.5
+  intl_phone_number_input: ^0.7.0+2
 
 dev_dependencies:
   flutter_test:

@@ -181,6 +181,12 @@ class _CreateCarState extends State<CreateCar> {
 
                           autofocus: true,
                           keyboardType: TextInputType.number,
+                          toolbarOptions: const ToolbarOptions(
+                            copy: true,
+                            cut: true,
+                            paste: false,
+                            selectAll: false,
+                          ),
                           decoration: InputDecoration(
                             labelText: "Год авто",
                             focusedBorder: UnderlineInputBorder(
