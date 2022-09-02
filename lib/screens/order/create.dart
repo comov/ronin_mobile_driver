@@ -287,6 +287,7 @@ class _OrderNewState extends State<OrderNew> {
 
   Future<Order?> _createOrder(List<int> checkedServices) async {
     debugPrint("car - $selectItem");
+    // ignore: prefer_typing_uninitialized_variables
     var car;
 
     if (carList!.isNotEmpty) {

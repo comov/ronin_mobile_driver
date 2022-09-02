@@ -22,24 +22,38 @@ class _AuthState extends State<Auth> {
 
     final formKey = GlobalKey<FormState>();
     return Scaffold(
-      body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 30, right: 30),
-          child: Text("На ваш номер телефона должен прийти код подтверждения"),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: formKey,
-            child: Column(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: formKey,
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const Spacer(),
+                const Text(
+                  "Вход",
+                  style: TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: '.SF Pro Display'),
+                ),
+                const Text(
+                  "Введите OTP код",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      fontFamily: '.SF Pro Text'),
+                ),
+
                 TextFormField(
                   onChanged: (text) => {otpCode = text},
                   autofocus: true,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     labelText: "Код подтверджения из СМС",
+                    labelStyle: TextStyle(
+                        fontFamily: '.SF Pro Text', color: Colors.black),
                     hintText: "0000",
                   ),
                   validator: (value) {
@@ -54,7 +68,16 @@ class _AuthState extends State<Auth> {
                     return null;
                   },
                 ),
+                const Spacer(),
+                // TextButton(
+                //   onPressed: enableResend ? _resendCode : null,
+                //   child: Text(duration.inSeconds == 0
+                //       ? "Отправить код еще раз"
+                //       : "Отправить код еще раз через ${duration.inSeconds} секунд"),
+                // ),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(50)),
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       authCallBack().then((value) {
@@ -64,23 +87,15 @@ class _AuthState extends State<Auth> {
                             (route) => false,
                           );
                         }
-                      }
-                      );
+                      });
                     }
                   },
-                  child: const Text("Отправить"),
+                  child: const Text("Продолжить"),
                 ),
-                // TextButton(
-                //   onPressed: enableResend ? _resendCode : null,
-                //   child: Text(duration.inSeconds == 0
-                //       ? "Отправить код еще раз"
-                //       : "Отправить код еще раз через ${duration.inSeconds} секунд"),
-                // ),
-              ],
-            ),
-          ),
+
+              ]),
         ),
-      ]),
+      ),
     );
   }
 

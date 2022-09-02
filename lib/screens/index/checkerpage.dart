@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:car_helper/entities/user.dart';
 import 'package:car_helper/resources/api_user_profile.dart';
 import 'package:car_helper/resources/refresh.dart';
@@ -9,34 +7,25 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckerPage extends StatefulWidget {
-
   const CheckerPage({Key? key}) : super(key: key);
-
 
   @override
   State<CheckerPage> createState() => _CheckerPage();
 }
 
-class _CheckerPage extends State<CheckerPage>  {
+class _CheckerPage extends State<CheckerPage> {
   String authToken = "";
   String phoneNumber = "";
   String refreshKey = "";
   Profile? profile;
 
-
-
-
-
-
   @override
   void initState() {
     super.initState();
-
   }
+
   @override
   Widget build(BuildContext context) {
-
-
     return FutureBuilder<String>(
       future: loadInitialData(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -73,7 +62,6 @@ class _CheckerPage extends State<CheckerPage>  {
             }
         }
         return Index(0);
-
       },
     );
   }
@@ -102,13 +90,11 @@ class _CheckerPage extends State<CheckerPage>  {
 
           final refreshResponse = await refreshToken(refreshKey);
           if (refreshResponse.statusCode == 200) {
-
             authToken = refreshResponse.auth!.token;
             refreshKey = refreshResponse.auth!.refreshKey;
 
             break;
           } else {
-
             debugPrint(
                 "refreshResponse.statusCode: ${refreshResponse.statusCode}");
             debugPrint("refreshResponse.error: ${refreshResponse.error}");
