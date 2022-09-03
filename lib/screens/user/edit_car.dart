@@ -302,7 +302,7 @@ class _EditCarState extends State<EditCar> {
 
   Future<int> _editCar(carItem) async {
     final response = await editCar(authToken, carItem.id, carItem.brand,
-        carItem.model, carItem.year ?? 0, carItem.vin, carItem.plateNumber);
+        carItem.model, carItem.year ?? 0, carItem.plateNumber, carItem.vin);
     switch (response.statusCode) {
       case 200:
         {

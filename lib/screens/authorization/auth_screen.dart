@@ -15,6 +15,37 @@ class Auth extends StatefulWidget {
 class _AuthState extends State<Auth> {
   var otpCode = "";
   String phoneNumber = "";
+  late Timer _timer;
+  int _start = 30;
+  bool validate = false;
+  TextEditingController textEditingController = TextEditingController();
+
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(oneSec, (Timer timer) {
+      if (_start == 0) {
+        setState(() {
+          timer.cancel();
+        });
+      } else {
+        setState(() {
+          _start--;
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +53,7 @@ class _AuthState extends State<Auth> {
 
     final formKey = GlobalKey<FormState>();
     return Scaffold(
+      appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -45,14 +77,15 @@ class _AuthState extends State<Auth> {
                       fontSize: 15,
                       fontFamily: '.SF Pro Text'),
                 ),
-
                 TextFormField(
                   onChanged: (text) => {otpCode = text},
                   autofocus: true,
+                  controller: textEditingController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: "Код подтверджения из СМС",
-                    labelStyle: TextStyle(
+                  decoration: InputDecoration(
+                    errorText: validate ? 'Введён не верный  OTP код' : null,
+                    // labelText: "Код подтверджения из СМС",
+                    labelStyle: const TextStyle(
                         fontFamily: '.SF Pro Text', color: Colors.black),
                     hintText: "0000",
                   ),
@@ -69,30 +102,68 @@ class _AuthState extends State<Auth> {
                   },
                 ),
                 const Spacer(),
-                // TextButton(
-                //   onPressed: enableResend ? _resendCode : null,
-                //   child: Text(duration.inSeconds == 0
-                //       ? "Отправить код еще раз"
-                //       : "Отправить код еще раз через ${duration.inSeconds} секунд"),
-                // ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50)),
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      authCallBack().then((value) {
-                        if (value == 200) {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            "/index",
-                            (route) => false,
-                          );
-                        }
-                      });
-                    }
-                  },
-                  child: const Text("Продолжить"),
+                const Text("Не пришёл код?",
+                    style: TextStyle(
+                        fontFamily: '.SF Pro Text',
+                        fontSize: 13,
+                        color: Colors.grey)),
+                _start != 0
+                    ? Row(
+                        children: [
+                          const Text(
+                            "Запросить код повторно через",
+                            style: TextStyle(
+                                fontFamily: '.SF Pro Text',
+                                fontSize: 13,
+                                color: Colors.grey),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            _start.toString(),
+                            style: const TextStyle(
+                                fontFamily: '.SF Pro Text',
+                                fontSize: 13,
+                                color: Colors.grey),
+                          )
+                        ],
+                      )
+                    : InkWell(
+                        onTap: () {
+                          setState(() {
+                            _start = 30;
+                            startTimer();
+                            singInCallBack();
+                          });
+                        },
+                        child: const Text("Запросить код повторно"),
+                      ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50)),
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        authCallBack().then((value) {
+                          if (value == 200) {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              "/index",
+                              (route) => false,
+                            );
+                          } else {
+                            setState(() {
+                              validate = true;
+                              // startTimer();
+                            });
+                          }
+                        });
+                      }
+                    },
+                    child: const Text("Продолжить"),
+                  ),
                 ),
-
               ]),
         ),
       ),

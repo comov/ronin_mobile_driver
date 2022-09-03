@@ -44,6 +44,7 @@ class _SignInState extends State<SignIn> {
 
           if (snapshot.hasError) {
             return Scaffold(
+
               body: Center(
                 child: Column(
                   children: [
@@ -125,8 +126,9 @@ class _SignInState extends State<SignIn> {
                         if (formKey.currentState!.validate()) {
                           singInCallBack().then((value) {
                             if (value == 200) {
-                              Navigator.pushNamed(context, "/auth");
+                              Navigator.pushNamed(context, "/auth",);
                             }
+
                           });
                         }
                       },
