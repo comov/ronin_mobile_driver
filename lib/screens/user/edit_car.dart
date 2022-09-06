@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'dart:async';
 
 import 'package:car_helper/entities/car.dart';
@@ -39,7 +41,6 @@ class _EditCarState extends State<EditCar> {
 
     FocusManager.instance.primaryFocus?.unfocus();
 
-    // var _selectedYear = selectedYear(carItem, sele);
     var _selectedYear = DateTime(carItem.year, selectedYear.month, selectedYear.day, selectedYear.hour, selectedYear.minute, selectedYear.second, selectedYear.millisecond, selectedYear.microsecond);
 
     return FutureBuilder<String>(
