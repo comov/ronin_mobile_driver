@@ -10,24 +10,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
-class BottomProfile extends StatefulWidget {
 
-  const BottomProfile({Key? key}) : super(key: key);
-  @override
-  State<BottomProfile> createState() => _BottomProfileState();
-}
-
-class _BottomProfileState extends State<BottomProfile> {
   String authToken = "";
   String refreshKey = "";
 
   Profile? profile;
   List<Car> carList = [];
 
-  @override
-  Widget build(
-    BuildContext context,
-  ) {
+Widget bottomProfile(BuildContext context) {
+
     return FutureBuilder<String>(
       future: loadInitialDataProfile(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -275,6 +266,7 @@ void sharePressed() {
 
   Future<String> loadInitialDataProfile() async {
     var pf = await SharedPreferences.getInstance();
+    debugPrint("profileFuture");
 
     authToken = pf.getString("auth_token") ?? "";
     refreshKey = pf.getString("refresh_key") ?? "";
@@ -315,4 +307,3 @@ void sharePressed() {
 
     return Future.value("Ok");
   }
-}
