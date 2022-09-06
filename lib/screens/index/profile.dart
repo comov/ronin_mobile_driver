@@ -10,21 +10,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
-
-// ignore: must_be_immutable
 class BottomProfile extends StatefulWidget {
-  TabController tabController;
 
-  BottomProfile({Key? key, required this.tabController}) : super(key: key);
-
+  const BottomProfile({Key? key}) : super(key: key);
   @override
   State<BottomProfile> createState() => _BottomProfileState();
 }
 
-class _BottomProfileState extends State<BottomProfile>
-    with SingleTickerProviderStateMixin {
+class _BottomProfileState extends State<BottomProfile> {
   String authToken = "";
-  String phoneNumber = "";
   String refreshKey = "";
 
   Profile? profile;
@@ -33,11 +27,9 @@ class _BottomProfileState extends State<BottomProfile>
   @override
   Widget build(
     BuildContext context,
-    // List<Category> categories,
-    // List<Order> orders,
   ) {
     return FutureBuilder<String>(
-      future: loadInitialData(),
+      future: loadInitialDataProfile(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         // AsyncSnapshot<Your object type>
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -45,7 +37,6 @@ class _BottomProfileState extends State<BottomProfile>
             body: Center(child: Text("Загрузка...")),
           );
         }
-
         if (snapshot.hasError) {
           return Scaffold(
             body: Center(
@@ -273,7 +264,6 @@ void sharePressed() {
         }
         break;
       case 2:
-        debugPrint("click on logout");
         delFromStorage();
         Navigator.of(context).pushNamedAndRemoveUntil(
           "/signin",
@@ -283,11 +273,10 @@ void sharePressed() {
     }
   }
 
-  Future<String> loadInitialData() async {
+  Future<String> loadInitialDataProfile() async {
     var pf = await SharedPreferences.getInstance();
 
     authToken = pf.getString("auth_token") ?? "";
-    phoneNumber = pf.getString("phone_number") ?? "";
     refreshKey = pf.getString("refresh_key") ?? "";
 
     if (authToken == "") {

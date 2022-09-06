@@ -45,7 +45,7 @@ class _IndexState extends State<Index>
     widgetOptions = {
       0: ["Главная", renderMain],
       1: ["Услуги", renderOrders],
-      2: ["Заказы", bottomOrders],
+      2: ["Заказы", BottomOrders],
       3: ["Профиль", BottomProfile],
     };
     _tabController = TabController(length: widgetOptions.length, vsync: this);
@@ -77,8 +77,8 @@ class _IndexState extends State<Index>
           children: <Widget>[
             renderMain(context),
             renderOrders(context),
-            bottomOrders(context),
-            BottomProfile(tabController: _tabController),
+            const BottomOrders(),
+            const BottomProfile(),
           ],
         ),
         bottomNavigationBar: Container(

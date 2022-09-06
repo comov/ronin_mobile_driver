@@ -155,7 +155,12 @@ class _UserEditState extends State<UserEdit> {
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
+                                          style: ElevatedButton.styleFrom(
+                                              primary: Colors.grey[300],
+                                            onPrimary: Colors.black
+                                          ),
                                           child: const Text('Отмена'),
+
                                         ),
                                         ElevatedButton(
                                             onPressed: () {
@@ -169,11 +174,12 @@ class _UserEditState extends State<UserEdit> {
                                                   );
                                                 }
                                               });
-                                            },
+                                            }, style: ElevatedButton.styleFrom(
+                                          primary: Colors.red,
+                                          onPrimary: Colors.white
+                                        ),
                                             child: const Text(
                                               'Удалить',
-                                              style:
-                                                  TextStyle(color: Colors.red),
                                             )),
                                       ],
                                     ),

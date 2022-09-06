@@ -7,15 +7,27 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class BottomOrders extends StatefulWidget {
+
+  const BottomOrders({Key? key}) : super(key: key);
+  @override
+  State<BottomOrders> createState() => _BottomOrdersState();
+}
+
+class _BottomOrdersState extends State<BottomOrders> {
+
 final DateFormat formatter = DateFormat("d MMMM yyyy, HH:mm");
 late String authToken;
 String refreshKey = "";
 
 List<Order> orders = [];
 
-Widget bottomOrders(BuildContext context) {
+@override
+Widget build(
+    BuildContext context,
+    ) {
   return FutureBuilder<String>(
-    future: loadInitialData(),
+    future: loadInitialDataOrders(),
     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return const Scaffold(
@@ -98,7 +110,7 @@ Widget bottomOrders(BuildContext context) {
   );
 }
 
-Future<String> loadInitialData() async {
+Future<String> loadInitialDataOrders() async {
   final pf = await SharedPreferences.getInstance();
   authToken = pf.getString("auth_token") ?? "";
   refreshKey = pf.getString("refresh_key") ?? "";
@@ -139,6 +151,7 @@ Future<String> loadInitialData() async {
     }
   }
   return Future.value("Ok");
+}
 }
 
 

@@ -36,12 +36,12 @@ class _OrderNewState extends State<OrderNew> {
   DateTime? pickUpTimeToSrv;
 
   int selectItemId = 0;
+  bool _clicked = false;
 
   // int value = 0;
 
   int selectedIndex1 = 0;
   String? selectItem = "";
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,6 @@ class _OrderNewState extends State<OrderNew> {
 
     FocusManager.instance.primaryFocus?.unfocus();
     final formKey = GlobalKey<FormState>();
-
 
     return FutureBuilder<String>(
       future: loadFromStorage(),
@@ -114,13 +113,18 @@ class _OrderNewState extends State<OrderNew> {
                               const Spacer(),
                               DropdownButton(
                                   value: selectItem,
-                                  items: carList?.map((car) { return DropdownMenuItem(value: car.plateNumber, child: Text(car.plateNumber), ); }).toList(),
+                                  items: carList?.map((car) {
+                                    return DropdownMenuItem(
+                                      value: car.plateNumber,
+                                      child: Text(car.plateNumber),
+                                    );
+                                  }).toList(),
                                   onChanged: (String? newValue) {
-                                setState(() {
-                                  var item = newValue!;
-                                  selectItem = newValue;
-                                  debugPrint("item= $item");
-                                });
+                                    setState(() {
+                                      var item = newValue!;
+                                      selectItem = newValue;
+                                      debugPrint("item= $item");
+                                    });
                                   })
                             ],
                           )
@@ -232,31 +236,36 @@ class _OrderNewState extends State<OrderNew> {
                     },
                   ),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: _clicked
+                        ? null
+                        : () {
+                      setState(() => _clicked = true);
+
                       if (formKey.currentState!.validate()) {
-                        final List<int> selectedServices = [
-                          for (final item in services.values)
-                            if (item.checked == true) item.service.id
-                        ];
+                              final List<int> selectedServices = [
+                                for (final item in services.values)
+                                  if (item.checked == true) item.service.id
+                              ];
 
-                        _createOrder(selectedServices)
-                            .then((order) {
-                          if (order != null) {
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Index(2)),
-                                (Route<dynamic> route) => false);
+                              _createOrder(selectedServices).then((order) {
+                                if (order != null) {
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Index(2)),
+                                      (Route<dynamic> route) => false);
 
-                            Navigator.pushNamed(
-                              context,
-                              "/order/detail",
-                              arguments: OrderDetailArgs(order: order),
-                            );
-                          }
-                        });
-                      }
-                    },
+                                  Navigator.pushNamed(
+                                    context,
+                                    "/order/detail",
+                                    arguments: OrderDetailArgs(order: order),
+                                  );
+                                } else {
+                                  setState(() => _clicked = false);
+                                }
+                              });
+                            }
+                          },
                     child: const Text("Оформить заказ"),
                   ),
                 ],
@@ -302,8 +311,7 @@ class _OrderNewState extends State<OrderNew> {
         customerComment,
         pickUpAddress,
         pickUpTimeToSrv?.toIso8601String(),
-        car ?? 0
-    );
+        car ?? 0);
 
     switch (response.statusCode) {
       case 200:
@@ -349,4 +357,3 @@ class _OrderNewState extends State<OrderNew> {
     );
   }
 }
-

@@ -238,6 +238,8 @@ class _OrderDetailState extends State<OrderDetail> {
                       arguments: MoreOrderDetailArgs(order: order));
                 },
                 child: const Text("Подробнее")),
+
+            const TextButton(onPressed: null, child: Text("Чат с водителем"))
           ],
         ),
       ),
