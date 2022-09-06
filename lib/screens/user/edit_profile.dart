@@ -64,7 +64,7 @@ class _UserEditState extends State<UserEdit> {
                                   keyboardType: TextInputType.text,
                                   initialValue: profile?.firstName,
                                   decoration: InputDecoration(
-                                    labelText: "Ваше имя",
+                                    labelText: "Имя",
                                     focusedBorder: UnderlineInputBorder(
                                       borderRadius: BorderRadius.circular(25.0),
                                       borderSide: const BorderSide(
@@ -92,7 +92,7 @@ class _UserEditState extends State<UserEdit> {
                                   keyboardType: TextInputType.text,
                                   initialValue: profile?.lastName,
                                   decoration: InputDecoration(
-                                    labelText: "Ваша фамилия",
+                                    labelText: "Фамилия",
                                     focusedBorder: UnderlineInputBorder(
                                       borderRadius: BorderRadius.circular(25.0),
                                       borderSide: const BorderSide(
@@ -130,9 +130,33 @@ class _UserEditState extends State<UserEdit> {
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
-                                      title: const Text('Удаление профиля'),
-                                      content: const Text('Вы уверены?'),
+                                      contentPadding: const EdgeInsets.only(
+                                          left: 10, right: 10, top: 8),
+                                      title: const Text('Удаление профиля',
+                                          style: TextStyle(
+                                              fontFamily: '.SF Pro Display')),
+                                      content: const ListTile(
+                                        title: Text(
+                                          'Вы уверены?',
+                                          style: TextStyle(
+                                              // fontWeight: FontWeight.bold,
+                                              fontFamily: '.SF Pro Display'),
+                                        ),
+                                        subtitle: Padding(
+                                          padding: EdgeInsets.only(top: 8.0),
+                                          child: Text(
+                                              "Профиль будет полностью удален без возможности восстановить",
+                                              style: TextStyle(
+                                                  fontFamily: '.SF Pro Text')),
+                                        ),
+                                      ),
                                       actions: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Отмена'),
+                                        ),
                                         ElevatedButton(
                                             onPressed: () {
                                               _deleteProfile().then((response) {
@@ -150,25 +174,32 @@ class _UserEditState extends State<UserEdit> {
                                               'Удалить',
                                               style:
                                                   TextStyle(color: Colors.red),
-                                            ))
+                                            )),
                                       ],
                                     ),
                                   );
                                 },
-                                child: const Text("Удаление профиля")),
+                                child: const Text(
+                                  "Удаление профиля",
+                                  style: TextStyle(color: Colors.red),
+                                )),
                           ],
                         ),
                       ),
                     ),
                   ),
+                  const Spacer(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
                           _editProfile(profile).then((response) {
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Index(3)), (Route<dynamic> route) => false);
-
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Index(3)),
+                                (Route<dynamic> route) => false);
                           });
                         }
                       },

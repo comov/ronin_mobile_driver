@@ -17,37 +17,42 @@ class _CreateCarState extends State<CreateCar> {
   String authToken = "";
   List<Car> carList = [];
 
+  DateTime selectedYear = DateTime.now();
+
   String brand = "";
   String model = "";
   int? year;
-  String yearString = "выберите год";
+  String? yearString;
   String vin = "";
   String plateNumber = "";
 
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     FocusManager.instance.primaryFocus?.unfocus();
     final formKey = GlobalKey<FormState>();
+    var _selectedYear = selectedYear;
 
     return FutureBuilder<String>(
       future: loadFromStorage(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         return Scaffold(
-          appBar: AppBar(
-              // title: const Text("Добавление авто"),
-              // titleTextStyle: const TextStyle(
-              //   color: Colors.black,
-              //   fontWeight: FontWeight.bold,
-              //   fontSize: 20,
-              // ),
-              ),
+          appBar: AppBar(),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Form(
               key: formKey,
               child: ListView(
-                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     "Добавление авто",
@@ -177,16 +182,41 @@ class _CreateCarState extends State<CreateCar> {
                             return null;
                           },
                         ),
-                        TextFormField(onChanged: (text) => {year = int.parse(text)},
-
-                          autofocus: true,
-                          keyboardType: TextInputType.number,
-                          toolbarOptions: const ToolbarOptions(
-                            copy: true,
-                            cut: true,
-                            paste: false,
-                            selectAll: false,
-                          ),
+                        TextFormField(
+                          // onChanged: (text) => {year = int.parse(text)},
+                          // autofocus: true,
+                          readOnly: true,
+                          initialValue: yearString,
+                          onTap: () async {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Выберите год"),
+                                    content: SizedBox(
+                                      width: 300,
+                                      height: 300,
+                                      child: YearPicker(
+                                        firstDate: DateTime(
+                                            DateTime.now().year - 100, 1),
+                                        lastDate:
+                                            DateTime(DateTime.now().year, 1),
+                                        initialDate: _selectedYear,
+                                        selectedDate: _selectedYear,
+                                        onChanged: (_selectedYear) {
+                                          debugPrint(
+                                              _selectedYear.year.toString());
+                                          year = _selectedYear.year;
+                                          setState(() {
+                                            yearString = year.toString();
+                                          });
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                });
+                          },
                           decoration: InputDecoration(
                             labelText: "Год авто",
                             focusedBorder: UnderlineInputBorder(
@@ -206,9 +236,8 @@ class _CreateCarState extends State<CreateCar> {
                             if (value!.length >= 5) {
                               return "Поле не может быть больше 4 символов";
                             }
-                            if (value.length <4) {
+                            if (value.length < 4) {
                               return "Поле не может быть меньше 4 символов";
-
                             }
                             return null;
                           },
@@ -241,11 +270,11 @@ class _CreateCarState extends State<CreateCar> {
                                 ),
                                 actions: [
                                   if (value != 200)
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Назад')),
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Назад')),
                                   if (value == 200)
                                     ElevatedButton(
                                         onPressed: () {
@@ -283,7 +312,6 @@ class _CreateCarState extends State<CreateCar> {
   Future<String> loadFromStorage() async {
     final pf = await SharedPreferences.getInstance();
     authToken = pf.getString("auth_token") ?? "";
-
     return Future.value("Ok");
   }
 

@@ -12,9 +12,10 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   var phoneNumber = "";
+  var region = "996";
 
   var phoneFormatter = MaskTextInputFormatter(
-      mask: '+### (###) ##-##-##',
+      mask: '+996 (###) ##-##-##',
       filter: {"#": RegExp(r'[0-9]')},
       type: MaskAutoCompletionType.lazy);
 
@@ -85,14 +86,15 @@ class _SignInState extends State<SignIn> {
                     TextFormField(
                       onChanged: (text) => {
                         phoneNumber = text,
-                        phoneNumber = phoneFormatter.getUnmaskedText(),
+                        phoneNumber = region + phoneFormatter.getUnmaskedText(),
+
                         debugPrint(phoneFormatter.getUnmaskedText()),
                       },
                       autofocus: true,
                       keyboardType: TextInputType.number,
                       inputFormatters: [phoneFormatter],
                       decoration: const InputDecoration(
-                        hintText: "996",
+                        hintText: "773735554",
                       ),
                       // initialValue: phoneFormatter.getMask(),
                       validator: (value) {

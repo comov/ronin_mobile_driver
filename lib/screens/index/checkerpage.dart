@@ -52,11 +52,12 @@ class _CheckerPage extends State<CheckerPage> {
         switch (snapshot.data!) {
           case "tokenNotFound":
             {
-              debugPrint("authToken is empty: $authToken");
+        debugPrint("authToken is empty: $authToken");
               return const SignIn();
             }
           case "tokenExpired":
             {
+              // const Text("Сессия устарела");
               debugPrint("authToken is expired: $authToken");
               return const SignIn();
             }

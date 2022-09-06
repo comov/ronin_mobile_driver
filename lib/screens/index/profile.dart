@@ -9,6 +9,7 @@ import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
 
 // ignore: must_be_immutable
 class BottomProfile extends StatefulWidget {
@@ -157,92 +158,90 @@ class _BottomProfileState extends State<BottomProfile>
                 Flex(
                   direction: Axis.horizontal,
                   children: [
-                      Expanded(
-                        child: Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ListTile(
-                              title: const Text("Авто пользователя:"),
-                              subtitle: Column(
-                                children: [
-                                  ListView.separated(
-                                    shrinkWrap: true,
-                                    padding: const EdgeInsets.all(3),
-                                    itemCount: carList.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return ExpansionTileCard(
-                                        borderRadius: BorderRadius.circular(16),
-                                        shadowColor:
-                                            const Color.fromRGBO(0, 0, 0, 0.5),
-                                        title: Text(
-                                            '${carList[index].brand} ${carList[index].model}'),
-                                        subtitle:
-                                            Text(carList[index].plateNumber),
-                                        children: <Widget>[
-                                          const Divider(
-                                            thickness: 1.0,
-                                            height: 1.0,
-                                          ),
-                                          Align(
-                                            alignment: Alignment.center,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Text(
-                                                      "id: ${carList[index].id.toString()}"),
-                                                  Text(
-                                                      "Марка авто: ${carList[index].brand}"),
-                                                  Text(
-                                                      "Модель авто: ${carList[index].model}"),
-                                                  Text(
-                                                      "Гос. Номер: ${carList[index].plateNumber}"),
-                                                  Text(
-                                                      "VIN авто: ${carList[index].vin}"),
-                                                  Text(
-                                                      "Год авто: ${carList[index].year.toString()}"),
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            "/user/edit_car",
-                                                            arguments: EditCarArgs(
-                                                                editCar: carList[
-                                                                    index]));
-                                                      },
-                                                      child: const Text(
-                                                          "Редактировать Авто")),
-                                                ],
-                                              ),
+                    Expanded(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            title: const Text("Авто пользователя:"),
+                            subtitle: Column(
+                              children: [
+                                ListView.separated(
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.all(3),
+                                  itemCount: carList.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return ExpansionTileCard(
+                                      borderRadius: BorderRadius.circular(16),
+                                      shadowColor:
+                                          const Color.fromRGBO(0, 0, 0, 0.5),
+                                      title: Text(
+                                          '${carList[index].brand} ${carList[index].model}'),
+                                      subtitle:
+                                          Text(carList[index].plateNumber),
+                                      children: <Widget>[
+                                        const Divider(
+                                          thickness: 1.0,
+                                          height: 1.0,
+                                        ),
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                    "id: ${carList[index].id.toString()}"),
+                                                Text(
+                                                    "Марка авто: ${carList[index].brand}"),
+                                                Text(
+                                                    "Модель авто: ${carList[index].model}"),
+                                                Text(
+                                                    "Гос. Номер: ${carList[index].plateNumber}"),
+                                                Text(
+                                                    "VIN авто: ${carList[index].vin}"),
+                                                Text(
+                                                    "Год авто: ${carList[index].year.toString()}"),
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pushNamed(
+                                                          context,
+                                                          "/user/edit_car",
+                                                          arguments: EditCarArgs(
+                                                              editCar: carList[
+                                                                  index]));
+                                                    },
+                                                    child: const Text(
+                                                        "Редактировать Авто")),
+                                              ],
                                             ),
                                           ),
-                                        ],
-                                      );
-                                    },
-                                    separatorBuilder:
-                                        (BuildContext context, int index) =>
-                                            const Divider(),
-                                  ),
-                                  if (carList.length >= 3)
-                                    const Text(
-                                        "Можно добавить не более 3х авто")
-                                  else
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pushNamed(
-                                            context,
-                                            "/user/create_car",
-                                          );
-                                        },
-                                        child: const Text("Добавить Авто")),
-                                ],
-                              ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) =>
+                                          const Divider(),
+                                ),
+                                if (carList.length >= 3)
+                                  const Text("Можно добавить не более 3х авто")
+                                else
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          "/user/create_car",
+                                        );
+                                      },
+                                      child: const Text("Добавить Авто")),
+                              ],
                             ),
                           ),
                         ),
                       ),
+                    ),
                   ],
                 ),
               ],
@@ -258,10 +257,15 @@ class _BottomProfileState extends State<BottomProfile>
     pf.remove("auth_token");
     pf.remove("refresh_key");
   }
+void sharePressed() {
+    String message = "Я пользуюсь приложением RoninMobile. Присоединяйся instagram.link";
+    Share.share(message);
+}
 
   void selectedItem(BuildContext context, item) {
     switch (item) {
       case 0:
+        sharePressed();
         break;
       case 1:
         if (kDebugMode) {
@@ -286,7 +290,7 @@ class _BottomProfileState extends State<BottomProfile>
     phoneNumber = pf.getString("phone_number") ?? "";
     refreshKey = pf.getString("refresh_key") ?? "";
 
-    if (authToken == ""){
+    if (authToken == "") {
       return Future.value("tokenNotFound");
     }
 
@@ -322,6 +326,4 @@ class _BottomProfileState extends State<BottomProfile>
 
     return Future.value("Ok");
   }
-
-
 }

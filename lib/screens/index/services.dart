@@ -183,12 +183,16 @@ Widget getSelectedServicesCard(context, controller, value) {
     for (var item in value.servicesMap.values.toList()) {
       if (item.checked == true) {
         final serviceItem = CheckboxListTile(
+
+          // contentPadding: EdgeInsets.zero,
           title: Text(item.service.title),
           value: item.checked,
           onChanged: (bool? value) {
             controller.checked(item.service.id, value);
           },
+
         );
+
         services.add(serviceItem);
       }
     }

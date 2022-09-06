@@ -45,6 +45,7 @@ dependencies:
   flutter_datetime_picker_bdaya: ^2.0.0
   flutter_picker: ^2.0.5
   mask_text_input_formatter: ^2.4.0
+  share_plus: ^4.0.10+1
 
 dev_dependencies:
   flutter_test:

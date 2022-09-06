@@ -28,6 +28,8 @@ class _EditCarState extends State<EditCar> {
   int? year;
   String vin = "";
   String plateNumber = "";
+  DateTime selectedYear = DateTime.now();
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,9 @@ class _EditCarState extends State<EditCar> {
     var carItem = args.editCar;
 
     FocusManager.instance.primaryFocus?.unfocus();
+
+    // var _selectedYear = selectedYear(carItem, sele);
+    var _selectedYear = DateTime(carItem.year, selectedYear.month, selectedYear.day, selectedYear.hour, selectedYear.minute, selectedYear.second, selectedYear.millisecond, selectedYear.microsecond);
 
     return FutureBuilder<String>(
       future: loadFromStorage(),
@@ -205,16 +210,37 @@ class _EditCarState extends State<EditCar> {
                           },
                         ),
                         TextFormField(
-                          onChanged: (text) => {carItem.year = int.parse(text)},
-                          autofocus: true,
-                          keyboardType: TextInputType.number,
+                          // onChanged: (text) => {carItem.year = int.parse(text)},
+                          // autofocus: true,
+                          // keyboardType: TextInputType.number,
                           initialValue: carItem.year.toString(),
-                          toolbarOptions: const ToolbarOptions(
-                            copy: true,
-                            cut: true,
-                            paste: false,
-                            selectAll: false,
-                          ),
+                          onTap: () async {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Выберите год"),
+                                    content: SizedBox(
+                                      width: 300,
+                                      height: 300,
+                                      child: YearPicker(
+                                        firstDate: DateTime(
+                                            DateTime.now().year - 100, 1),
+                                        lastDate:
+                                        DateTime(DateTime.now().year, 1),
+                                        // initialDate: _selectedYear,
+                                        selectedDate: _selectedYear,
+                                        onChanged: (_selectedYear) {
+                                          setState(() {
+                                            carItem.year = _selectedYear.year;
+                                          });
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                });
+                          },
                           decoration: InputDecoration(
                             labelText: "Год авто",
                             focusedBorder: UnderlineInputBorder(
@@ -338,7 +364,7 @@ class _EditCarState extends State<EditCar> {
         }
       default:
         {
-          debugPrint("Ошибка при редактировании Авто: ${response.statusCode}");
+          debugPrint("Ошибка при удалении Авто: ${response.statusCode}");
           debugPrint("response.error!.error=${response.error!.error}");
           debugPrint("response.error!.message=${response.error!.message}");
           break;
