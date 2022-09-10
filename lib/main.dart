@@ -12,11 +12,18 @@ import 'package:car_helper/screens/user/edit_car.dart';
 import 'package:car_helper/screens/user/edit_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-const sentryDSN = "https://8198951336c94b3cba51cd09a46dbac2@o1348955.ingest.sentry.io/6655166";
+const sentryDSN =
+    "https://8198951336c94b3cba51cd09a46dbac2@o1348955.ingest.sentry.io/6655166";
 const backendURL = "https://stage.i-10.win";
 
 Future<void> main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   await SentryFlutter.init(
     (options) {
       options.dsn = sentryDSN;
@@ -50,8 +57,7 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            onPrimary: Colors.white,
-            primary: Colors.black,
+            foregroundColor: Colors.white, backgroundColor: Colors.black,
           ),
         ),
         checkboxTheme: CheckboxThemeData(
@@ -73,10 +79,7 @@ class MyApp extends StatelessWidget {
           labelSmall: TextStyle(color: Colors.black),
         ),
         appBarTheme: const AppBarTheme(
-          actionsIconTheme: IconThemeData(
-            color: Colors.black,
-            opacity: 10.0
-          ),
+          actionsIconTheme: IconThemeData(color: Colors.black, opacity: 10.0),
           centerTitle: false,
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.transparent,
@@ -90,15 +93,15 @@ class MyApp extends StatelessWidget {
         ),
       ),
       routes: {
-        "/index": (BuildContext context) =>  Index(0),
-        "/checkerPage": (BuildContext context) =>  const CheckerPage(),
+        "/index": (BuildContext context) => Index(0),
+        "/checkerPage": (BuildContext context) => const CheckerPage(),
         "/signin": (BuildContext context) => const SignIn(),
         "/auth": (BuildContext context) => const Auth(),
         "/order/new": (BuildContext context) => const OrderNew(),
-        "/order/create_car_from_order": (BuildContext context) => const CreateCarFromOrder(),
+        "/order/create_car_from_order": (BuildContext context) =>
+            const CreateCarFromOrder(),
         "/order/detail": (BuildContext context) => const OrderDetail(),
         "/order/more_detail": (BuildContext context) => const MoreOrderDetail(),
-
         "/user/edit_profile": (BuildContext context) => const UserEdit(),
         "/user/create_car": (BuildContext context) => const CreateCar(),
         "/user/edit_car": (BuildContext context) => const EditCar(),
