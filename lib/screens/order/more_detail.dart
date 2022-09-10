@@ -55,18 +55,18 @@ class _MoreOrderDetailState extends State<MoreOrderDetail> {
         child: ListView(
           children: [
             Text("Статус: ${order.status}"),
-            Text("Ваш комментарий: ${order.comment}"),
+            Text("Комментарий к заявке: ${order.comment}"),
             const Divider(),
             Text("Адрес откуда забрать авто: ${order.pickUpAddress}"),
             order.pickUpTime != null
                 ? Text(
-                    "Время выполнения заявки: ${formatter.format(order.pickUpTime!.toLocal())} ")
-                : const Text("Время выполнения заявки:"),
+                    "Время указанное в заявке: ${formatter.format(order.pickUpTime!.toLocal())} ")
+                : const Text("Время указанное в заявке:"),
             const Divider(),
             Text(
-                "ФИО Вашего менеджера: ${order.employee?.lastName} ${order.employee?.firstName}"),
+                "ФИО менеджера: ${order.employee?.lastName} ${order.employee?.firstName}"),
             const Divider(),
-            const Text("Ваше авто:"),
+            const Text("Авто:"),
             Text("Марка: ${order.car?.brand}"),
             Text("Модель: ${order.car?.model}"),
             Text("ГОС. Номер авто: ${order.car?.plateNumber}"),
@@ -74,23 +74,80 @@ class _MoreOrderDetailState extends State<MoreOrderDetail> {
                 "ФИО водителя: ${order.driver?.lastName} ${order.driver?.firstName}"),
             Text("Номер телефона водителя: ${order.driver?.phone} "),
             const Divider(),
-            const Text("Фотографии до:"),
-            Column(
-              children: [
-                for (var image in before)
-                  if (image != null) Image.network(image.imageUrl)
-              ],
-            ),
-            const Text("Фотографии после:"),
-            Column(
+            const Text("Фотографии до выполнения заявки:"),
+            GridView(
+              physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  childAspectRatio: 1.0
+                ),
+            children: [
+              for (var image in before)
+                if (image != null)
+                  PostTile(image.imageUrl)
+
+            ],),
+
+            const Text("Фотографии после выполнения заявки:"),
+            GridView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  childAspectRatio: 1.0
+              ),
               children: [
                 for (var image in after)
-                  if (image != null) Image.network(image.imageUrl)
-              ],
-            ),
+                  if (image != null)
+                    PostTile(image.imageUrl)
+
+              ],),
+
           ],
         ),
       ),
+    );
+  }
+}
+class PostTile extends StatefulWidget {
+  final String mediaUrl;
+  const PostTile(this.mediaUrl, {Key? key}) : super(key: key);
+
+  @override
+  State<PostTile> createState() => _PostTileState();
+}
+class _PostTileState extends State<PostTile> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      child: Image.network(widget.mediaUrl),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                fullscreenDialog: true,
+                builder: (BuildContext context) {
+                  return Scaffold(
+                    body: GestureDetector(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        child: Hero(
+                          tag: 'imageHero',
+                          child: Image.network(
+                            widget.mediaUrl,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  );
+                }));
+      },
     );
   }
 }

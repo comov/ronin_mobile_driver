@@ -194,7 +194,6 @@ class _UserEditState extends State<UserEdit> {
                       ),
                     ),
                   ),
-                  const Spacer(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(

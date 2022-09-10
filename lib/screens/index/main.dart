@@ -15,26 +15,68 @@ mixin MainState {
         ),
       ),
       body: Column(
-        children:  [
-          const Expanded(child: Text("Последние два активных заказа"),
+        children: [
+          const Expanded(
+            child: Text("Последние два активных заказа"),
           ),
+          Expanded(
+            child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: const [
+                    SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: Card(
+                        margin: EdgeInsets.all(8),
+                        color: Colors.amber,
+                        // alignment: Alignment.center,
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: Text("Мойка авто")),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 150,
+                      width: 150,
 
+                      child: Card(
+                        margin: EdgeInsets.all(8),
+                        color: Colors.amber,
 
-         Expanded(
-           child: Container(
-             height: 100,
-             margin: const EdgeInsets.symmetric(vertical: 20),
-             child: ListView(
-               scrollDirection: Axis.horizontal,
-                children:  const [
-                  Text("Быстрый заказ на мойку"),
-                  Text("Вызов эвакуатора"),
-                  Text("Выездной ремонт на месте"),
-                  Text("Автоподбор")
-                ],
-              ),
-           ),
-         )
+                        // alignment: Alignment.center,
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: Text("Вызов эвакуатора")),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: Card(
+                        margin: EdgeInsets.all(8),
+                        color: Colors.amber,
+                        // alignment: Alignment.center,
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: Text("Выездной ремонт",                             maxLines: 2,
+                            )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: Card(
+                          margin: EdgeInsets.all(8),
+                          color: Colors.amber,
+                          // alignment: Alignment.center,
+                          child: Align(
+                              alignment: Alignment.center,
+                              child: Text("Автоподбор"))),
+                    ),
+                  ],
+                )),
+          )
         ],
       ),
     );

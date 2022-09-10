@@ -33,37 +33,26 @@ class _OrderDetailState extends State<OrderDetail> {
             step = 0;
             break;
           }
-        case "В обработке":
+        case "Обрабатывается":
           {
             step = 1;
             break;
           }
-        case "Принят":
+        case "Ожидается исполнение":
           {
             step = 2;
             break;
           }
-        case "Машина у водителя":
+        case "Выполняется":
           {
             step = 3;
             break;
           }
-        case "На выполнении":
+        case "Выполнено":
           {
             step = 4;
             break;
           }
-        case "Машина у клиента":
-          {
-            step = 5;
-            break;
-          }
-        case "Клиент оценил выполнение":
-          {
-            step = 6;
-            break;
-          }
-
       }
       return step;
     }
@@ -82,76 +71,52 @@ class _OrderDetailState extends State<OrderDetail> {
               ? StepState.complete
               : StepState.disabled),
       Step(
-          title: const Text("В обработке"),
+          title: const Text("Обрабатывается"),
           content: Column(
             children: const [
               Text("тут время когда перешло на этот статус")
             ],
           ),
-          isActive: order.status == "В обработке",
-          state: order.status == "В обработке"
+          isActive: order.status == "Обрабатывается",
+          state: order.status == "Обрабатывается"
               ? StepState.complete
               : StepState.disabled),
       Step(
-          title: const Text("Принят"),
+          title: const Text("Ожидается исполнение"),
           content: Column(
             children: const [
               Text("тут время когда перешло на этот статус")
             ],
           ),
-          isActive: order.status == "Принят",
-          state: order.status == "Принят"
+          isActive: order.status == "Ожидается исполнение",
+          state: order.status == "Ожидается исполнение"
               ? StepState.complete
               : StepState.disabled
       ),
       Step(
-          title: const Text("Машина у водителя"),
+          title: const Text("Выполняется"),
           content: Column(
             children: const [
               Text("тут время когда перешло на этот статус")
             ],
           ),
-          isActive: order.status == "Машина у водителя",
-          state: order.status == "Машина у водителя"
+          isActive: order.status == "Выполняется",
+          state: order.status == "Выполняется"
               ? StepState.complete
               : StepState.disabled
       ),
       Step(
-          title: const Text("На выполнении"),
+          title: const Text("Выполнено"),
           content: Column(
             children: const [
               Text("тут время когда перешло на этот статус")
             ],
           ),
-          isActive: order.status == "На выполнении",
-          state: order.status == "На выполнении"
+          isActive: order.status == "Выполнено",
+          state: order.status == "Выполнено"
               ? StepState.complete
               : StepState.disabled
       ),
-      Step(
-          title: const Text("Машина у клиента"),
-          content: Column(
-            children: const [
-              Text("тут время когда перешло на этот статус")
-            ],
-          ),
-          isActive: order.status == "Машина у клиента",
-          state: order.status == "Машина у клиента"
-              ? StepState.complete
-              : StepState.disabled
-      ),
-      Step(
-          title: const Text("Клиент оценил выполнение"),
-          content: Column(
-            children: const [
-              Text("тут время когда перешло на этот статус")
-            ],
-          ),
-          isActive: order.status == "Клиент оценил выполнение",
-          state: order.status == "Клиент оценил выполнение"
-              ? StepState.complete
-              : StepState.disabled
-      )
     ];
 
 
@@ -239,7 +204,7 @@ class _OrderDetailState extends State<OrderDetail> {
                 },
                 child: const Text("Подробнее")),
 
-            const TextButton(onPressed: null, child: Text("Чат с водителем"))
+            const TextButton(onPressed: null, child: Text("Чат заявки"))
           ],
         ),
       ),

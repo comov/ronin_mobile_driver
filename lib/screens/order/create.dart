@@ -215,7 +215,7 @@ class _OrderNewState extends State<OrderNew> {
                     initialValue: customerComment,
                     decoration: InputDecoration(
                       hintText:
-                          "Ваше пожелания и предложение о работах с Вашим авто",
+                          "Пожелания и предложения",
                       focusedBorder: UnderlineInputBorder(
                         borderRadius: BorderRadius.circular(25.0),
                         borderSide: const BorderSide(
