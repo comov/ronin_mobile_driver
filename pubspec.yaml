@@ -46,6 +46,7 @@ dependencies:
   flutter_picker: ^2.0.5
   mask_text_input_formatter: ^2.4.0
   share_plus: ^4.0.10+1
+  firebase_core: ^1.22.0
 
 dev_dependencies:
   flutter_test:

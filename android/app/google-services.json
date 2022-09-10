@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "308852378119",
+    "project_id": "ronin-mobile",
+    "storage_bucket": "ronin-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:308852378119:android:9a61caa64eea373c6cb8a2",
+        "android_client_info": {
+          "package_name": "kg.carhelper.car_helper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "308852378119-a5teud5m8f7t2q2u64v2hjthmrhmgbi2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARMwIUAwO46mWLwglbldJTBErBcMOsVqs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "308852378119-a5teud5m8f7t2q2u64v2hjthmrhmgbi2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "308852378119-60kii45nc92md24cgtmsq7jrf6ti3tja.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "kg.carhelper.carHelper"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
