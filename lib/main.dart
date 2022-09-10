@@ -23,13 +23,6 @@ const sentryDSN =
 const backendURL = "https://stage.i-10.win";
 
 Future<void> main() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-  debugPrint(fcmToken);
-
-
   await SentryFlutter.init(
     (options) {
       options.dsn = sentryDSN;
@@ -39,6 +32,12 @@ Future<void> main() async {
     },
     appRunner: () => runApp(const MyApp()),
   );
+  //
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
+  // final fcmToken = await FirebaseMessaging.instance.getToken();
+  // debugPrint(fcmToken);
 
   // or define SENTRY_DSN via Dart environment variable (--dart-define)
 }
