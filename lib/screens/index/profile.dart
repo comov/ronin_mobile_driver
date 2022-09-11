@@ -13,6 +13,7 @@ import 'package:share_plus/share_plus.dart';
 
   String authToken = "";
   String refreshKey = "";
+  String firebaseToken = "";
 
   Profile? profile;
   List<Car> carList = [];
@@ -239,15 +240,16 @@ Widget bottomProfile(BuildContext context) {
     pf.remove("auth_token");
     pf.remove("refresh_key");
   }
-void sharePressed() {
+void sharePressed(token) {
+    // String token = "";
     String message = "Я пользуюсь приложением RoninMobile. Присоединяйся instagram.link";
-    Share.share(message);
+    Share.share(token);
 }
 
   void selectedItem(BuildContext context, item) {
     switch (item) {
       case 0:
-        sharePressed();
+        sharePressed(firebaseToken);
         break;
       case 1:
         if (kDebugMode) {
@@ -270,6 +272,9 @@ void sharePressed() {
 
     authToken = pf.getString("auth_token") ?? "";
     refreshKey = pf.getString("refresh_key") ?? "";
+    firebaseToken = pf.getString("firebase_token") ?? "";
+
+    debugPrint("firebaseTOken-$firebaseToken");
 
     if (authToken == "") {
       return Future.value("tokenNotFound");

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -40,6 +41,7 @@ class Index extends StatefulWidget {
 
 class _IndexState extends State<Index>
     with MainState, SingleTickerProviderStateMixin {
+
   int selectedBottom = 0;
   Map<int, List> widgetOptions = {};
   late TabController _tabController;
@@ -53,6 +55,8 @@ class _IndexState extends State<Index>
   void requestAndRegisterNotification() async {
     // 1. Initialize the Firebase app
     await Firebase.initializeApp();
+    var pf = await SharedPreferences.getInstance();
+
 
     // 2. Instantiate Firebase Messaging
     _messaging = FirebaseMessaging.instance;
@@ -71,6 +75,8 @@ class _IndexState extends State<Index>
       String? token = await _messaging.getToken();
       debugPrint("The token is $token");
       print("token is "+token!);
+      pf.setString("firebase_token", token);
+
       // For handling the received notifications
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         // Parse the message received
