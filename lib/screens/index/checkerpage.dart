@@ -52,7 +52,7 @@ class _CheckerPage extends State<CheckerPage> {
         switch (snapshot.data!) {
           case "tokenNotFound":
             {
-        debugPrint("authToken is empty: $authToken");
+              debugPrint("authToken is empty: $authToken");
               return const SignIn();
             }
           case "tokenExpired":
@@ -93,6 +93,8 @@ class _CheckerPage extends State<CheckerPage> {
           if (refreshResponse.statusCode == 200) {
             authToken = refreshResponse.auth!.token;
             refreshKey = refreshResponse.auth!.refreshKey;
+            pf.setString("auth_token", authToken);
+            pf.setString("refresh_key", refreshKey);
 
             break;
           } else {

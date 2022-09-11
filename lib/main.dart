@@ -10,19 +10,18 @@ import 'package:car_helper/screens/order/more_detail.dart';
 import 'package:car_helper/screens/user/create_car.dart';
 import 'package:car_helper/screens/user/edit_car.dart';
 import 'package:car_helper/screens/user/edit_profile.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-
-
+import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 const sentryDSN =
     "https://8198951336c94b3cba51cd09a46dbac2@o1348955.ingest.sentry.io/6655166";
 const backendURL = "https://stage.i-10.win";
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await SentryFlutter.init(
     (options) {
       options.dsn = sentryDSN;
@@ -32,13 +31,6 @@ Future<void> main() async {
     },
     appRunner: () => runApp(const MyApp()),
   );
-  //
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  // final fcmToken = await FirebaseMessaging.instance.getToken();
-  // debugPrint(fcmToken);
-
   // or define SENTRY_DSN via Dart environment variable (--dart-define)
 }
 
@@ -47,7 +39,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return OverlaySupport(
+      child: MaterialApp(
       title: "CarHelpers",
       initialRoute: "/checkerPage",
       navigatorObservers: [
@@ -62,7 +55,8 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white, backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.black,
           ),
         ),
         checkboxTheme: CheckboxThemeData(
@@ -114,6 +108,6 @@ class MyApp extends StatelessWidget {
       },
       debugShowCheckedModeBanner: false,
       showSemanticsDebugger: false,
-    );
+      ));
   }
 }

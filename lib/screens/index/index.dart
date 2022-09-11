@@ -1,10 +1,20 @@
+import 'package:car_helper/entities/push_notifications.dart';
 import 'package:car_helper/screens/index/main.dart';
 import 'package:car_helper/screens/index/orders.dart';
 import 'package:car_helper/screens/index/profile.dart';
 import 'package:car_helper/screens/index/services.dart';
+import 'package:car_helper/screens/notification_badge.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:overlay_support/overlay_support.dart';
+
+Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  debugPrint("Handling a background message: ${message.messageId}");
+}
 
 const String homeIcon = "assets/images/icon/TabBarMain.svg";
 const String servicesIcon = "assets/images/icon/TabBarServices.svg";
@@ -32,14 +42,80 @@ class _IndexState extends State<Index>
     with MainState, SingleTickerProviderStateMixin {
   int selectedBottom = 0;
   Map<int, List> widgetOptions = {};
-
   late TabController _tabController;
 
   _IndexState(this.selectedBottom);
 
+  late int _totalNotifications;
+  late final FirebaseMessaging _messaging;
+  PushNotification? _notificationInfo;
+
+  void requestAndRegisterNotification() async {
+    // 1. Initialize the Firebase app
+    await Firebase.initializeApp();
+
+    // 2. Instantiate Firebase Messaging
+    _messaging = FirebaseMessaging.instance;
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    // 3. On iOS, this helps to take the user permissions
+    NotificationSettings settings = await _messaging.requestPermission(
+      alert: true,
+      badge: true,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      debugPrint('User granted permission');
+      String? token = await _messaging.getToken();
+      debugPrint("The token is $token");
+      print("token is "+token!);
+      // For handling the received notifications
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        // Parse the message received
+        PushNotification notification = PushNotification(
+          title: message.notification?.title,
+          body: message.notification?.body,
+        );
+
+        setState(() {
+          _notificationInfo = notification;
+          _totalNotifications++;
+        });
+        if (_notificationInfo != null) {
+          // For displaying the notification as an overlay
+          showSimpleNotification(
+            Text(_notificationInfo!.title!),
+            leading: NotificationBadge(totalNotifications: _totalNotifications),
+            subtitle: Text(_notificationInfo!.body!),
+            background: Colors.cyan.shade700,
+            duration: const Duration(seconds: 2),
+          );
+        }
+      });
+    } else {
+      debugPrint('User declined or has not accepted permission');
+    }
+  }
+
+
   @override
   void initState() {
     SystemChannels.textInput.invokeMethod('TexInput.hide');
+    requestAndRegisterNotification();
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      PushNotification notification = PushNotification(
+        title: message.notification?.title,
+        body: message.notification?.body,
+      );
+      setState(() {
+        _notificationInfo = notification;
+        _totalNotifications++;
+      });
+    });
+    _totalNotifications = 0;
+
     super.initState();
 
     widgetOptions = {
@@ -78,7 +154,7 @@ class _IndexState extends State<Index>
             renderMain(context),
             renderOrders(context),
             bottomOrders(context),
-             bottomProfile(context),
+            bottomProfile(context),
           ],
         ),
         bottomNavigationBar: Container(
