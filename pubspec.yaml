@@ -49,6 +49,7 @@ dependencies:
   firebase_messaging: ^13.0.1
   overlay_support: ^2.0.1
   flutter_local_notifications: ^9.9.1
+  flutter_launcher_icons: ^0.10.0
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +77,11 @@ flutter:
     - assets/images/
     - assets/images/icon/
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/icon/launcher_icon.png"
+  main_sdk_android: 21
 
 
 
