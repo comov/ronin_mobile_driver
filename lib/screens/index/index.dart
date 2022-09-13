@@ -41,7 +41,6 @@ class Index extends StatefulWidget {
 
 class _IndexState extends State<Index>
     with MainState, SingleTickerProviderStateMixin {
-
   int selectedBottom = 0;
   Map<int, List> widgetOptions = {};
   late TabController _tabController;
@@ -56,7 +55,6 @@ class _IndexState extends State<Index>
     // 1. Initialize the Firebase app
     await Firebase.initializeApp();
     var pf = await SharedPreferences.getInstance();
-
 
     // 2. Instantiate Firebase Messaging
     _messaging = FirebaseMessaging.instance;
@@ -74,7 +72,7 @@ class _IndexState extends State<Index>
       debugPrint('User granted permission');
       String? token = await _messaging.getToken();
       debugPrint("The token is $token");
-      print("token is "+token!);
+      print("token is " + token!);
       pf.setString("firebase_token", token);
 
       // For handling the received notifications
@@ -105,11 +103,43 @@ class _IndexState extends State<Index>
     }
   }
 
+  Future<void> setupInteractedMessage() async {
+    debugPrint('setupInteractedMessage');
+
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+
+    }
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    final routeFromNotification = message.data["screen"];
+
+    if (routeFromNotification != null) {
+
+        debugPrint(routeFromNotification);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    Index(3)),
+                (Route<dynamic> route) => false);
+
+    } else {
+      debugPrint('couldnt find the route');
+    }
+
+  }
 
   @override
   void initState() {
     SystemChannels.textInput.invokeMethod('TexInput.hide');
     requestAndRegisterNotification();
+    setupInteractedMessage();
+
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       PushNotification notification = PushNotification(
         title: message.notification?.title,
