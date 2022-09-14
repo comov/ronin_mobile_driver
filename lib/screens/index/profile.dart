@@ -1,11 +1,9 @@
-import 'package:car_helper/entities/car.dart';
-import 'package:car_helper/entities/user.dart';
-import 'package:car_helper/resources/api_user_profile.dart';
-import 'package:car_helper/resources/refresh.dart';
-import 'package:car_helper/screens/authorization/sign_in_screen.dart';
-import 'package:car_helper/screens/user/edit_car.dart';
-import 'package:car_helper/screens/user/edit_profile.dart';
-import 'package:expansion_tile_card/expansion_tile_card.dart';
+import 'package:car_helper_driver/entities/car.dart';
+import 'package:car_helper_driver/entities/user.dart';
+import 'package:car_helper_driver/resources/api_user_profile.dart';
+import 'package:car_helper_driver/resources/refresh.dart';
+import 'package:car_helper_driver/screens/authorization/auth_screen.dart';
+import 'package:car_helper_driver/screens/user/edit_profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,8 +11,6 @@ import 'package:share_plus/share_plus.dart';
 
   String authToken = "";
   String refreshKey = "";
-  String firebaseToken = "";
-
   Profile? profile;
   List<Car> carList = [];
 
@@ -47,12 +43,12 @@ Widget bottomProfile(BuildContext context) {
           case "tokenNotFound":
             {
               debugPrint("authToken is empty: $authToken");
-              return const SignIn();
+              return const Auth();
             }
           case "tokenExpired":
             {
               debugPrint("authToken is expired: $authToken");
-              return const SignIn();
+              return const Auth();
             }
         }
 
@@ -138,95 +134,6 @@ Widget bottomProfile(BuildContext context) {
                     ),
                   ],
                 ),
-                Flex(
-                  direction: Axis.horizontal,
-                  children: [
-                    Expanded(
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ListTile(
-                            title: const Text("Авто пользователя:"),
-                            subtitle: Column(
-                              children: [
-                                ListView.separated(
-                                  shrinkWrap: true,
-                                  padding: const EdgeInsets.all(3),
-                                  itemCount: carList.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return ExpansionTileCard(
-                                      borderRadius: BorderRadius.circular(16),
-                                      shadowColor:
-                                          const Color.fromRGBO(0, 0, 0, 0.5),
-                                      title: Text(
-                                          '${carList[index].brand} ${carList[index].model}'),
-                                      subtitle:
-                                          Text(carList[index].plateNumber),
-                                      children: <Widget>[
-                                        const Divider(
-                                          thickness: 1.0,
-                                          height: 1.0,
-                                        ),
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: Column(
-                                              children: <Widget>[
-                                                Text(
-                                                    "id: ${carList[index].id.toString()}"),
-                                                Text(
-                                                    "Марка авто: ${carList[index].brand}"),
-                                                Text(
-                                                    "Модель авто: ${carList[index].model}"),
-                                                Text(
-                                                    "Гос. Номер: ${carList[index].plateNumber}"),
-                                                Text(
-                                                    "VIN авто: ${carList[index].vin}"),
-                                                Text(
-                                                    "Год авто: ${carList[index].year.toString()}"),
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pushNamed(
-                                                          context,
-                                                          "/user/edit_car",
-                                                          arguments: EditCarArgs(
-                                                              editCar: carList[
-                                                                  index]));
-                                                    },
-                                                    child: const Text(
-                                                        "Редактировать Авто")),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) =>
-                                          const Divider(),
-                                ),
-                                if (carList.length >= 3)
-                                  const Text("Можно добавить не более 3х авто")
-                                else
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          "/user/create_car",
-                                        );
-                                      },
-                                      child: const Text("Добавить Авто")),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
@@ -240,16 +147,15 @@ Widget bottomProfile(BuildContext context) {
     pf.remove("auth_token");
     pf.remove("refresh_key");
   }
-void sharePressed(token) {
-    // String token = "";
+void sharePressed() {
     String message = "Я пользуюсь приложением RoninMobile. Присоединяйся instagram.link";
-    Share.share(token);
+    Share.share(message);
 }
 
   void selectedItem(BuildContext context, item) {
     switch (item) {
       case 0:
-        sharePressed(firebaseToken);
+        sharePressed();
         break;
       case 1:
         if (kDebugMode) {
@@ -272,9 +178,7 @@ void sharePressed(token) {
 
     authToken = pf.getString("auth_token") ?? "";
     refreshKey = pf.getString("refresh_key") ?? "";
-    firebaseToken = pf.getString("firebase_token") ?? "";
 
-    debugPrint("firebaseTOken-$firebaseToken");
 
     if (authToken == "") {
       return Future.value("tokenNotFound");

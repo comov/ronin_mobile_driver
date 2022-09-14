@@ -1,8 +1,6 @@
-import 'package:car_helper/entities/category.dart';
 import 'package:flutter/material.dart';
 
 mixin MainState {
-  List<Category> categories = [];
 
   Widget renderMain(BuildContext context) {
     return Scaffold(

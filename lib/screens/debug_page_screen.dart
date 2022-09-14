@@ -1,4 +1,4 @@
-import 'package:car_helper/screens/authorization/sign_in_screen.dart';
+import 'package:car_helper_driver/screens/authorization/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,7 +43,7 @@ class _DebugPageState extends State<DebugPage> with DebugMixin {
         }
 
         if (authToken == "") {
-          return const SignIn();
+          return const Auth();
         }
 
         return Scaffold(

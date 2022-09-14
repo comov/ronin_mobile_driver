@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kg.carhelper.car_helper">
+    package="kg.carhelper.car_helper_driver">
    <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="Ronin: Автопомощник"
+        android:label="Ronin: Водитель"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
@@ -26,10 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
 
             </intent-filter>
-            <intent-filter>
-                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
 
         </activity>
         <!-- Don't delete the meta-data below.
@@ -37,12 +33,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-       <meta-data
-           android:name="firebase_messaging_auto_init_enabled"
-           android:value="false" />
-       <meta-data
-           android:name="com.google.firebase.messaging.default_notification_channel_id"
-           android:value="high_importance_channel"/>
+
 
     </application>
 </manifest>

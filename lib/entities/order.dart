@@ -1,8 +1,8 @@
-import 'package:car_helper/entities/car.dart';
-import 'package:car_helper/entities/driver.dart';
-import 'package:car_helper/entities/employee.dart';
-import 'package:car_helper/entities/photo.dart';
-import 'package:car_helper/entities/service.dart';
+import 'package:car_helper_driver/entities/car.dart';
+import 'package:car_helper_driver/entities/driver.dart';
+import 'package:car_helper_driver/entities/employee.dart';
+import 'package:car_helper_driver/entities/photo.dart';
+import 'package:car_helper_driver/entities/service.dart';
 
 enum OrderStatus {
   created,

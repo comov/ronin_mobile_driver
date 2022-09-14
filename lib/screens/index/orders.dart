@@ -1,8 +1,8 @@
-import 'package:car_helper/entities/order.dart';
-import 'package:car_helper/resources/api_order_list.dart';
-import 'package:car_helper/resources/refresh.dart';
-import 'package:car_helper/screens/authorization/sign_in_screen.dart';
-import 'package:car_helper/screens/order/detail.dart';
+import 'package:car_helper_driver/entities/order.dart';
+import 'package:car_helper_driver/resources/api_order_list.dart';
+import 'package:car_helper_driver/resources/refresh.dart';
+import 'package:car_helper_driver/screens/authorization/auth_screen.dart';
+import 'package:car_helper_driver/screens/order/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,12 +41,12 @@ Widget bottomOrders(BuildContext context) {
         case "tokenNotFound":
           {
             debugPrint("authToken is empty: $authToken");
-            return const SignIn();
+            return const Auth();
           }
         case "tokenExpired":
           {
             debugPrint("authToken is expired: $authToken");
-            return const SignIn();
+            return const Auth();
           }
       }
       return Scaffold(

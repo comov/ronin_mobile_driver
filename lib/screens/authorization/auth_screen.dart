@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:car_helper/resources/auth.dart';
-import 'package:car_helper/resources/signin.dart';
+import 'package:car_helper_driver/resources/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,38 +12,23 @@ class Auth extends StatefulWidget {
 }
 
 class _AuthState extends State<Auth> {
-  var otpCode = "";
   String phoneNumber = "";
-  late Timer _timer;
-  int _start = 30;
-  bool validate = false;
-  TextEditingController textEditingController = TextEditingController();
+  String password = "";
+  bool validatePhone = false;
+  bool validatePassword = false;
 
-  void startTimer() {
-    const oneSec = Duration(seconds: 1);
-    _timer = Timer.periodic(oneSec, (Timer timer) {
-      if (_start == 0) {
-        setState(() {
-          timer.cancel();
-        });
-      } else {
-        setState(() {
-          _start--;
-        });
-      }
-    });
-  }
+  TextEditingController textEditingPhoneNumberController = TextEditingController();
+  TextEditingController textEditingPasswordController = TextEditingController();
+
 
   @override
   void initState() {
     super.initState();
-    startTimer();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _timer.cancel();
   }
 
   @override
@@ -71,74 +55,64 @@ class _AuthState extends State<Auth> {
                       fontFamily: '.SF Pro Display'),
                 ),
                 const Text(
-                  "Введите OTP код",
+                  "Введите номер телефона и пароль",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                       fontFamily: '.SF Pro Text'),
                 ),
                 TextFormField(
-                  onChanged: (text) => {otpCode = text},
+                  onChanged: (text) => {phoneNumber = text},
                   autofocus: true,
-                  controller: textEditingController,
+                  controller: textEditingPhoneNumberController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    errorText: validate ? 'Введён не верный  OTP код' : null,
+                    errorText: validatePhone ? 'Введён не верный  номер-телефона' : null,
                     // labelText: "Код подтверджения из СМС",
                     labelStyle: const TextStyle(
                         fontFamily: '.SF Pro Text', color: Colors.black),
-                    hintText: "0000",
+                    hintText: "Номер телефона",
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Код подтверджения не может быть пустым";
+                      return "Номер телефона не может быть пустым";
                     }
-
-                    if (value.length != 4) {
-                      return "Код подтверджения должен быть из 4-х цифр";
-                    }
+                    //
+                    // if (value.length != 4) {
+                    //   return "Номер телефона  должен быть из 4-х цифр";
+                    // }
 
                     return null;
                   },
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: TextFormField(
+                    onChanged: (text) => {password = text},
+                    autofocus: true,
+                    controller: textEditingPasswordController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      errorText: validatePassword ? 'Введён не верный  пароль' : null,
+                      // labelText: "Код подтверджения из СМС",
+                      labelStyle: const TextStyle(
+                          fontFamily: '.SF Pro Text', color: Colors.black),
+                      hintText: "Пароль",
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Номер телефона не может быть пустым";
+                      }
+                      //
+                      // if (value.length != 4) {
+                      //   return "Номер телефона  должен быть из 4-х цифр";
+                      // }
+
+                      return null;
+                    },
+                  ),
+                ),
                 const Spacer(),
-                const Text("Не пришёл код?",
-                    style: TextStyle(
-                        fontFamily: '.SF Pro Text',
-                        fontSize: 13,
-                        color: Colors.grey)),
-                _start != 0
-                    ? Row(
-                        children: [
-                          const Text(
-                            "Запросить код повторно через",
-                            style: TextStyle(
-                                fontFamily: '.SF Pro Text',
-                                fontSize: 13,
-                                color: Colors.grey),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            _start.toString(),
-                            style: const TextStyle(
-                                fontFamily: '.SF Pro Text',
-                                fontSize: 13,
-                                color: Colors.grey),
-                          )
-                        ],
-                      )
-                    : InkWell(
-                        onTap: () {
-                          setState(() {
-                            _start = 30;
-                            startTimer();
-                            singInCallBack();
-                          });
-                        },
-                        child: const Text("Запросить код повторно"),
-                      ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: ElevatedButton(
@@ -152,10 +126,22 @@ class _AuthState extends State<Auth> {
                               "/index",
                               (route) => false,
                             );
-                          } else {
+                          }
+                          else if (value == 405) {
                             setState(() {
-                              validate = true;
-                              // startTimer();
+                              validatePhone = true;
+                            });
+                          }
+
+                          else if (value == 406) {
+                            setState(() {
+                              validatePassword = true;
+                            });
+                          }
+                            else {
+                            setState(() {
+                              // validatePhone = true;
+                              // validatePassword = true;
                             });
                           }
                         });
@@ -171,8 +157,6 @@ class _AuthState extends State<Auth> {
   }
 
   Future<String> loadFromStorage() async {
-    final pf = await SharedPreferences.getInstance();
-    phoneNumber = pf.getString("phone_number") ?? "";
     return Future.value("Ok");
   }
 
@@ -183,25 +167,8 @@ class _AuthState extends State<Auth> {
     return Future.value("Ok");
   }
 
-  void singInCallBack() async {
-    final response = await sigIn(phoneNumber);
-    switch (response.statusCode) {
-      case 200:
-        {
-          break;
-        }
-      default:
-        {
-          debugPrint("Ошибка при авторизации: ${response.statusCode}");
-          debugPrint("response.error!.error=${response.error!.error}");
-          debugPrint("response.error!.message=${response.error!.message}");
-          break;
-        }
-    }
-  }
-
   Future<int> authCallBack() async {
-    final response = await auth(phoneNumber, otpCode);
+    final response = await auth(phoneNumber, password);
     switch (response.statusCode) {
       case 200:
         {
@@ -210,6 +177,13 @@ class _AuthState extends State<Auth> {
         }
       default:
         {
+          if (response.error!.message == "can not get driver from DB: record not found") {
+            return Future.value(405);
+          }
+          if (response.error!.message == "auth failed: invalid password") {
+            return Future.value(406);
+          }
+
           debugPrint("Ошибка при авторизации: ${response.statusCode}");
           debugPrint("response.error!.error=${response.error!.error}");
           debugPrint("response.error!.message=${response.error!.message}");

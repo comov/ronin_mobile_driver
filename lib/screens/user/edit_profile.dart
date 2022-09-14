@@ -1,6 +1,6 @@
-import 'package:car_helper/entities/user.dart';
-import 'package:car_helper/resources/api_user_profile.dart';
-import 'package:car_helper/screens/index/index.dart';
+import 'package:car_helper_driver/entities/user.dart';
+import 'package:car_helper_driver/resources/api_user_profile.dart';
+import 'package:car_helper_driver/screens/index/index.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

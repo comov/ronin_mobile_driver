@@ -1,18 +1,11 @@
-import 'package:car_helper/screens/authorization/auth_screen.dart';
-import 'package:car_helper/screens/authorization/sign_in_screen.dart';
-import 'package:car_helper/screens/debug_page_screen.dart';
-import 'package:car_helper/screens/index/checkerpage.dart';
-import 'package:car_helper/screens/index/index.dart';
-import 'package:car_helper/screens/order/create.dart';
-import 'package:car_helper/screens/order/createcarfromorder.dart';
-import 'package:car_helper/screens/order/detail.dart';
-import 'package:car_helper/screens/order/more_detail.dart';
-import 'package:car_helper/screens/user/create_car.dart';
-import 'package:car_helper/screens/user/edit_car.dart';
-import 'package:car_helper/screens/user/edit_profile.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:car_helper_driver/screens/authorization/auth_screen.dart';
+import 'package:car_helper_driver/screens/debug_page_screen.dart';
+import 'package:car_helper_driver/screens/index/checkerpage.dart';
+import 'package:car_helper_driver/screens/index/index.dart';
+import 'package:car_helper_driver/screens/order/detail.dart';
+import 'package:car_helper_driver/screens/order/more_detail.dart';
+import 'package:car_helper_driver/screens/user/edit_profile.dart';
 import 'package:flutter/material.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 const sentryDSN =
@@ -21,7 +14,6 @@ const backendURL = "https://stage.i-10.win";
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   await SentryFlutter.init(
     (options) {
       options.dsn = sentryDSN;
@@ -39,8 +31,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport(
-      child: MaterialApp(
+    return MaterialApp(
       title: "CarHelpers",
       initialRoute: "/checkerPage",
       navigatorObservers: [
@@ -94,20 +85,14 @@ class MyApp extends StatelessWidget {
       routes: {
         "/index": (BuildContext context) => Index(0),
         "/checkerPage": (BuildContext context) => const CheckerPage(),
-        "/signin": (BuildContext context) => const SignIn(),
         "/auth": (BuildContext context) => const Auth(),
-        "/order/new": (BuildContext context) => const OrderNew(),
-        "/order/create_car_from_order": (BuildContext context) =>
-            const CreateCarFromOrder(),
         "/order/detail": (BuildContext context) => const OrderDetail(),
         "/order/more_detail": (BuildContext context) => const MoreOrderDetail(),
         "/user/edit_profile": (BuildContext context) => const UserEdit(),
-        "/user/create_car": (BuildContext context) => const CreateCar(),
-        "/user/edit_car": (BuildContext context) => const EditCar(),
         "/debug": (BuildContext context) => const DebugPage(),
       },
       debugShowCheckedModeBanner: false,
       showSemanticsDebugger: false,
-      ));
+      );
   }
 }

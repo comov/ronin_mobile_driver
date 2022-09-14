@@ -1,5 +1,5 @@
-import 'package:car_helper/entities/order.dart';
-import 'package:car_helper/screens/order/more_detail.dart';
+import 'package:car_helper_driver/entities/order.dart';
+import 'package:car_helper_driver/screens/order/more_detail.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

@@ -1,8 +1,8 @@
-import 'package:car_helper/entities/user.dart';
-import 'package:car_helper/resources/api_user_profile.dart';
-import 'package:car_helper/resources/refresh.dart';
-import 'package:car_helper/screens/authorization/sign_in_screen.dart';
-import 'package:car_helper/screens/index/index.dart';
+import 'package:car_helper_driver/entities/user.dart';
+import 'package:car_helper_driver/resources/api_user_profile.dart';
+import 'package:car_helper_driver/resources/refresh.dart';
+import 'package:car_helper_driver/screens/authorization/auth_screen.dart';
+import 'package:car_helper_driver/screens/index/index.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -53,13 +53,13 @@ class _CheckerPage extends State<CheckerPage> {
           case "tokenNotFound":
             {
               debugPrint("authToken is empty: $authToken");
-              return const SignIn();
+              return const Auth();
             }
           case "tokenExpired":
             {
               // const Text("Сессия устарела");
               debugPrint("authToken is expired: $authToken");
-              return const SignIn();
+              return const Auth();
             }
         }
         return Index(0);

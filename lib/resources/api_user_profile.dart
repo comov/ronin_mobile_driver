@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:car_helper/entities/api.dart';
-import 'package:car_helper/entities/car.dart';
-import 'package:car_helper/entities/user.dart';
-import 'package:car_helper/main.dart';
+import 'package:car_helper_driver/entities/api.dart';
+import 'package:car_helper_driver/entities/car.dart';
+import 'package:car_helper_driver/entities/user.dart';
+import 'package:car_helper_driver/main.dart';
 import 'package:http/http.dart' as http;
 
 class ProfileResponse {
