@@ -3,7 +3,6 @@ import 'package:car_helper_driver/entities/user.dart';
 import 'package:car_helper_driver/resources/api_user_profile.dart';
 import 'package:car_helper_driver/resources/refresh.dart';
 import 'package:car_helper_driver/screens/authorization/auth_screen.dart';
-import 'package:car_helper_driver/screens/user/edit_profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -99,7 +98,7 @@ Widget bottomProfile(BuildContext context) {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
-                            title: const Text("Данные пользователя:"),
+                            title: const Text("Данные водителя:"),
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Column(
@@ -116,15 +115,15 @@ Widget bottomProfile(BuildContext context) {
                                   Text(
                                     "Номер телефона: ${profile?.phone}",
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, "/user/edit_profile",
-                                          arguments:
-                                              UserEditArs(profile: profile));
-                                    },
-                                    child: const Text("Редактировать профиль"),
-                                  ),
+                                  // TextButton(
+                                  //   onPressed: () {
+                                  //     Navigator.pushNamed(
+                                  //         context, "/user/edit_profile",
+                                  //         arguments:
+                                  //             UserEditArs(profile: profile));
+                                  //   },
+                                  //   child: const Text("Редактировать профиль"),
+                                  // ),
                                 ],
                               ),
                             ),
@@ -165,7 +164,7 @@ void sharePressed() {
       case 2:
         delFromStorage();
         Navigator.of(context).pushNamedAndRemoveUntil(
-          "/signin",
+          "/auth",
           (route) => false,
         );
         break;
@@ -210,9 +209,6 @@ void sharePressed() {
           }
       }
     }
-
-    final getCarListResponse = await getCustomerCars(authToken);
-    carList = getCarListResponse.cars;
 
     return Future.value("Ok");
   }

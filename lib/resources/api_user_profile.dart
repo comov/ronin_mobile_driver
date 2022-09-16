@@ -17,7 +17,7 @@ class ProfileResponse {
 
 Future<ProfileResponse> getProfile(String authToken) async {
   final response = await http.get(
-    Uri.parse("$backendURL/api/v1/user/profile"),
+    Uri.parse("$backendURL/api/v1/driver/profile"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
@@ -59,7 +59,7 @@ Future<ProfileResponse> editProfile(
 
 Future<ProfileResponse> deleteProfile(String authToken) async {
   final response = await http.delete(
-    Uri.parse("$backendURL/api/v1/user/profile"),
+    Uri.parse("$backendURL/api/v1/driver/profile"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",
@@ -157,18 +157,3 @@ Future<CarListResponse> editCar(String authToken, int id, String brand,
   return res;
 }
 
-Future<CarListResponse> deleteCar(String authToken, int id) async {
-  final response = await http.delete(
-    Uri.parse("$backendURL/api/v1/user/cars/$id"),
-    headers: <String, String>{
-      "Content-Type": "application/json; charset=UTF-8",
-      "Authorization": "Bearer $authToken",
-    },
-  );
-  final res = CarListResponse(statusCode: response.statusCode, cars: []);
-  if (response.statusCode == 200) {
-    // res.parseJson(jsonDecode(response.body));
-    // res = response.statusCode;
-  }
-  return res;
-}

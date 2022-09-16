@@ -26,7 +26,7 @@ class OrderListResponse {
 
 Future<OrderListResponse> getOrders(String authToken) async {
   final response = await http.get(
-    Uri.parse("$backendURL/api/v1/user/order"),
+    Uri.parse("$backendURL/api/v1/driver/order"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $authToken",

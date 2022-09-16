@@ -13,9 +13,9 @@ class AuthResponse {
   const AuthResponse({required this.statusCode, this.auth, this.error});
 }
 
-Future<AuthResponse> auth(String phoneNumber, String otp) async {
+Future<AuthResponse> auth(String phoneNumber, String password) async {
   final response = await http.post(
-    Uri.parse("$backendURL/api/v1/auth?phone=$phoneNumber&otp=$otp"),
+    Uri.parse("$backendURL/api/v1/driver/auth?phone=$phoneNumber&password=$password"),
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
     },

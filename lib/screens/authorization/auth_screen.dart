@@ -101,7 +101,7 @@ class _AuthState extends State<Auth> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Номер телефона не может быть пустым";
+                        return "Пароль не может быть пустым";
                       }
                       //
                       // if (value.length != 4) {

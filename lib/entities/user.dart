@@ -1,5 +1,4 @@
 class Profile {
-  int id;
   String phone;
   String firstName;
   String lastName;
@@ -7,7 +6,6 @@ class Profile {
   String modifiedAt;
 
   Profile({
-    required this.id,
     required this.phone,
     required this.firstName,
     required this.lastName,
@@ -17,7 +15,6 @@ class Profile {
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
-      id: json["id"],
       phone: json["phone"],
       firstName: json["first_name"] ?? "",
       lastName: json["last_name"] ?? "",
