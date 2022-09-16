@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final DateFormat formatter = DateFormat("d MMMM yyyy, HH:mm");
-late String authToken;
+String authToken = "";
 String refreshKey = "";
 
 List<Order> orders = [];
@@ -69,7 +69,7 @@ Widget bottomOrders(BuildContext context) {
                   Navigator.pushNamed(
                     context,
                     "/order/detail",
-                    arguments: OrderDetailArgs(order: orders[index]),
+                    arguments: OrderDetailArgs(orderId: orders[index].id),
                   );
                 },
                 child: Row(
