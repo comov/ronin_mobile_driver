@@ -53,7 +53,7 @@ class _OrderDetailState extends State<OrderDetail> {
             step = 1;
             break;
           }
-        case "Ожидается исполнение":
+        case "Ожидает исполнения":
           {
             step = 2;
             break;
@@ -63,7 +63,7 @@ class _OrderDetailState extends State<OrderDetail> {
             step = 3;
             break;
           }
-        case "Выполнено":
+        case "Выполнен":
           {
             step = 4;
             break;
@@ -205,14 +205,14 @@ class _OrderDetailState extends State<OrderDetail> {
                                 ? StepState.complete
                                 : StepState.disabled),
                         Step(
-                            title: const Text("Ожидается исполнение"),
+                            title: const Text("Ожидает исполнения"),
                             content: Column(
                               children: const [
                                 Text("тут время когда перешло на этот статус")
                               ],
                             ),
-                            isActive: order.status == "Ожидается исполнение",
-                            state: order.status == "Ожидается исполнение"
+                            isActive: order.status == "Ожидает исполнения",
+                            state: order.status == "Ожидает исполнения"
                                 ? StepState.complete
                                 : StepState.disabled),
                         Step(
@@ -227,14 +227,14 @@ class _OrderDetailState extends State<OrderDetail> {
                                 ? StepState.complete
                                 : StepState.disabled),
                         Step(
-                            title: const Text("Выполнено"),
+                            title: const Text("Выполнен"),
                             content: Column(
                               children: const [
                                 Text("тут время когда перешло на этот статус")
                               ],
                             ),
-                            isActive: order.status == "Выполнено",
-                            state: order.status == "Выполнено"
+                            isActive: order.status == "Выполнен",
+                            state: order.status == "Выполнен"
                                 ? StepState.complete
                                 : StepState.disabled),
                       ]),

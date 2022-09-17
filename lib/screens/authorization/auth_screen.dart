@@ -91,7 +91,7 @@ class _AuthState extends State<Auth> {
                     onChanged: (text) => {password = text},
                     autofocus: true,
                     controller: textEditingPasswordController,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.visiblePassword,
                     decoration: InputDecoration(
                       errorText: validatePassword ? 'Введён не верный  пароль' : null,
                       // labelText: "Код подтверджения из СМС",
