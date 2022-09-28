@@ -74,9 +74,9 @@ class _IndexState extends State<Index>
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       debugPrint('User granted permission');
-      String? token = await _messaging.getToken();
-      debugPrint("The token is $token");
-      pf.setString("firebase_token", token!);
+      String? fireBasePushtoken = await _messaging.getToken();
+      debugPrint("The token is $fireBasePushtoken");
+      pf.setString("firebase_push_token", fireBasePushtoken!);
 
       // For handling the received notifications
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -105,7 +105,7 @@ class _IndexState extends State<Index>
       debugPrint('User declined or has not accepted permission');
     }
 
-    final fireToken = pf.getString("fire_token") ?? "";
+    final fireToken = pf.getString("firebase_chat_token") ?? "";
     try {
       final userCredential =
       await FirebaseAuth.instance.signInWithCustomToken(fireToken);
