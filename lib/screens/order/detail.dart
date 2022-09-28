@@ -1,7 +1,10 @@
 import 'package:car_helper_driver/entities/order.dart';
 import 'package:car_helper_driver/resources/refresh.dart';
 import 'package:car_helper_driver/screens/authorization/auth_screen.dart';
+import 'package:car_helper_driver/screens/order/chat.dart';
 import 'package:car_helper_driver/screens/order/more_detail.dart';
+import 'package:car_helper_driver/screens/order/update_car.dart';
+import 'package:car_helper_driver/screens/order/upload_photo.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -43,29 +46,29 @@ class _OrderDetailState extends State<OrderDetail> {
     currentState() {
       int step = 0;
       switch (order.status) {
-        case "Создан":
+        // case "Создан":
+        //   {
+        //     step = 0;
+        //     break;
+        //   }
+        // case "Обрабатывается":
+        //   {
+        //     step = 1;
+        //     break;
+        //   }
+        case "Ожидает исполнения":
           {
             step = 0;
             break;
           }
-        case "Обрабатывается":
+        case "Выполняется":
           {
             step = 1;
             break;
           }
-        case "Ожидает исполнения":
-          {
-            step = 2;
-            break;
-          }
-        case "Выполняется":
-          {
-            step = 3;
-            break;
-          }
         case "Выполнен":
           {
-            step = 4;
+            step = 2;
             break;
           }
       }
@@ -182,33 +185,49 @@ class _OrderDetailState extends State<OrderDetail> {
                         );
                       },
                       steps: <Step>[
-                        Step(
-                            title: const Text("Создан"),
-                            content: Column(
-                              children: const [
-                                Text("тут время когда перешло на этот статус")
-                              ],
-                            ),
-                            isActive: order.status == "Создан",
-                            state: order.status == "Создан"
-                                ? StepState.complete
-                                : StepState.disabled),
-                        Step(
-                            title: const Text("Обрабатывается"),
-                            content: Column(
-                              children: const [
-                                Text("тут время когда перешло на этот статус")
-                              ],
-                            ),
-                            isActive: order.status == "Обрабатывается",
-                            state: order.status == "Обрабатывается"
-                                ? StepState.complete
-                                : StepState.disabled),
+                        // Step(
+                        //     title: const Text("Создан"),
+                        //     content: Column(
+                        //       children: [],
+                        //     ),
+                        //     isActive: order.status == "Создан",
+                        //     state: order.status == "Создан"
+                        //         ? StepState.complete
+                        //         : StepState.disabled),
+                        // Step(
+                        //     title: const Text("Обрабатывается"),
+                        //     content: Column(
+                        //       children: const [
+                        //         Text("тут время когда перешло на этот статус")
+                        //       ],
+                        //     ),
+                        //     isActive: order.status == "Обрабатывается",
+                        //     state: order.status == "Обрабатывается"
+                        //         ? StepState.complete
+                        //         : StepState.disabled),
                         Step(
                             title: const Text("Ожидает исполнения"),
                             content: Column(
-                              children: const [
-                                Text("тут время когда перешло на этот статус")
+                              children: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                          context, "/order/update_car",
+                                          arguments: UpdateCarArgs(
+                                              editCar: order.car!,
+                                              orderId: orderId));
+                                    },
+                                    child: const Text(
+                                        "Редактировать авто клиента")),
+                                const Divider(),
+                                TextButton(onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, "/order/upload_photo",
+                                      arguments: UploadPhotoArgs(
+                                          stateId: 0, authToken: authToken));
+
+                                },
+                                    child: const Text("Добавить фотографии ДО"))
                               ],
                             ),
                             isActive: order.status == "Ожидает исполнения",
@@ -245,7 +264,15 @@ class _OrderDetailState extends State<OrderDetail> {
                             arguments: MoreOrderDetailArgs(order: order));
                       },
                       child: const Text("Подробнее")),
-                  const TextButton(onPressed: null, child: Text("Чат заявки"))
+                   TextButton(onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChatPage(
+                              orderId: order.id.toString(),
+                            )),
+                            (Route<dynamic> route) => true);
+                  }, child: Text("Чат заявки"))
                 ],
               ),
             ),

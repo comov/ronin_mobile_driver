@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>308852378119-851rkouvu8pdli6ih6op9rvvlnhr9138.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.308852378119-851rkouvu8pdli6ih6op9rvvlnhr9138</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBZftocFag_v2FDvWgZ0u6zx_Oc-q-QUrY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>308852378119</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>kg.carhelper.carHelperDriver</string>
+	<key>PROJECT_ID</key>
+	<string>ronin-mobile</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ronin-mobile.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:308852378119:ios:c381075d5a5fa4e46cb8a2</string>
+</dict>
+</plist>

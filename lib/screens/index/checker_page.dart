@@ -73,6 +73,10 @@ class _CheckerPage extends State<CheckerPage> {
     authToken = pf.getString("auth_token") ?? "";
     phoneNumber = pf.getString("phone_number") ?? "";
     refreshKey = pf.getString("refresh_key") ?? "";
+    //TODO endpoint with FireToken
+    final fireToken = "eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiYzNhZTcyMDYyODZmYmEwYTZiODIxNzllYTQ0NmFiZjE4Y2FjOGM2ZSJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGsteXd6eGVAcm9uaW4tbW9iaWxlLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay15d3p4ZUByb25pbi1tb2JpbGUuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICJjdXN0b21lcjo2IiwgImlhdCI6IDE2NjQzNjYxOTUsICJleHAiOiAxNjY0MzY5Nzk1fQ.ml-3pwSPyzQWVBewtk10ejrII1K9w-URvprXWLqQ2Yvio3loQFjbxl7sdvHsHHaU8xct5oI1EKVWC-0Wkt_lsignksy6juhgBykXhcxAhMoiCnPQACBorEh6lxT-PSzJBYcyYkDTvH5dlsX0bsvJTwdp1OogZ5jz-dEBr2IV67xDmzFZY5R7SZSn--Cmc_v03-6o2YM0hfryx1_JABI9X2eD9ekwwBGKUJFkQLdOrCYGa41Yz2-3ya_lC89-YPiMaqopNwr_A_C_JyrMbFXzGkcCks9499SDv-Ty-MqAYInM0QqTwU1pd6v6Y3voXFFKkPnYifrGactR-JsSJrfkaQ";
+    pf.setString("fire_token", fireToken);
+
 
     if (authToken == "") {
       return Future.value("tokenNotFound");

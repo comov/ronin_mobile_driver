@@ -1,19 +1,23 @@
 import 'package:car_helper_driver/screens/authorization/auth_screen.dart';
 import 'package:car_helper_driver/screens/debug_page_screen.dart';
-import 'package:car_helper_driver/screens/index/checkerpage.dart';
+import 'package:car_helper_driver/screens/index/checker_page.dart';
 import 'package:car_helper_driver/screens/index/index.dart';
 import 'package:car_helper_driver/screens/order/detail.dart';
 import 'package:car_helper_driver/screens/order/more_detail.dart';
+import 'package:car_helper_driver/screens/order/update_car.dart';
+import 'package:car_helper_driver/screens/order/upload_photo.dart';
 import 'package:car_helper_driver/screens/user/edit_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 const sentryDSN =
-    "https://8198951336c94b3cba51cd09a46dbac2@o1348955.ingest.sentry.io/6655166";
+    "https://406aa96bd81e421692d6233984b789fd@o1348955.ingest.sentry.io/6780852";
 const backendURL = "https://stage.i-10.win";
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await SentryFlutter.init(
     (options) {
       options.dsn = sentryDSN;
@@ -87,6 +91,8 @@ class MyApp extends StatelessWidget {
         "/checkerPage": (BuildContext context) => const CheckerPage(),
         "/auth": (BuildContext context) => const Auth(),
         "/order/detail": (BuildContext context) => const OrderDetail(),
+        "/order/update_car": (BuildContext context) => const UpdateCar(),
+        "/order/upload_photo": (BuildContext context) => const UploadPhoto(),
         "/order/more_detail": (BuildContext context) => const MoreOrderDetail(),
         "/user/edit_profile": (BuildContext context) => const UserEdit(),
         "/debug": (BuildContext context) => const DebugPage(),
