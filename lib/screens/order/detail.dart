@@ -28,6 +28,9 @@ class _OrderDetailState extends State<OrderDetail> {
   String authToken = "";
   String refreshKey = "";
   late Order order;
+  String commentForAccept = "";
+  TextEditingController commentForAcceptController = TextEditingController();
+
 
   @override
   void initState() {
@@ -224,10 +227,44 @@ class _OrderDetailState extends State<OrderDetail> {
                                   Navigator.pushNamed(
                                       context, "/order/upload_photo",
                                       arguments: UploadPhotoArgs(
-                                          stateId: 0, authToken: authToken));
+                                          stateId: 0, authToken: authToken, orderId: orderId));
 
                                 },
-                                    child: const Text("Добавить фотографии ДО"))
+                                    child: const Text("Добавить фотографии ДО")),
+                                Divider(),
+
+                                TextFormField(
+                                  controller: commentForAcceptController,
+                                  onChanged: (text) => {commentForAccept = text},
+                                  autofocus: true,
+                                  keyboardType: TextInputType.text,
+                                  textCapitalization: TextCapitalization.characters,
+                                  decoration: InputDecoration(
+                                    labelText: "Комментарий к фотографии",
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderRadius: BorderRadius.circular(25.0),
+                                      borderSide: const BorderSide(
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderRadius: BorderRadius.circular(25.0),
+                                      borderSide: const BorderSide(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value!.length >= 21) {
+                                      return "Поле не может быть больше 20 символов";
+                                    }
+                                    return null;
+                                  },
+                                ),
+
+                                TextButton(onPressed: () {}
+                                    , child: Text("Принять"))
+
                               ],
                             ),
                             isActive: order.status == "Ожидает исполнения",

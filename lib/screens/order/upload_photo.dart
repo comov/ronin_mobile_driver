@@ -13,8 +13,9 @@ import 'package:path/path.dart';
 class UploadPhotoArgs {
   final int stateId;
   final String authToken;
+  final int orderId;
 
-  UploadPhotoArgs({required this.stateId, required this.authToken});
+  UploadPhotoArgs({required this.stateId, required this.authToken, required this.orderId});
 }
 
 class UploadPhoto extends StatefulWidget {
@@ -33,9 +34,11 @@ class _UploadPhotoState extends State<UploadPhoto> {
   final _picker = ImagePicker();
   bool showSpinner = false;
 
+
+
   Future getImage() async {
     final pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery, imageQuality: 80);
+        source: ImageSource.gallery, imageQuality: 90);
     if (pickedFile != null) {
       image = File(pickedFile.path);
       setState(() {});
@@ -44,7 +47,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
     }
   }
 
-  Future<void> uploadImage(String authToken) async {
+  Future<void> uploadImage(String authToken, int orderId, int stateId) async {
 
     setState(() {
       showSpinner = true;
@@ -59,7 +62,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
     };
 
     var uri = Uri.parse(
-        "https://stage.i-10.win/api/v1/driver/order/122/upload_photo?kind=0");
+        "https://stage.i-10.win/api/v1/driver/order/$orderId/upload_photo?kind=$stateId");
 
     var request = http.MultipartRequest('PUT', uri);
 
@@ -96,6 +99,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as UploadPhotoArgs;
     final stateId = args.stateId;
+    final orderId = args.orderId;
     String authToken = args.authToken;
 
 
@@ -210,7 +214,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
                     Divider(),
                     GestureDetector(
                       onTap: () {
-                        uploadImage(authToken);
+                        uploadImage(authToken, orderId, stateId);
                       },
                       child: Container(
                         width: 200,
@@ -219,6 +223,11 @@ class _UploadPhotoState extends State<UploadPhoto> {
                         child: Text("Загрузить"),
                       ),
                     ),
+
+                    Divider(),
+                    Text("Загруженные фотографии"),
+
+                    Text("тут сделаю отображения фотографий на сервере")
                   ],
                 ),
               ),

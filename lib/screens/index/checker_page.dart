@@ -19,6 +19,8 @@ class _CheckerPage extends State<CheckerPage> {
   String refreshKey = "";
   Profile? profile;
 
+
+
   @override
   void initState() {
     super.initState();
