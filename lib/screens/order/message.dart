@@ -1,24 +1,32 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'package:car_helper_driver/entities/customer.dart';
+import 'package:car_helper_driver/entities/driver.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class Messages extends StatefulWidget {
   String orderId;
+  Driver? driver;
 
-  Messages({required this.orderId});
+  Messages({super.key, required this.orderId, required this.driver});
 
   @override
-  _MessagesState createState() => _MessagesState(orderId: orderId);
+  // ignore: library_private_types_in_public_api
+  _MessagesState createState() =>
+      _MessagesState(orderId: orderId, driver: driver);
 }
 
 class _MessagesState extends State<Messages> {
   String orderId;
+  Driver? driver;
 
-  _MessagesState({required this.orderId});
+  _MessagesState({required this.orderId, required this.driver});
 
   @override
   Widget build(BuildContext context) {
+    String uid = "driver:${driver!.id}";
     Stream<QuerySnapshot> _messageStream = FirebaseFirestore.instance
         .collection('rooms')
         .doc('order_$orderId')
@@ -47,13 +55,12 @@ class _MessagesState extends State<Messages> {
             QueryDocumentSnapshot qs = snapshot.data!.docs[index];
             Timestamp t = qs['timestamp'];
             DateTime d = t.toDate();
-            // print(d.toString());
             return Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 8),
               child: Column(
-                // crossAxisAlignment: email == qs['email']
-                //     ? CrossAxisAlignment.end
-                //     : CrossAxisAlignment.start,
+                crossAxisAlignment: uid == qs['uid']
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
                 children: [
                   SizedBox(
                     width: 300,
@@ -64,12 +71,12 @@ class _MessagesState extends State<Messages> {
                         ),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      // title: Text(
-                      //   qs['email'],
-                      //   style: TextStyle(
-                      //     fontSize: 15,
-                      //   ),
-                      // ),
+                      title: Text(
+                        qs['name'],
+                        style: TextStyle(
+                          fontSize: 15,
+                        ),
+                      ),
                       subtitle: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

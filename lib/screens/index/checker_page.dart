@@ -3,6 +3,7 @@ import 'package:car_helper_driver/resources/api_user_profile.dart';
 import 'package:car_helper_driver/resources/refresh.dart';
 import 'package:car_helper_driver/screens/authorization/auth_screen.dart';
 import 'package:car_helper_driver/screens/index/index.dart';
+import 'package:car_helper_driver/screens/index/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,8 @@ class _CheckerPage extends State<CheckerPage> {
   String authToken = "";
   String phoneNumber = "";
   String refreshKey = "";
+  String fireBasePushToken = "";
+
   Profile? profile;
 
 
@@ -75,11 +78,23 @@ class _CheckerPage extends State<CheckerPage> {
     authToken = pf.getString("auth_token") ?? "";
     phoneNumber = pf.getString("phone_number") ?? "";
     refreshKey = pf.getString("refresh_key") ?? "";
+    fireBasePushToken = pf.getString("firebase_push_token") ?? "";
+
     //TODO endpoint with FireToken
+
 
 
     if (authToken == "") {
       return Future.value("tokenNotFound");
+    }
+
+    final fireBasePushTokenResponse = await postFirebasePushToken(authToken, fireBasePushToken);
+    switch(fireBasePushTokenResponse.statusCode) {
+      case 200:
+        {
+          debugPrint("fireBasePushToken: $fireBasePushToken");
+        }
+        break;
     }
 
     final profileResponse = await getProfile(authToken);
@@ -87,6 +102,16 @@ class _CheckerPage extends State<CheckerPage> {
       case 200:
         {
           profile = profileResponse.profile;
+          final fireBaseChatTokenResponse = await getFirebaseChatToken(authToken);
+          switch(fireBaseChatTokenResponse.statusCode) {
+            case 200:
+              {
+                fireBaseChatToken = fireBaseChatTokenResponse.auth!.token;
+                debugPrint("fireBaseChatToken: $fireBaseChatToken");
+                pf.setString("firebase_chat_token", fireBaseChatToken);
+              }
+              break;
+          }
         }
         break;
       case 401:
@@ -99,6 +124,17 @@ class _CheckerPage extends State<CheckerPage> {
             refreshKey = refreshResponse.auth!.refreshKey;
             pf.setString("auth_token", authToken);
             pf.setString("refresh_key", refreshKey);
+
+            final fireBaseChatTokenResponse = await getFirebaseChatToken(authToken);
+            switch(fireBaseChatTokenResponse.statusCode) {
+              case 200:
+                {
+                  fireBaseChatToken = fireBaseChatTokenResponse.auth!.token;
+                  debugPrint("fireBaseChatToken: $fireBaseChatToken");
+                  pf.setString("firebase_chat_token", fireBaseChatToken);
+                }
+                break;
+            }
 
             break;
           } else {

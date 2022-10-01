@@ -31,7 +31,6 @@ class _OrderDetailState extends State<OrderDetail> {
   String commentForAccept = "";
   TextEditingController commentForAcceptController = TextEditingController();
 
-
   @override
   void initState() {
     super.initState();
@@ -40,7 +39,7 @@ class _OrderDetailState extends State<OrderDetail> {
   @override
   Widget build(BuildContext context) {
     final DateFormat formatter = DateFormat("d MMMM yyyy, HH:mm");
-
+    final formKey = GlobalKey<FormState>();
     final args = ModalRoute.of(context)!.settings.arguments as OrderDetailArgs;
     final orderId = args.orderId;
 
@@ -49,16 +48,6 @@ class _OrderDetailState extends State<OrderDetail> {
     currentState() {
       int step = 0;
       switch (order.status) {
-        // case "Создан":
-        //   {
-        //     step = 0;
-        //     break;
-        //   }
-        // case "Обрабатывается":
-        //   {
-        //     step = 1;
-        //     break;
-        //   }
         case "Ожидает исполнения":
           {
             step = 0;
@@ -188,84 +177,85 @@ class _OrderDetailState extends State<OrderDetail> {
                         );
                       },
                       steps: <Step>[
-                        // Step(
-                        //     title: const Text("Создан"),
-                        //     content: Column(
-                        //       children: [],
-                        //     ),
-                        //     isActive: order.status == "Создан",
-                        //     state: order.status == "Создан"
-                        //         ? StepState.complete
-                        //         : StepState.disabled),
-                        // Step(
-                        //     title: const Text("Обрабатывается"),
-                        //     content: Column(
-                        //       children: const [
-                        //         Text("тут время когда перешло на этот статус")
-                        //       ],
-                        //     ),
-                        //     isActive: order.status == "Обрабатывается",
-                        //     state: order.status == "Обрабатывается"
-                        //         ? StepState.complete
-                        //         : StepState.disabled),
                         Step(
                             title: const Text("Ожидает исполнения"),
-                            content: Column(
-                              children: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, "/order/update_car",
-                                          arguments: UpdateCarArgs(
-                                              editCar: order.car!,
-                                              orderId: orderId));
+                            content: Form(
+                              key: formKey,
+                              child: Column(
+                                children: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, "/order/update_car",
+                                            arguments: UpdateCarArgs(
+                                                editCar: order.car!,
+                                                orderId: orderId));
+                                      },
+                                      child: const Text(
+                                          "Редактировать авто клиента")),
+                                  const Divider(),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, "/order/upload_photo",
+                                            arguments: UploadPhotoArgs(
+                                                stateId: 0,
+                                                authToken: authToken,
+                                                orderId: orderId,
+                                            ));
+                                      },
+                                      child:
+                                          const Text("Добавить фотографии ДО")),
+                                  const Divider(),
+                                  TextFormField(
+                                    controller: commentForAcceptController,
+                                    onChanged: (text) =>
+                                        {commentForAccept = text},
+                                    // autofocus: true,
+                                    keyboardType: TextInputType.text,
+                                    textCapitalization:
+                                        TextCapitalization.characters,
+                                    decoration: InputDecoration(
+                                      labelText: "Комментарий к фотографии",
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(25.0),
+                                        borderSide: const BorderSide(
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(25.0),
+                                        borderSide: const BorderSide(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value!.length >= 21) {
+                                        return "Поле не может быть больше 20 символов";
+                                      }
+                                      return null;
                                     },
-                                    child: const Text(
-                                        "Редактировать авто клиента")),
-                                const Divider(),
-                                TextButton(onPressed: () {
-                                  Navigator.pushNamed(
-                                      context, "/order/upload_photo",
-                                      arguments: UploadPhotoArgs(
-                                          stateId: 0, authToken: authToken, orderId: orderId));
-
-                                },
-                                    child: const Text("Добавить фотографии ДО")),
-                                Divider(),
-
-                                TextFormField(
-                                  controller: commentForAcceptController,
-                                  onChanged: (text) => {commentForAccept = text},
-                                  autofocus: true,
-                                  keyboardType: TextInputType.text,
-                                  textCapitalization: TextCapitalization.characters,
-                                  decoration: InputDecoration(
-                                    labelText: "Комментарий к фотографии",
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderRadius: BorderRadius.circular(25.0),
-                                      borderSide: const BorderSide(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                    enabledBorder: UnderlineInputBorder(
-                                      borderRadius: BorderRadius.circular(25.0),
-                                      borderSide: const BorderSide(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
                                   ),
-                                  validator: (value) {
-                                    if (value!.length >= 21) {
-                                      return "Поле не может быть больше 20 символов";
-                                    }
-                                    return null;
-                                  },
-                                ),
-
-                                TextButton(onPressed: () {}
-                                    , child: Text("Принять"))
-
-                              ],
+                                  TextButton(
+                                      onPressed: () {
+                                        if (formKey.currentState!.validate()) {
+                                          _acceptOrder(
+                                                  orderId, commentForAccept)
+                                              .then((response) {
+                                            if (response == 200) {
+                                              setState(() {
+                                                debugPrint("OK");
+                                              });
+                                            }
+                                          });
+                                        }
+                                      },
+                                      child: const Text("Принять"))
+                                ],
+                              ),
                             ),
                             isActive: order.status == "Ожидает исполнения",
                             state: order.status == "Ожидает исполнения"
@@ -301,15 +291,18 @@ class _OrderDetailState extends State<OrderDetail> {
                             arguments: MoreOrderDetailArgs(order: order));
                       },
                       child: const Text("Подробнее")),
-                   TextButton(onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ChatPage(
-                              orderId: order.id.toString(),
-                            )),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                      orderId: order.id.toString(),
+                                    driver: order.driver
+                                    )),
                             (Route<dynamic> route) => true);
-                  }, child: Text("Чат заявки"))
+                      },
+                      child: const Text("Чат заявки"))
                 ],
               ),
             ),
@@ -356,5 +349,25 @@ class _OrderDetailState extends State<OrderDetail> {
       }
     }
     return Future.value("Ok");
+  }
+
+  Future<int> _acceptOrder(orderId, comment) async {
+    final response = await acceptOrder(authToken, orderId, comment);
+    switch (response.statusCode) {
+      case 200:
+        {
+          debugPrint("Заказ был подтвержден!");
+          break;
+        }
+      default:
+        {
+          debugPrint("Ошибка при подтверждения заказа: ${response.statusCode}");
+          debugPrint("response.error!.error=${response.error!.error}");
+          debugPrint("response.error!.message=${response.error!.message}");
+          break;
+        }
+    }
+
+    return Future.value(response.statusCode);
   }
 }

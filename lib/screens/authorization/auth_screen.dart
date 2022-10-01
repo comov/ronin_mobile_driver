@@ -123,7 +123,7 @@ class _AuthState extends State<Auth> {
                         authCallBack().then((value) {
                           if (value == 200) {
                             Navigator.of(context).pushNamedAndRemoveUntil(
-                              "/index",
+                              "/checkerPage",
                               (route) => false,
                             );
                           }

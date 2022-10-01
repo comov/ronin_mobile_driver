@@ -1,21 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:car_helper_driver/main.dart';
 import 'package:car_helper_driver/screens/authorization/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
 
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart';
 
 class UploadPhotoArgs {
   final int stateId;
   final String authToken;
   final int orderId;
 
-  UploadPhotoArgs({required this.stateId, required this.authToken, required this.orderId});
+  UploadPhotoArgs(
+      {required this.stateId, required this.authToken, required this.orderId});
 }
 
 class UploadPhoto extends StatefulWidget {
@@ -34,11 +37,9 @@ class _UploadPhotoState extends State<UploadPhoto> {
   final _picker = ImagePicker();
   bool showSpinner = false;
 
-
-
   Future getImage() async {
-    final pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery, imageQuality: 90);
+    final pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery, imageQuality: 90);
     if (pickedFile != null) {
       image = File(pickedFile.path);
       setState(() {});
@@ -48,7 +49,6 @@ class _UploadPhotoState extends State<UploadPhoto> {
   }
 
   Future<void> uploadImage(String authToken, int orderId, int stateId) async {
-
     setState(() {
       showSpinner = true;
     });
@@ -57,18 +57,18 @@ class _UploadPhotoState extends State<UploadPhoto> {
 
     var length = await image!.length();
     Map<String, String> headers = {
-      "Accept": "application/json",
-      "Authorization": "Bearer " + authToken
+      // "Accept": "application/json",
+      "Authorization": "Bearer $authToken"
     };
 
     var uri = Uri.parse(
-        "https://stage.i-10.win/api/v1/driver/order/$orderId/upload_photo?kind=$stateId");
+        "$backendURL/api/v1/driver/order/$orderId/upload_photo?kind=$stateId");
 
     var request = http.MultipartRequest('PUT', uri);
 
-
-    var multiport = http.MultipartFile('photo[0]', stream, length, filename: basename(image!.path));
-    request.files.add(multiport);
+    var multiPort = http.MultipartFile('photo[0]', stream, length,
+        filename: basename(image!.path));
+    request.files.add(multiPort);
     request.headers.addAll(headers);
     request.fields['photo_comment[0]'] = comment;
 
@@ -84,7 +84,6 @@ class _UploadPhotoState extends State<UploadPhoto> {
       setState(() {
         showSpinner = false;
       });
-
     } else {
       debugPrint("${response.statusCode}");
 
@@ -102,7 +101,6 @@ class _UploadPhotoState extends State<UploadPhoto> {
     final orderId = args.orderId;
     String authToken = args.authToken;
 
-
     return FutureBuilder<String>(
         future: loadInitialDataOrderDetail(stateId),
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -114,17 +112,16 @@ class _UploadPhotoState extends State<UploadPhoto> {
 
           if (snapshot.hasError) {
             return Scaffold(
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Ошибка при загрузке приложения :("),
-                      Text("${snapshot.error}"),
-                    ],
-                  ),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Ошибка при загрузке приложения :("),
+                    Text("${snapshot.error}"),
+                  ],
                 ),
-              );
-
+              ),
+            );
           }
 
           switch (snapshot.data!) {
@@ -159,77 +156,92 @@ class _UploadPhotoState extends State<UploadPhoto> {
               ),
               body: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        getImage();
-                      },
-                      child: Container(
-                        child: image == null
-                            ? Center(
-                                child: Text("Pick Image"),
-                              )
-                            : Container(
-                                child: Center(
-                                  child: Image.file(File(image!.path).absolute,
-                                      height: 100, width: 100, fit: BoxFit.cover),
-                                ),
-                              )),
-                    ),
-                    Divider(),
-                    SizedBox(
-                      height: 150,
-                    ),
-                    TextFormField(
-                      controller: commentController,
-                      onChanged: (text) => {comment = text},
-                      autofocus: true,
-                      keyboardType: TextInputType.text,
-                      textCapitalization: TextCapitalization.characters,
-                      decoration: InputDecoration(
-                        labelText: "Комментарий к фотографии",
-                        focusedBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: const BorderSide(
-                            color: Colors.blue,
+                child: ListView(children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          getImage();
+                        },
+                        child: Container(
+                            child: image == null
+                                ? const Center(
+                                    child:
+                                        Text("Выбрать изображение из галлереи"),
+                                  )
+                                // ignore: avoid_unnecessary_containers
+                                : Container(
+                                    child: Center(
+                                      child: Image.file(
+                                          File(image!.path).absolute,
+                                          height: 100,
+                                          width: 100,
+                                          fit: BoxFit.cover),
+                                    ),
+                                  )),
+                      ),
+                      const Divider(),
+                      const SizedBox(
+                        height: 150,
+                      ),
+                      TextFormField(
+                        controller: commentController,
+                        onChanged: (text) => {comment = text},
+                        autofocus: true,
+                        keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.characters,
+                        decoration: InputDecoration(
+                          labelText: "Комментарий к фотографии",
+                          focusedBorder: UnderlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                            borderSide: const BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                            borderSide: const BorderSide(
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                          ),
-                        ),
+                        validator: (value) {
+                          if (value!.length >= 21) {
+                            return "Поле не может быть больше 20 символов";
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value!.length >= 21) {
-                          return "Поле не может быть больше 20 символов";
-                        }
-                        return null;
-                      },
-                    ),
-                    Divider(),
-                    GestureDetector(
-                      onTap: () {
-                        uploadImage(authToken, orderId, stateId);
-                      },
-                      child: Container(
-                        width: 200,
-                        height: 50,
-                        color: Colors.green,
-                        child: Text("Загрузить"),
+                      const Divider(),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50)),
+                        onPressed: () {
+                          uploadImage(authToken, orderId, stateId);
+                        },
+                        child: const Text("Загрузить"),
                       ),
-                    ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     uploadImage(authToken, orderId, stateId);
+                      //   },
+                      //   child: Container(
+                      //     width: 200,
+                      //     height: 50,
+                      //     color: Colors.green,
+                      //     child: const Text("Загрузить"),
+                      //   ),
+                      // ),
 
-                    Divider(),
-                    Text("Загруженные фотографии"),
+                      const Divider(),
+                      const Text("Загруженные фотографии"),
 
-                    Text("тут сделаю отображения фотографий на сервере")
-                  ],
-                ),
+                      const Text("тут сделаю отображения фотографий на сервере")
+                    ],
+                  ),
+                ]),
               ),
             ),
           );

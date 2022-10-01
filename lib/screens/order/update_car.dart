@@ -263,7 +263,7 @@ class _UpdateCarState extends State<UpdateCar> {
                   ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
-                        _update_Car(carItem, orderId).then((value) async {
+                        _updateCar(carItem, orderId).then((value) async {
                           if (value == 200) {
                             Navigator.pushNamed(
                               context,
@@ -315,7 +315,7 @@ class _UpdateCarState extends State<UpdateCar> {
     return Future.value("Ok");
   }
 
-  Future<int> _update_Car(carItem, orderId) async {
+  Future<int> _updateCar(carItem, orderId) async {
     final response = await updateCar(authToken, orderId, carItem.id, carItem.brand,
         carItem.model, carItem.year ?? 0, carItem.plateNumber, carItem.vin);
     switch (response.statusCode) {

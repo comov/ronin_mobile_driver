@@ -19,6 +19,17 @@ class OrderDetailResponse {
 
 }
 
+class OrderAcceptResponse {
+  final int statusCode;
+  final ApiErrorResponse? error;
+
+  const OrderAcceptResponse({
+    required this.statusCode,
+    this.error,
+  });
+
+}
+
 Future<OrderDetailResponse> getOrderDetail(String authToken, int id) async {
   final response = await http.get(
     Uri.parse("$backendURL/api/v1/driver/order/$id"),
@@ -37,5 +48,29 @@ Future<OrderDetailResponse> getOrderDetail(String authToken, int id) async {
     statusCode: response.statusCode,
     error: ApiErrorResponse.fromJson(jsonDecode(response.body)),
     orderDetail: Order.fromJson(jsonDecode(response.body)),
+  );
+}
+
+
+
+Future<OrderAcceptResponse> acceptOrder(String authToken, int orderId, String comment) async {
+  final response = await http.post(
+    Uri.parse("$backendURL/api/v1/driver/order/$orderId/accept"),
+    headers: <String, String>{
+      "Authorization": "Bearer $authToken",
+    },
+
+    body: {
+      "comment": comment
+    }
+  );
+  if (response.statusCode == 200) {
+    return OrderAcceptResponse(
+      statusCode: response.statusCode,
+    );
+  }
+  return OrderAcceptResponse(
+    statusCode: response.statusCode,
+    error: ApiErrorResponse.fromJson(jsonDecode(response.body)),
   );
 }

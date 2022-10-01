@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable, library_private_types_in_public_api
 
+import 'package:car_helper_driver/entities/customer.dart';
+import 'package:car_helper_driver/entities/driver.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,17 +9,20 @@ import 'message.dart';
 
 class ChatPage extends StatefulWidget {
   String orderId;
+  Driver? driver;
 
-  ChatPage({super.key, required this.orderId});
+  ChatPage({super.key, required this.orderId, required this.driver});
 
   @override
-  _ChatPageState createState() => _ChatPageState(orderId: orderId);
+  _ChatPageState createState() =>
+      _ChatPageState(orderId: orderId, driver: driver);
 }
 
 class _ChatPageState extends State<ChatPage> {
   String orderId;
+  Driver? driver;
 
-  _ChatPageState({required this.orderId});
+  _ChatPageState({required this.orderId, required this.driver});
 
   final fs = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
@@ -45,9 +50,7 @@ class _ChatPageState extends State<ChatPage> {
             children: [
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.79,
-                child: Messages(
-                  orderId: orderId,
-                ),
+                child: Messages(orderId: orderId, driver: driver),
               ),
               Row(
                 children: [
@@ -89,7 +92,8 @@ class _ChatPageState extends State<ChatPage> {
                             .set({
                           'text': message.text.trim(),
                           'timestamp': DateTime.now(),
-                          // 'name': email,
+                          'name': driver!.displayName(),
+                          'uid': "driver:${driver!.id}"
                         });
 
                         message.clear();

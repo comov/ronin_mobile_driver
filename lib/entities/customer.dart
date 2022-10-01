@@ -1,4 +1,4 @@
-class Driver {
+class Customer {
   final int id;
   final String phone;
   final String firstName;
@@ -6,7 +6,7 @@ class Driver {
   final String createdAt;
   final String modifiedAt;
 
-  const Driver({
+  const Customer({
     required this.id,
     required this.phone,
     required this.firstName,
@@ -15,8 +15,8 @@ class Driver {
     required this.modifiedAt,
   });
 
-  factory Driver.fromJson(Map<String, dynamic> json) {
-    return Driver(
+  factory Customer.fromJson(Map<String, dynamic> json) {
+    return Customer(
       id: json["id"],
       phone: json["phone"],
       firstName: json["first_name"],
@@ -26,8 +26,8 @@ class Driver {
     );
   }
 
-  factory Driver.empty() {
-    return const Driver(
+  factory Customer.empty() {
+    return const Customer(
       id: 0,
       phone: "",
       firstName: "",
@@ -39,7 +39,7 @@ class Driver {
 
   displayName() {
     if (firstName != '' && lastName != '') {
-      return "$firstName $lastName (Водитель)";
+      return "$firstName $lastName";
     }
     return phone;
   }

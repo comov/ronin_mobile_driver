@@ -173,6 +173,7 @@ class _IndexState extends State<Index>
     super.initState();
     setupInteractedMessage();
 
+    // ignore: no_leading_underscores_for_local_identifiers
     Stream<RemoteMessage> _stream = FirebaseMessaging.onMessageOpenedApp;
     _stream.listen((RemoteMessage event) async {
       if (event.data != null) {

@@ -1,4 +1,5 @@
 import 'package:car_helper_driver/entities/car.dart';
+import 'package:car_helper_driver/entities/customer.dart';
 import 'package:car_helper_driver/entities/driver.dart';
 import 'package:car_helper_driver/entities/employee.dart';
 import 'package:car_helper_driver/entities/photo.dart';
@@ -42,6 +43,7 @@ class Order {
   final DateTime? pickUpTime;
   final DateTime createdAt;
   final DateTime modifiedAt;
+  final Customer customer;
   final Car? car;
   final Driver? driver;
   final Employee? employee;
@@ -55,6 +57,7 @@ class Order {
     this.pickUpTime,
     required this.status,
     required this.car,
+    required this.customer,
     required this.driver,
     required this.employee,
     required this.services,
@@ -91,6 +94,9 @@ class Order {
       createdAt: DateTime.parse(json["created_at"]),
       modifiedAt: DateTime.parse(json["modified_at"]),
       car: json["car"] == null ? Car.empty() : Car.fromJson(json["car"]),
+      customer: json["customer"] == null
+          ? Customer.empty()
+          : Customer.fromJson(json["customer"]),
       driver: json["driver"] == null
           ? Driver.empty()
           : Driver.fromJson(json["driver"]),

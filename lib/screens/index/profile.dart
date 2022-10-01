@@ -127,35 +127,6 @@ Widget bottomProfile(BuildContext context) {
                   ),
                 ),
               ),
-
-              TextFormField(
-                onChanged: (text) => {
-                  fireBaseChatToken = text,
-                  saveChatToken(fireBaseChatToken)
-                },
-                autofocus: true,
-                keyboardType: TextInputType.text,
-                textCapitalization: TextCapitalization.characters,
-                initialValue: fireBaseChatToken,
-                decoration: InputDecoration(
-                  labelText: "Чат Токен Firebase",
-                  focusedBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                    borderSide: const BorderSide(
-                      color: Colors.blue,
-                    ),
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                validator: (value) {
-                  return null;
-                },
-              ),
             ],
           ),
         ),
@@ -170,16 +141,16 @@ void delFromStorage() async {
   pf.remove("refresh_key");
 }
 
-void sharePressed(firebasePushToken) {
+void sharePressed() {
   String message =
       "Я пользуюсь приложением RoninMobile. Присоединяйся instagram.link";
-  Share.share(firebasePushToken);
+  Share.share(message);
 }
 
 void selectedItem(BuildContext context, item) {
   switch (item) {
     case 0:
-      sharePressed(firebasePushToken);
+      sharePressed();
       break;
     case 1:
       if (kDebugMode) {
@@ -203,6 +174,7 @@ Future<String> loadInitialDataProfile() async {
   authToken = pf.getString("auth_token") ?? "";
   refreshKey = pf.getString("refresh_key") ?? "";
   firebasePushToken = pf.getString("firebase_push_token") ?? "";
+  fireBaseChatToken = pf.getString("firebase_chat_token") ?? "";
 
   if (authToken == "") {
     return Future.value("tokenNotFound");

@@ -14,6 +14,8 @@ import 'package:firebase_core/firebase_core.dart';
 const sentryDSN =
     "https://406aa96bd81e421692d6233984b789fd@o1348955.ingest.sentry.io/6780852";
 const backendURL = "https://stage.i-10.win";
+// const backendURL = "http://192.168.88.247";
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
